@@ -14,6 +14,7 @@ export default {
         lato: ['Lato', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
         ManropeSemiBold: ['Manrope SemiBold', 'sans-serif'],
+        monrope: ['Manrope', 'sans-serif'],
       },
       boxShadow: {
         'custom': '0px 4px 20px 0px #0000001A',

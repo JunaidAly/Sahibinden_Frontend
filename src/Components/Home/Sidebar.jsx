@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { Link } from "react-router";
 const Sidebar = () => {
   // State to track which categories are expanded
   const [expanded, setExpanded] = useState({
@@ -52,9 +52,9 @@ const Sidebar = () => {
   const imgSrcSpare = <img src="/assets/private/spare.svg" alt="" />;
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-full overflow-y-auto font-poppins">
+    <div className="w-64 bg-white shadow-custom h-full overflow-y-auto font-poppins">
       <div className="p-4">
-        <h2 className="text-2xl font-semibold text-blue-700 mb-4">
+        <h2 className="text-2xl font-semibold text-[#1544AB] font-monrope mb-4">
           Categories
         </h2>
 
@@ -65,10 +65,10 @@ const Sidebar = () => {
           <CategoryItem icon={imgSrcHouse} label="Refurbished Devices With" />
 
           {/* Auto360 Category */}
-          <li>
+          <li className="text-[#231E1C] font-[500] text-[18px]">
             <CategoryHeader icon={imgSrcAuto} label="Auto360" />
             <ul className="ml-8 mt-2 space-y-3">
-              <li className="text-gray-700">Auto Expertise</li>
+              <li className="text-[#231E1C] font-[400] font-monrope text-[15px]">Auto Expertise</li>
             </ul>
             <ToggleButton
               expanded={expanded.auto}
@@ -107,7 +107,7 @@ const Sidebar = () => {
             />
             {expanded.vehicle && (
               <ul className="ml-8 mt-2 space-y-3">
-                <SubcategoryItem label="Cars" count="766986" />
+                <Link to={"/categories-cars"}> <SubcategoryItem label="Cars" count="766986" /></Link>  
                 <SubcategoryItem label="Off-Road" count="766986" />
                 <SubcategoryItem label="Motorcycle" count="766986" />
                 <SubcategoryItem label="Minivan & Panel Van" count="766986" />
@@ -319,39 +319,39 @@ const Sidebar = () => {
                   <input
                     type="checkbox"
                     id="babysitter"
-                    className="mr-2 h-4 w-4 border-gray-300 rounded"
+                    className="mr-2 h-4 w-4 border-[#1544AB] "
                     checked={checked.babysitter}
                     onChange={() => handleCheckboxChange("babysitter")}
                   />
-                  <label htmlFor="babysitter" className="text-gray-700">
+                  <label htmlFor="babysitter" className="text-[#231E1C] font-monrope text-[15px] font-[400]">
                     Babysitter & Nanny
-                    <span className="text-gray-500 text-sm">(56)</span>
+                    <span className="text-[12px]">(56)</span>
                   </label>
                 </li>
                 <li className="flex items-center">
                   <input
                     type="checkbox"
                     id="elderly"
-                    className="mr-2 h-4 w-4 border-gray-300 rounded"
+                    className="mr-2 h-4 w-5 border-[#1544AB]"
                     checked={checked.elderly}
                     onChange={() => handleCheckboxChange("elderly")}
                   />
-                  <label htmlFor="elderly" className="text-gray-700">
+                  <label htmlFor="elderly" className="text-[#231E1C] font-monrope text-[15px] font-[400]">
                     Elderly & Patient Caregiver
-                    <span className="text-gray-500 text-sm">(67)</span>
+                    <span className="text-[12px]">(67)</span>
                   </label>
                 </li>
                 <li className="flex items-center">
                   <input
                     type="checkbox"
                     id="cleaner"
-                    className="mr-2 h-4 w-4 border-gray-300 rounded"
+                    className="mr-2 h-4 w-5 border-[#1544AB]"
                     checked={checked.cleaner}
                     onChange={() => handleCheckboxChange("cleaner")}
                   />
-                  <label htmlFor="cleaner" className="text-gray-700">
+                  <label htmlFor="cleaner" className="text-[#231E1C] font-monrope text-[15px] font-[400]">
                     Cleaner & Housekeeper
-                    <span className="text-gray-500 text-sm">(78)</span>
+                    <span className="text-[12px]">(78)</span>
                   </label>
                 </li>
               </ul>
@@ -381,18 +381,18 @@ const CategoryItem = ({ icon, label }) => (
 const CategoryHeader = ({ icon, label, count }) => (
   <div className="flex items-center py-2">
     <span className="mr-3 w-6">{icon}</span>
-    <span className="text-gray-800 font-medium">
+    <span className="text-[#231E1C] font-medium font-poppins text-[18px]">
       {label}
-      {count && <span className="text-gray-500 text-sm">({count})</span>}
+      {count && <span className=" text-[12px]">({count})</span>}
     </span>
   </div>
 );
 
 // Subcategory item with label and count
 const SubcategoryItem = ({ label, count }) => (
-  <li className="text-gray-700">
+  <li className="text-[#231E1C] font-[400] font-monrope text-[15px]">
     {label}
-    {count && <span className="text-gray-500 text-sm">({count})</span>}
+    {count && <span className="text-[12px]">({count})</span>}
   </li>
 );
 
@@ -400,7 +400,7 @@ const SubcategoryItem = ({ label, count }) => (
 const ToggleButton = ({ expanded, onClick }) => (
   <button
     onClick={onClick}
-    className="flex items-center ml-8 mt-2 mb-2 text-gray-800 font-medium"
+    className="flex items-center ml-8 mt-2 mb-2 text-[#231E1C] font-[400] font-monrope text-[18px]"
   >
     Show All
     <svg
