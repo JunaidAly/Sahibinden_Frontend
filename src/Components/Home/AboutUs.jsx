@@ -2,7 +2,7 @@ import React from "react";
 
 const AboutUs = () => {
   return (
-    <section className="relative left-[7rem] w-full  ">
+    <section className="relative flex justify-center w-full  ">
     <div className="w-[1126px] h-[600px]">
       {/* Background Image */}
       <img
@@ -12,7 +12,7 @@ const AboutUs = () => {
       />
 
       {/* Blue Overlay Content */}
-      <div className="absolute bottom-10 md:right-[9rem] left-0 md:left-auto p-8 bg-[#1544AB]  w-full md:w-[660px] h-[250px] text-white">
+      <div className="absolute bottom-10 md:right-[3rem] left-0 md:left-auto p-8 bg-[#1544AB]  w-full md:w-[660px] h-[250px] text-white">
         <h2 className="text-[40px] md:text-4xl font-poppins font-[900] leading-[100%] mb-4">
           ABOUT US
         </h2>

@@ -1,8 +1,8 @@
 import { FaShoppingCart, FaEnvelope, FaBell, FaStar } from "react-icons/fa";
-
+import { Link } from "react-router";
 const Navbar = () => {
   const links = [
-    { name: "Home", href: "#", active: true },
+    { name: "Home", href: "/", active: true },
     { name: "Ad Management", href: "#" },
     { name: "My Shopping Transactions", href: "#" },
     { name: "Favorites", href: "#" },
@@ -11,13 +11,14 @@ const Navbar = () => {
     { name: "My Account", href: "#" },
   ];
   return (
-    <nav className="flex flex-col  items-center justify-center gap-2 bg-white p-4 ">
+    <nav className="flex flex-col  items-center justify-center gap-2 bg-white ">
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
       {/* Left: Logo */}
+      <Link to={"/"}>
       <div className="flex items-center">
         <img src="assets/logo.svg" alt="Logo" className="h-[80px] w-[150px]"/>
       </div>
-
+      </Link>
       {/* Center: Search Bar */}
       <div className="flex-1 mx-8">
         <div className="flex items-center w-[464px] border border-[#1544AB] rounded-md overflow-hidden">
@@ -65,7 +66,8 @@ const Navbar = () => {
         </div>
 
         {/* Post Ad Button */}
-        <button className="bg-[#1544AB] hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-full flex items-center gap-2">
+        <Link to={"/post-an-add"}>
+        <button className="bg-[#1544AB]  text-white font-semibold px-6 py-2 rounded-full flex items-center gap-2">
           POST AN AD FOR FREE
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -82,6 +84,7 @@ const Navbar = () => {
             />
           </svg>
         </button>
+        </Link>
       </div>
       </div>
 
@@ -91,7 +94,7 @@ const Navbar = () => {
           <a
             key={index}
             href={link.href}
-            className={`text-[16px] font-[400] font-poppins${
+            className={`text-[16px] font-[400] font-poppins ${
               link.active
                 ? "text-[#1544AB]"
                 : "text-[#231E1C] hover:text-black"

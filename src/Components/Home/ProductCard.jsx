@@ -1,6 +1,6 @@
 import React from 'react'
 import { RiVerifiedBadgeFill } from "react-icons/ri";
-
+import { Link } from 'react-router';
 
 export function ProductsGrid() {
     const products = [
@@ -34,9 +34,13 @@ export function ProductsGrid() {
     return (
       <main className="flex-1 p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+         
           {products.map((p, idx) => (
+             <Link to={"/ad-details"} >
             <ProductCard key={idx} {...p} />
+            </Link>
           ))}
+         
         </div>
       </main>
     );

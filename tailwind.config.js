@@ -15,6 +15,9 @@ export default {
         poppins: ['Poppins', 'sans-serif'],
         ManropeSemiBold: ['Manrope SemiBold', 'sans-serif'],
       },
+      boxShadow: {
+        'custom': '0px 4px 20px 0px #0000001A',
+      },
     },
   },
   plugins: [

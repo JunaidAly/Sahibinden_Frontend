@@ -2,13 +2,13 @@ import React from "react";
 
 const CommentForm = () => {
   return (
-    <section className="max-w-4xl mx-auto p-12 bg-white rounded-2xl ">
-      {/* Heading */}
-      <h2 className="text-[28px] font-poppins leading-[100%] font-bold mb-2 text-[#434343]">Leave A Reply</h2>
-      
+    <> {/* Heading */}
+      <h2 className="text-[28px] font-poppins leading-[100%] font-bold ml-32 my-10 text-[#434343]">Leave A Reply</h2>
+    <section className="max-w-6xl mx-auto p-12 bg-white rounded-2xl ">
+     
 
       {/* Name & Email Fields */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col ">
       <p className="text-[#717171] font-poppins mb-6 text-[22px] leading-8">Your Email Address Will Not Be Published.</p>
 
       {/* Comment Field */}
@@ -38,12 +38,13 @@ const CommentForm = () => {
         </div>
       </div> 
       {/* Submit Button */}
-      <button className="bg-[#1544AB]  mx-64  text-white py-3 px-8 rounded-lg shadow-md transition">
+      <button className="bg-[#1544AB]  mx-[22rem]  text-white py-3 px-8 rounded-lg shadow-lg  transition">
         Post Comment
       </button>
       </div>
       
     </section>
+    </>
   );
 };
 
