@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router';
 const CategorySelection = () => {
   const categories = [
     {
@@ -57,8 +57,9 @@ const CategorySelection = () => {
   return (
     <div className="max-w-[1300px] mx-auto p-6 h-[644px] font-poppins bg-white rounded-lg shadow-custom">
       <h2 className="text-2xl font-[500] text-black  mb-6">Step By Step Select Category</h2>
-      
+      <Link to={"/category-selection-details"}>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+       
         {categories.map((category) => (
           <div 
             key={category.id}
@@ -75,6 +76,8 @@ const CategorySelection = () => {
           </div>
         ))}
       </div>
+      </Link>
+
     </div>
   );
 };
