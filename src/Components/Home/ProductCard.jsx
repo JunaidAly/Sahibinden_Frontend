@@ -72,7 +72,7 @@ function ProductCard({ image, title, category, badge }) {
         
         <img src={image} alt={title} className="w-[285px] h-[300px] object-cover rounded" />
          {badge && (
-          <span className=" relative bottom-[17.5rem] left-2  text-[#231E1C] bg-white/5 text-[16px] font-poppins font-[600] border border-[#ffffff]  uppercase px-2 py-3 rounded-[40px]">
+          <span className=" relative bottom-[17.5rem] left-2  text-[#231E1C] bg-white/20 text-[16px] font-poppins font-[600] border border-[#ffffff]  uppercase px-2 py-3 rounded-[40px]">
             {badge}
           </span>
         )}

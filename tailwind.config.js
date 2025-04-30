@@ -18,6 +18,7 @@ export default {
       },
       boxShadow: {
         'custom': '0px 4px 20px 0px #0000001A',
+        'custom-right': '2px 0px 10px 0px #00000040',
       },
     },
   },

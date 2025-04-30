@@ -2,13 +2,13 @@ import { FaShoppingCart, FaEnvelope, FaBell, FaStar } from "react-icons/fa";
 import { Link } from "react-router";
 const Navbar = () => {
   const links = [
-    { name: "Home", href: "/", active: true },
-    { name: "Ad Management", href: "#" },
-    { name: "My Shopping Transactions", href: "#" },
-    { name: "Favorites", href: "#" },
-    { name: "Message and Notifications", href: "#" },
-    { name: "Services", href: "#" },
-    { name: "My Account", href: "#" },
+    { name: "Home", path:"/" },
+    { name: "Ad Management", path:"/ad-management"  },
+    { name: "My Shopping Transactions", path:"/" },
+    { name: "Favorites", path:"/" },
+    { name: "Message and Notifications", path:"/" },
+    { name: "Services", path:"/" },
+    { name: "My Account",path:"/"},
   ];
   return (
     <nav className="flex flex-col  items-center justify-center gap-2 bg-white ">
@@ -89,19 +89,20 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center h-[70px] justify-center w-full max-w-7xl mx-auto">
-      <div className="flex gap-8">
+      <div className="flex gap-8 cursor-pointer">
         {links.map((link, index) => (
-          <a
+          <Link
             key={index}
-            href={link.href}
+            to={link.path}
             className={`text-[16px] font-[400] font-poppins ${
               link.active
                 ? "text-[#1544AB]"
-                : "text-[#231E1C] hover:text-black"
+                : "text-[#231E1C] "
             }`}
+           
           >
-            {link.name}
-          </a>
+             {link.name}
+          </Link>
         ))}
       </div>
       </div>

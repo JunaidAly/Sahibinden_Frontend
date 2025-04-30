@@ -6,6 +6,7 @@ import PostAnAdd from "./Pages/PostAnAdd";
 import CategorySelectionDetails from "./Components/AddAnPost/CategorySelectionDetails";
 import CategoriesCars from "./Components/Home/CategoriesCars";
 import CategoriesCellPhones from "./Components/Home/CategoriesCellPhones";
+import AdManagement from "./Pages/AdManagement";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -14,6 +15,7 @@ const ProjectRoutes = () => {
         { path: "/category-selection-details", element: <CategorySelectionDetails/> }, 
         { path: "/categories-cars", element: <CategoriesCars/> },
         { path: "/categories-cell-phones", element: <CategoriesCellPhones/> },
+        { path: "/ad-management", element: <AdManagement/> },
     ]);
     return element;
   };
