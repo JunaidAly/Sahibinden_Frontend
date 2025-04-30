@@ -1,23 +1,27 @@
 import React from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
-import { ProductsGrid } from '../CategoryCars/ProductCard';
-import SideBar from '../CategoryCars/SideBar';
+import { ProductsGrid } from '../CategoryCellPhones/ProductCard';
+import SideBar from '../CategoryCellPhones/MobilePhoneFilter';
 import Testimonials from './Testimonials';
 import AboutUs from './AboutUs';
 import CommentForm from './CommentForm';
-import { Stats } from '../CategoryCars/ProductCard';
-function CategoriesCars() {
+import { Stats } from '../CategoryCellPhones/ProductCard';
+import AdvancedSorting from '../CategoryCellPhones/AdvancedSorting';
+function CategoriesCellPhones() {
   return (
     <>
       <Navbar />
       <div className="min-h-screen flex flex-col gap-10">
       <div className="flex flex-col md:flex-row   ">
         <SideBar />
-        <main className="flex-1   p-6">
-          <h2 className="text-4xl font-bold mb-6 uppercase text-center text-[#231E1C]">
-            Vehicles
+        <main className="flex-1 p-6">
+        <div className='flex gap-[18rem] items-center'>
+          <h2 className="text-[30px] font-[600] ml-5  font-poppins  text-left text-[#231E1C]">
+            Refurbished Cell Phones
           </h2>
+          <AdvancedSorting />
+          </div>
           <ProductsGrid />     
         </main>
       </div>
@@ -30,7 +34,7 @@ function CategoriesCars() {
       </div>
       <Footer />
     </>
-  );
+  )
 }
 
-export default CategoriesCars
+export default CategoriesCellPhones

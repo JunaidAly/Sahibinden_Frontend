@@ -62,7 +62,7 @@ const Sidebar = () => {
           {/* Original Categories */}
           <CategoryItem icon={imgSrcHouse} label="Urgent" />
           <CategoryItem icon={imgSrcHouse} label="Last 48 Hours / 1 Week" />
-          <CategoryItem icon={imgSrcHouse} label="Refurbished Devices With" />
+          <Link to={"/categories-cell-phones"}><CategoryItem icon={imgSrcHouse} label="Refurbished Devices With" /></Link>
 
           {/* Auto360 Category */}
           <li className="text-[#231E1C] font-[500] text-[18px]">
