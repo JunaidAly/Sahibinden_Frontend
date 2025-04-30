@@ -7,6 +7,7 @@ import CategorySelectionDetails from "./Components/AddAnPost/CategorySelectionDe
 import CategoriesCars from "./Components/Home/CategoriesCars";
 import CategoriesCellPhones from "./Components/Home/CategoriesCellPhones";
 import AdManagement from "./Pages/AdManagement";
+import BuyNow from "./Components/AdManagement/BuyNow";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -16,6 +17,7 @@ const ProjectRoutes = () => {
         { path: "/categories-cars", element: <CategoriesCars/> },
         { path: "/categories-cell-phones", element: <CategoriesCellPhones/> },
         { path: "/ad-management", element: <AdManagement/> },
+        { path: "/buy-now", element: <BuyNow/> },
     ]);
     return element;
   };

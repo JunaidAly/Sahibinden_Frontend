@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-
+import { Link } from 'react-router';
 const Accordion = () => {
   const [openSections, setOpenSections] = useState({
     advertisements: false,
@@ -104,9 +104,11 @@ const Accordion = () => {
             className={`border-t border-[#1544AB] ${activeItems.autoExpertise === 'buyNow' ? 'text-[#1544AB]' : 'bg-white'} cursor-pointer`}
             onClick={() => setActiveItem('autoExpertise', 'buyNow')}
           >
+            <Link to={"/buy-now"}>
             <div className="py-2 px-2">
-              <h3 className={`text-xl font-light ${activeItems.autoExpertise === 'buyNow' ? 'text-[#1544AB]' : 'text-gray-900'}`}>Buy Now</h3>
+            <h3 className={`text-xl font-light ${activeItems.autoExpertise === 'buyNow' ? 'text-[#1544AB]' : 'text-gray-900'}`}>Buy Now</h3>
             </div>
+            </Link> 
           </div>
           
           <div 

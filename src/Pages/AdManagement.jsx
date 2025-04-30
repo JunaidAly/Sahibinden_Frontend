@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../Components/Navbar'
 import Footer from '../Components/Footer'
-import Accordion from '../Components/AdManagement/Accordation'
+import Accordion from '../Components/AdManagement/Accordion'
 import Dashboard from '../Components/AdManagement/Dashboard'
 import CommentForm from '../Components/Home/CommentForm'
 function AdManagement() {
