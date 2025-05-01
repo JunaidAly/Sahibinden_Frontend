@@ -1,30 +1,3 @@
-// import React from 'react'
-// import Navbar from '../Components/Navbar'
-// import Footer from '../Components/Footer'
-// import Accordion from '../Components/AdManagement/Accordion'
-// import Dashboard from '../Components/AdManagement/Dashboard'
-// import CommentForm from '../Components/Home/CommentForm'
-// function AdManagement() {
-//   return (
-//     <>
-//     <Navbar />
-//     <div className='min-h-screen flex flex-col gap-5 items-center'>
-//         <div className='flex  justify-center w-full max-w-[1250px]  '>
-//           <Accordion />
-//           <Dashboard />
-//         </div>
-//         <div className='w-full max-w-[1250px]'>
-//         <CommentForm />
-//         </div>
-//     </div>
-//     <Footer />
-//     </>
-//   )
-// }
-
-// export default AdManagement
-
-
 
 // AdManagement.jsx
 import React, { useState } from 'react'
@@ -34,6 +7,9 @@ import Accordion from '../Components/AdManagement/Accordion'
 import Dashboard from '../Components/AdManagement/Dashboard'
 import PublishedAdvertisements from '../Components/AdManagement/PublishedAdvertisements'
 import CommentForm from '../Components/Home/CommentForm'
+import UnPublishedAdvertisements from '../Components/AdManagement/UnPublishedAdvertisements'
+import MyTransactions from '../Components/AdManagement/MyTransactions'
+import MyExpertReports from '../Components/AdManagement/MyExpertReports'
 
 function AdManagement() {
   const [activeComponent, setActiveComponent] = useState('dashboard');
@@ -50,13 +26,13 @@ function AdManagement() {
         return <PublishedAdvertisements />;
       case 'notOnAir':
         // Replace with your NotOnAir component when created
-        return <div>Not On Air Component</div>;
+        return<UnPublishedAdvertisements/>;
       case 'myTransactions':
         // Replace with your MyTransactions component when created
-        return <div>My Transactions Component</div>;
+        return <MyTransactions />;
       case 'myExpertReports':
         // Replace with your MyExpertReports component when created
-        return <div>My Expert Reports Component</div>;
+        return <MyExpertReports />;
       case 'dashboard':
       default:
         return <Dashboard />;
