@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from './Header';
+import Navbar from '../Navbar';
 import Footer from '../Footer';
 import CommentForm from '../Home/CommentForm';
 import CategorySearch from './CategorySearch';
@@ -50,7 +50,7 @@ const CategorySelectionDetails = () => {
 
   return (
     <>
-    <Header/>
+    <Navbar />
     <div className="max-w-[1300px] mx-auto p-8 font-poppins bg-white rounded-xl shadow-custom">
       <h1 className="text-2xl font-[500] text-black mb-4">Step by Step Select Catgory</h1>
       <h2 className="text-xl text-[#888F9F] text-[20px] font-[500] mb-6">Real Estate</h2>

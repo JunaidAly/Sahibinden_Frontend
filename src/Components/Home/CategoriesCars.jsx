@@ -1,5 +1,6 @@
 import React from 'react'
 import Navbar from '../Navbar'
+import NavMenuBar from '../NavMenuBar'
 import Footer from '../Footer'
 import { ProductsGrid } from '../CategoryCars/ProductCard';
 import SideBar from '../CategoryCars/SideBar';
@@ -11,6 +12,7 @@ function CategoriesCars() {
   return (
     <>
       <Navbar />
+      <NavMenuBar />
       <div className="min-h-screen flex flex-col gap-10">
       <div className="flex flex-col md:flex-row   ">
         <SideBar />

@@ -2,6 +2,7 @@
 // AdManagement.jsx
 import React, { useState } from 'react'
 import Navbar from '../Components/Navbar'
+import NavMenuBar from '../Components/NavMenuBar'
 import Footer from '../Components/Footer'
 import Accordion from '../Components/AdManagement/Accordion'
 import Dashboard from '../Components/AdManagement/Dashboard'
@@ -42,6 +43,7 @@ function AdManagement() {
   return (
     <>
       <Navbar />
+      <NavMenuBar />
       <div className='min-h-screen flex flex-col gap-5 items-center'>
         <div className='flex justify-center w-full max-w-[1250px]'>
           <Accordion onComponentChange={handleComponentChange} />

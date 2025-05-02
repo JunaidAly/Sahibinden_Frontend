@@ -3,6 +3,7 @@ import { ProductsGrid } from "../Components/Home/ProductCard";
 import { Stats } from "../Components/Home/ProductCard";
 import Sidebar from "../Components/Home/Sidebar";
 import Navbar from "../Components/Navbar";
+import NavMenuBar from "../Components/NavMenuBar";
 import Footer from "../Components/Footer";
 import Auto360 from "../Components/Home/Auto360";
 import RealEstate360 from "../Components/Home/RealEstate360";
@@ -15,6 +16,7 @@ function Home() {
     <>
     <div className="min-h-screen">
       <Navbar />
+      <NavMenuBar />
       <div className="flex flex-col md:flex-row   ">
         <Sidebar />
         <main className="flex-1   p-6">

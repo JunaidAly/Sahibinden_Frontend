@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../Components/AddAnPost/Header'
+import Navbar from '../Components/Navbar'
 import CategorySelection from '../Components/AddAnPost/CategorySelection'
 import Footer from '../Components/Footer'
 import CategorySearch from '../Components/AddAnPost/CategorySearch'
@@ -9,7 +9,7 @@ function PostAnAdd() {
     <>
     
     <div className='min-h-screen'>
-        <Header/>
+        <Navbar/>
         <CategorySelection/>
         <CategorySearch/>
         <CommentForm/>

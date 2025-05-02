@@ -66,7 +66,7 @@ const Sidebar = () => {
 
           {/* Auto360 Category */}
           <li className="text-[#231E1C] font-[500] text-[18px]">
-            <CategoryHeader icon={imgSrcAuto} label="Auto360" />
+            <Link to={"/auto-360"}><CategoryHeader icon={imgSrcAuto} label="Auto360" /></Link>
             <ul className="ml-8 mt-2 space-y-3">
               <li className="text-[#231E1C] font-[400] font-monrope text-[15px]">Auto Expertise</li>
             </ul>
