@@ -1,11 +1,15 @@
 
+
 import React, { useState } from 'react';
 import Navbar from '../Navbar'
 import NavbarMenu from '../Auto360/NavbarMenu'
 import Footer from '../Footer'
 import CommentForm from '../Home/CommentForm'
 
-export const VehicleValuationInfo = () => {
+// Import the VehicleValuationSelection component
+import VehicleValuationSelection from './VehicleValuationSelection';
+
+export const VehicleValuationInfo = ({ onNavigateToSelection }) => {
   return (
     <div className="max-w-7xl mx-auto p-6 mb-10 md:p-8 lg:p-12 rounded-lg font-poppins shadow-custom">
       <h1 className="text-3xl text-black font-[500] mb-8">Vehicle Valuation</h1>
@@ -16,7 +20,10 @@ export const VehicleValuationInfo = () => {
         utilizing the current and comprehensive ad data on sahibinden.com.
       </p>
 
-      <button className="bg-[#1544AB] text-white px-8 py-4 rounded-md text-lg font-medium w-full max-w-[352px] mb-8">
+      <button 
+        onClick={onNavigateToSelection}
+        className="bg-[#1544AB] text-white px-8 py-4 rounded-md text-lg font-medium w-full max-w-[352px] mb-8"
+      >
         Vehicle Valuation
       </button>
 
@@ -71,18 +78,18 @@ export const VehicleValuationInfo = () => {
         const [isOpen, setIsOpen] = useState(false);
       
         return (
-          <div className="border-b border-gray-200">
+          <div className="shadow-custom   px-4 rounded-lg">
             <button
-              className="w-full flex justify-between items-center py-6 px-0 text-left focus:outline-none"
+              className="w-full flex justify-between  items-center py-6 px-0 text-left focus:outline-none"
               onClick={() => setIsOpen(!isOpen)}
             >
-              <span className="text-base font-medium text-gray-900">{question}</span>
+              <span className="text-[20px] text-black font-[500]">{question}</span>
               <svg
-                className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                className={`w-5 h-5 text-black transition-transform duration-200 ${
                   isOpen ? 'transform rotate-180' : ''
                 }`}
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox="0 0 20 20"
                 stroke="currentColor"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -130,9 +137,9 @@ export const VehicleValuationInfo = () => {
         ];
       
         return (
-          <div className="max-w-2xl mx-auto p-6">
-            <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
-            <div className="space-y-0">
+          <div className="max-w-7xl mx-auto p-6 font-poppins">
+            <h2 className="text-[35px] text-black font-[500]  mb-6">Frequently Asked Questions</h2>
+            <div className="space-y-4">
               {faqItems.map((item, index) => (
                 <FAQItem key={index} question={item.question} answer={item.answer} />
               ))}
@@ -142,11 +149,17 @@ export const VehicleValuationInfo = () => {
       };
 
 function VehicleValuation() {
+  const [showSelection, setShowSelection] = useState(false);
+
+  const handleNavigateToSelection = () => {
+    setShowSelection(true);
+  };
+
   return (
     <>
     <Navbar/>
     <NavbarMenu/>
-    <VehicleValuationInfo/>
+    {showSelection ? <div className='flex items-center justify-center'><VehicleValuationSelection/></div>  : <VehicleValuationInfo onNavigateToSelection={handleNavigateToSelection}/>}
     <VehicleValuationCartInfo/>
     <FAQComponent/>
     <CommentForm/>

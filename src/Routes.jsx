@@ -11,6 +11,7 @@ import BuyNow from "./Components/AdManagement/BuyNow";
 import Auto360 from "./Components/Auto360";
 import VehicleComparisonComponent from "./Components/WhileBuying/VehicleComparisonComponent";
 import VehicleValuationComponent from "./Components/WhileBuying/VehicleValuation";
+import VehicleDamageInquiry from "./Components/WhileBuying/VehicleDamageInquiry";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -24,6 +25,7 @@ const ProjectRoutes = () => {
         { path: "/auto-360", element: <Auto360/> },
         { path: "/vehicle-comparison", element: <VehicleComparisonComponent/> },
         { path: "/vehicle-valuation", element: <VehicleValuationComponent/> },
+        { path: "/vehicle-damage-inquiry", element: <VehicleDamageInquiry/> },
     ]);
     return element;
   };
