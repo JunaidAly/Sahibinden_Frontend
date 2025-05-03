@@ -12,6 +12,9 @@ import Auto360 from "./Components/Auto360";
 import VehicleComparisonComponent from "./Components/WhileBuying/VehicleComparisonComponent";
 import VehicleValuationComponent from "./Components/WhileBuying/VehicleValuation";
 import VehicleDamageInquiry from "./Components/WhileBuying/VehicleDamageInquiry";
+import PastQueries from "./Components/WhileBuying/PastQueries";
+import AutoExpertise from "./Components/Auto360/index"
+import WhileBuyingGuide from "./Components/WhileBuying/WhileBuyingGuide";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -26,6 +29,10 @@ const ProjectRoutes = () => {
         { path: "/vehicle-comparison", element: <VehicleComparisonComponent/> },
         { path: "/vehicle-valuation", element: <VehicleValuationComponent/> },
         { path: "/vehicle-damage-inquiry", element: <VehicleDamageInquiry/> },
+        { path: "/past-queries", element: <PastQueries/> },
+        { path: "/auto-expertise", element: <AutoExpertise/> },
+        { path: "/vehicle-buying-guide", element: <WhileBuyingGuide/> },
+        
     ]);
     return element;
   };

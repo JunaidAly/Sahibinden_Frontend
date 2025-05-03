@@ -4,7 +4,43 @@ import NavbarMenu from './NavbarMenu';
 import Footer from '../Footer';
 import CommentForm from '../Home/CommentForm';
 import ComparePlans from '../AdManagement/ComparePlans';
-// import { FaCaretDown } from "react-icons/fa";
+
+
+
+ const DetailedInformation = () => {
+  return (
+    <div className="max-w-7xl mx-auto font-poppins  py-12 px-4  ">
+      <h2 className="text-[30px] font-[500] text-black mb-8">
+        Why should I get expert service from sahibinden.com?
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="shadow-custom-diagonal rounded-lg p-6">
+          <h3 className="text-[20px]  font-[500] text-black mb-4">
+            Get Comprehensive Service at an Affordable Price
+          </h3>
+          <p className="text-[15px]  font-[500] text-black leading-relaxed">
+            Choose from our expert packages and have a comprehensive expert
+            assessment done at an affordable price.
+          </p>
+        </div>
+
+        {/* Vehicle Detail Inquiry Section */}
+        <div className="shadow-custom-diagonal rounded-lg p-6">
+          <h3 className="text-[20px]  font-[500] text-black mb-4">
+            Choose Professional Service
+          </h3>
+          <p className="text-[15px]  font-[500] text-black leading-relaxed">
+            Selected for you by sahibinden.com to Get professional and quality
+            service by choosing one of our kspertiz business partner Auto King
+            Auto Expertise branches.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function index() {
   const [province, setProvince] = useState('');
   const [district, setDistrict] = useState('');
@@ -63,6 +99,7 @@ function index() {
       </div>
     </div>
     <ComparePlans/>
+    <DetailedInformation/>
     <CommentForm/>
     <Footer/>
     </>
