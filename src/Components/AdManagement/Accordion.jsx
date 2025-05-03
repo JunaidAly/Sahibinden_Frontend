@@ -1,5 +1,4 @@
 
-
 // Accordion.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
@@ -17,10 +16,60 @@ const Accordion = ({ onComponentChange }) => {
   });
 
   const toggleSection = (section) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+    // When a section is opened
+    if (!openSections[section]) {
+      setOpenSections(prev => ({
+        ...prev,
+        [section]: true
+      }));
+      
+      // Set default active item and notify parent
+      if (section === 'advertisements') {
+        setActiveItems(prev => ({
+          ...prev,
+          advertisements: 'onAir'
+        }));
+        onComponentChange('onAir');
+      } else if (section === 'autoExpertise') {
+        setActiveItems(prev => ({
+          ...prev,
+          autoExpertise: 'myTransactions'
+        }));
+        onComponentChange('myTransactions');
+      }
+    } 
+    // When a section is closed
+    else {
+      setOpenSections(prev => ({
+        ...prev,
+        [section]: false
+      }));
+      
+      // Clear active item for this section
+      setActiveItems(prev => ({
+        ...prev,
+        [section]: null
+      }));
+      
+      // Check if any other section is open
+      const updatedSections = {
+        ...openSections,
+        [section]: false
+      };
+      
+      // If no sections are open, render dashboard
+      if (!updatedSections.advertisements && !updatedSections.autoExpertise) {
+        onComponentChange('dashboard');
+      }
+      // If another section is still open, check its active item
+      else {
+        if (updatedSections.advertisements && activeItems.advertisements) {
+          onComponentChange(activeItems.advertisements);
+        } else if (updatedSections.autoExpertise && activeItems.autoExpertise) {
+          onComponentChange(activeItems.autoExpertise);
+        }
+      }
+    }
   };
 
   const setActiveItem = (section, item) => {

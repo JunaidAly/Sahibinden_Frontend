@@ -94,154 +94,172 @@ export const FAQComponent = () => {
 };
 
 export const DetailedInformation = () => {
-    return (
-      <div className="bg-gray-50 py-12 px-4 border-b border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Detailed Information</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Vehicle Damage Inquiry Section */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              What is Vehicle Damage Inquiry Service?
-            </h3>
-            <p className="text-gray-600 leading-relaxed">
-              It is a service where you can find out whether a vehicle has been involved in an accident before it leaves so or not. In the case of the accident, the cause of the accident and the amount of damage. You can easily make inquiries and have the damage calculation with this private insurance system.
-            </p>
-          </div>
-  
-          {/* Vehicle Detail Inquiry Section */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              What is Vehicle Detail Inquiry Service?
-            </h3>
-            <p className="text-gray-600 leading-relaxed">
-              It is a service where you can learn the brand and model of the vehicle, its registration date, its period with or without insurance, whether it has Insurance in force, whether there has been a change in plate or vehicle type, in which province it is registered, and the car ownership period.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-const VehicleDamageInquiry = () => {
-  const [selectedTab, setSelectedTab] = useState("damage");
-  const [selectedOption, setSelectedOption] = useState("plate");
-  const [plateNumber, setPlateNumber] = useState("");
-
   return (
-    <>
-    <Navbar />
-    <NavbarMenu />
-    <div className="flex flex-row bg-gray-100 rounded-lg overflow-hidden">
-      {/* Left Panel */}
-      <div className="w-1/2 bg-white p-6">
-        {/* Tabs */}
-        <div className="flex space-x-2 mb-6">
-          <button
-            onClick={() => setSelectedTab("damage")}
-            className={`px-6 py-2 rounded-full border-2 ${
-              selectedTab === "damage"
-                ? "border-blue-600 bg-blue-600 text-white"
-                : "border-blue-600 text-blue-600"
-            }`}
-          >
-            Vehicle Damage Inquiry
-          </button>
-          <button
-            onClick={() => setSelectedTab("detail")}
-            className={`px-6 py-2 rounded-full border-2 ${
-              selectedTab === "detail"
-                ? "border-blue-600 bg-blue-600 text-white"
-                : "border-blue-600 text-blue-600"
-            }`}
-          >
-            Vehicle Detail Inquiry
-          </button>
+    <div className="bg-gray-50 py-12 px-4 border-b border-gray-200">
+      <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        Detailed Information
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Vehicle Damage Inquiry Section */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            What is Vehicle Damage Inquiry Service?
+          </h3>
+          <p className="text-gray-600 leading-relaxed">
+            It is a service where you can find out whether a vehicle has been
+            involved in an accident before it leaves so or not. In the case of
+            the accident, the cause of the accident and the amount of damage.
+            You can easily make inquiries and have the damage calculation with
+            this private insurance system.
+          </p>
         </div>
 
-        {/* Radio Buttons */}
-        <div className="flex items-center space-x-8 mb-6">
-          <div className="flex items-center">
-            <div
-              onClick={() => setSelectedOption("plate")}
-              className={`w-5 h-5 rounded-full border-2 mr-2 cursor-pointer flex items-center justify-center ${
-                selectedOption === "plate"
-                  ? "border-blue-600"
-                  : "border-gray-300"
-              }`}
-            >
-              {selectedOption === "plate" && (
-                <div className="w-3 h-3 rounded-full bg-blue-600" />
-              )}
-            </div>
-            <span className="text-gray-700">Plate Number</span>
-          </div>
-          <div className="flex items-center">
-            <div
-              onClick={() => setSelectedOption("chassis")}
-              className={`w-5 h-5 rounded-full border-2 mr-2 cursor-pointer flex items-center justify-center ${
-                selectedOption === "chassis"
-                  ? "border-blue-600"
-                  : "border-gray-300"
-              }`}
-            >
-              {selectedOption === "chassis" && (
-                <div className="w-3 h-3 rounded-full bg-blue-600" />
-              )}
-            </div>
-            <span className="text-gray-700">Chassis No.</span>
-          </div>
-        </div>
-
-        {/* Input Field */}
-        <input
-          type="text"
-          placeholder="Plate Number"
-          value={plateNumber}
-          onChange={(e) => setPlateNumber(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:border-blue-600"
-        />
-
-        {/* Button */}
-        <button className="w-full bg-blue-600 text-white py-3 rounded-full font-medium mb-6 hover:bg-blue-700">
-          Vehicle Damage Inquiry
-        </button>
-
-        {/* Link */}
-        <a href="#" className="text-blue-600 hover:underline block text-center">
-          My Past Queries
-        </a>
-      </div>
-
-      {/* Right Panel */}
-      <div className="w-1/2 bg-white p-6 flex flex-row ">
-      <div>
-        <h2 className="text-3xl w-max font-bold mb-4">Vehicle Damage Inquiry</h2>
-        <p className="text-gray-600 mb-4  max-w-md">
-          You can learn the damage information or vehicle details of any vehicle
-          you want by using its plate or chassis number.
-            <br /> <br />
-          Log in with your corporate account to get special pricing for
-          corporate account holders.
-        </p>
-        </div>
-
-        {/* Car Image Placeholder */}
-        <div className="w-full max-w-3xl">
-          <img
-            src="/assets/vehicledamage.png"
-            alt="Black SUV vehicle"
-            className="w-full h-auto object-contain"
-          />
+        {/* Vehicle Detail Inquiry Section */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            What is Vehicle Detail Inquiry Service?
+          </h3>
+          <p className="text-gray-600 leading-relaxed">
+            It is a service where you can learn the brand and model of the
+            vehicle, its registration date, its period with or without
+            insurance, whether it has Insurance in force, whether there has been
+            a change in plate or vehicle type, in which province it is
+            registered, and the car ownership period.
+          </p>
         </div>
       </div>
     </div>
-    <DetailedInformation />
-    <FAQComponent />
-    <CommentForm />
-    <Footer />
-    </>
   );
 };
+
+const VehicleDamageInquiry = () => {
+    const [selectedTab, setSelectedTab] = useState("damage");
+    const [selectedOption, setSelectedOption] = useState("plate");
+    const [plateNumber, setPlateNumber] = useState("");
+  
+    return (
+      <>
+        <Navbar />
+        <NavbarMenu />
+        <div className="flex items-center justify-center font-poppins">
+          <div className="flex flex-row justify-center items-center  shadow-custom-diagonal max-w-[1360px] lg:max-w-7xl rounded-lg overflow-hidden">
+            {/* Left Panel */}
+            <div className="max-w-[500px] flex flex-col items-center justify-center shadow-custom-diagonal rounded-lg  bg-white m-6 p-3">
+              {/* Tabs */}
+              <div className="flex justify-center items-center  h-[41px] w-[400px] mb-6 bg-white border border-[#1F4EC9] rounded-full">
+                <button
+                  onClick={() => setSelectedTab("damage")}
+                  className={`w-1/2 px-[1px] font-[500] text-[15px] py-2 rounded-full ${
+                    selectedTab === "damage"
+                      ? "bg-[#1544AB] text-white"
+                      : "bg-transparent text-[#1544AB]"
+                  }`}
+                >
+                  Vehicle Damage Inquiry
+                </button>
+                <button
+                  onClick={() => setSelectedTab("detail")}
+                  className={`w-1/2 font-[500] text-[15px] px-[1px] py-2 rounded-full ${
+                    selectedTab === "detail"
+                      ? "bg-[#1544AB] text-white"
+                      : "bg-transparent text-[#1544AB]"
+                  }`}
+                >
+                  Vehicle Detail Inquiry
+                </button>
+              </div>
+              {/* Radio Buttons */}
+              <div className="flex items-center justify-center space-x-8 mb-6">
+                <div className="flex items-center">
+                  <div
+                    onClick={() => setSelectedOption("plate")}
+                    className={`w-5 h-5 rounded-full border-2 mr-2 cursor-pointer flex items-center justify-center ${
+                      selectedOption === "plate"
+                        ? "border-[#1544AB]"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    {selectedOption === "plate" && (
+                      <div className="w-3 h-3 rounded-full bg-[#1544AB]" />
+                    )}
+                  </div>
+                  <span className="text-gray-700">Plate Number</span>
+                </div>
+                <div className="flex items-center">
+                  <div
+                    onClick={() => setSelectedOption("chassis")}
+                    className={`w-5 h-5 rounded-full border-2 mr-2 cursor-pointer flex items-center justify-center ${
+                      selectedOption === "chassis"
+                        ? "border-[#1544AB]"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    {selectedOption === "chassis" && (
+                      <div className="w-3 h-3 rounded-full bg-[#1544AB]" />
+                    )}
+                  </div>
+                  <span className="text-gray-700">Chassis No.</span>
+                </div>
+              </div>
+
+              {/* Input Field */}
+              <input
+                type="text"
+                placeholder="Plate Number"
+                value={plateNumber}
+                onChange={(e) => setPlateNumber(e.target.value)}
+                className="w-[322px] h-[60px] px-4 py-3 border border-[#1544AB] placeholder:text-[15px] placeholder:text-black rounded-lg mb-6 "
+              />
+
+              {/* Button - Dynamic text based on selected tab */}
+              <button className="w-[323px] bg-[#1544AB] text-white py-3 rounded-full font-medium mb-6 text-[15px]">
+                {selectedTab === "damage"
+                  ? "Vehicle Damage Inquiry"
+                  : "Vehicle Detail Inquiry"}
+              </button>
+
+              {/* Link */}
+              <a
+                href="#"
+                className="text-[#1544AB] text-[15px] font-[400]  block text-center"
+              >
+                My Past Queries
+              </a>
+            </div>
+
+            {/* Right Panel */}
+            <div className="w-[75%] bg-white p-6 flex flex-row justify-center gap-3 ">
+              <div className="max-w-[400px]">
+                <h2 className="text-3xl w-max font-[600] text-black mb-4">
+                  Vehicle Damage Inquiry
+                </h2>
+                <p className="text-black mb-4 font-[400] text-[16px]  max-w-[400px]">
+                  You can learn the damage information or vehicle details of any
+                  vehicle you want by using its plate or chassis number. <br />{" "}
+                  <br />
+                  Log in with your corporate account to get special pricing for
+                  corporate account holders.
+                </p>
+              </div>
+
+              {/* Car Image Placeholder */}
+              <div className="w-full max-w-3xl">
+                <img
+                  src="/assets/vehicledamage.png"
+                  alt="Black SUV vehicle"
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <DetailedInformation />
+        <FAQComponent />
+        <CommentForm />
+        <Footer />
+      </>
+    );
+  };
 
 export default VehicleDamageInquiry;
