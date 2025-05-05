@@ -125,41 +125,42 @@ const VehicleGuide = () => {
         </div>
         
         {/* Timeline section */}
-        <div className="max-w-7xl mx-auto font-poppins py-12 relative">
+        <div className="max-w-7xl mx-auto font-poppins bottom-10 relative">
           {/* Vertical line connecting steps */}
-          <div className="absolute left-1/2 top-24 bottom-0 w-0.5 h-full max-h-[230rem] bg-gray-200 z-0"></div>
+          <div className="absolute left-1/2 top-16 bottom-0 w-0.5 h-full max-h-[240rem] bg-[#D9D9D9] z-0"></div>
           
           {steps.map((step, index) => {
             const isEven = index % 2 === 1;
             
             return (
               <div key={step.id} className="flex justify-center max-w-7xl mb-16 last:mb-0">
-                <div className="flex w-full gap- max-w-7xl">
+                <div className="flex w-full  max-w-7xl">
                   {/* Left side content */}
                   {!isEven ? (
-                    <div className="w-1/2 pr-8 flex justify-end">
-                      <div className="bg-white p-6 rounded-lg shadow-md max-w-[618px] h-[300px]">
-                        <h2 className="text-xl font-bold mb-2">{step.title}</h2>
-                        <p className="text-gray-700 mb-3">{step.description}</p>
+                    <div className="w-1/2  flex justify-end font-poppins">
+                      <div className="bg-white p-6 rounded-lg shadow-custom-diagonal max-w-[618px] h-[300px]">
+                        <h2 className="text-[25px] font-[500]  mb-2">{step.title}</h2>
+                        <p className="text-black text-[20px] font-[500] mb-3">{step.description}</p>
                         {step.additionalText && (
-                          <p className="text-gray-700 text-sm italic">
+                          <p className="text-[#1544AB] font-[500] text-[16px] ">
                             {step.additionalText}
                           </p>
                         )}
                         {step.hasLink && (
-                          <a href={step.linkUrl} className="text-blue-600 text-sm font-medium hover:underline block mt-2">
+                          <a href={step.linkUrl} className="text-[#1544AB] font-[500] text-[16px] block mt-2">
                             {step.linkText}
                           </a>
                         )}
                       </div>
+                      <img src="/assets/Polygon.png" className="w-10 h-10 relative right-2 top-[38px]"  />
                     </div>
                   ) : (
                     <div className="w-1/2"></div>
                   )}
                   
                   {/* Circle with number */}
-                  <div className="flex items-center justify-center mb-[10rem] z-10">
-                    <div className="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full font-bold text-lg">
+                  <div className="flex items-center justify-center mb-[12rem] z-10">
+                    <div className="flex items-center justify-center w-[75px] h-[75px] bg-[#1544AB] text-white rounded-full font-bold text-lg">
                       {step.id}
                     </div>
                   </div>
@@ -167,20 +168,21 @@ const VehicleGuide = () => {
                   {/* Right side content */}
                   {isEven ? (
                     <div className="w-1/2 pl-8">
-                      <div className="bg-white p-6 rounded-lg shadow-md max-w-[618px] h-[300px]">
-                        <h2 className="text-xl font-bold mb-2">{step.title}</h2>
-                        <p className="text-gray-700 mb-3">{step.description}</p>
+                      <div className="bg-white p-6 rounded-lg shadow-custom-diagonal max-w-[618px] h-[300px]">
+                        <h2 className="text-[25px] font-[500] mb-2">{step.title}</h2>
+                        <p className="text-black text-[20px] mb-3">{step.description}</p>
                         {step.additionalText && (
-                          <p className="text-gray-700 text-sm italic">
+                          <p className="text-[#1544AB] font-[500] text-[16px]">
                             {step.additionalText}
                           </p>
                         )}
                         {step.hasLink && (
-                          <a href={step.linkUrl} className="text-blue-600 text-sm font-medium hover:underline block mt-2">
+                          <a href={step.linkUrl} className="text-[#1544AB] font-[500] text-[16px] block mt-2">
                             {step.linkText}
                           </a>
                         )}
                       </div>
+                      <img src="/assets/Polygon2.png" className="w-10 h-10 relative right-7 bottom-[15.5rem]"  />
                     </div>
                   ) : (
                     <div className="w-1/2"></div>
