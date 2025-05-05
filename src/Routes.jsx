@@ -15,6 +15,12 @@ import VehicleDamageInquiry from "./Components/WhileBuying/VehicleDamageInquiry"
 import PastQueries from "./Components/WhileBuying/PastQueries";
 import AutoExpertise from "./Components/Auto360/index"
 import WhileBuyingGuide from "./Components/WhileBuying/WhileBuyingGuide";
+import WhileBuyingAutoDictionary from "./Components/WhileBuying/WhileBuyingAutoDictionary";
+import DuringPurchase from "./Components/WhileBuying/DuringPurchase";
+import BeforePurchase from "./Components/WhileBuying/BeforePurchase";
+import AfterPurchase from "./Components/WhileBuying/AfterPurchase";
+import PurchaseDetails from "./Components/WhileBuying/PurchaseDetails";
+import VehicleGuide from "./Components/WhileBuying/VehicleGuide";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -32,6 +38,13 @@ const ProjectRoutes = () => {
         { path: "/past-queries", element: <PastQueries/> },
         { path: "/auto-expertise", element: <AutoExpertise/> },
         { path: "/vehicle-buying-guide", element: <WhileBuyingGuide/> },
+        { path: "/auto-dictionary", element: <WhileBuyingAutoDictionary/> },
+        { path: "/during-purchase", element: <DuringPurchase/> },
+        { path: "/before-purchase", element: <BeforePurchase/> },
+        { path: "/after-purchase", element: <AfterPurchase/> },
+        { path: "/purchase-details", element: <PurchaseDetails/> },
+        { path: "/vehicle-guide", element: <VehicleGuide/> },
+        
         
     ]);
     return element;
