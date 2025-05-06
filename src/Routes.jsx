@@ -23,6 +23,9 @@ import PurchaseDetails from "./Components/WhileBuying/PurchaseDetails";
 import VehicleGuide from "./Components/WhileBuying/VehicleGuide";
 import VehicleGuideSelling from "./Components/WhileSelling/VehicleGuide";
 import AutoDictionary from "./Components/WhileBuying/AutoDictionary";
+import PreSale from "./Components/WhileSelling/PreSale";
+import DuringSales from "./Components/WhileSelling/DuringSales";
+import SaleDetails from "./Components/WhileSelling/SaleDetails";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -48,6 +51,9 @@ const ProjectRoutes = () => {
         { path: "/vehicle-guide", element: <VehicleGuide/> },
         { path: "/auto-dictionary", element: <AutoDictionary/> },
         { path: "/vehicle-guide-selling", element: <VehicleGuideSelling/> },
+        { path: "/pre-sale", element: <PreSale/> },
+        { path: "/during-sales", element: <DuringSales/> },
+        { path: "/sale-details", element: <SaleDetails/> },
         
         
     ]);

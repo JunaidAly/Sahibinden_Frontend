@@ -11,14 +11,14 @@ function WhileSellingGuide() {
           title: "Pre-Sales",
           description: "You can find answers to many of your questions, from calculating the value of your vehicle to tips on selling it, from deposits to mortgage....",
           image: "/assets/whileselling.png",
-          path: "/before-purchase" // Add path for navigation
+          path: "/pre-sale" // Add path for navigation
         },
         {
           id: "during-sales",
           title: "During Sales",
           description: "Easily learn the answers to your questions during sales, from notary procedures to payment methods.",
           image: "/assets/whileselling.png",
-          path: "/during-purchase" // Add path for navigation
+          path: "/during-sales" // Add path for navigation
         },
   
     ];

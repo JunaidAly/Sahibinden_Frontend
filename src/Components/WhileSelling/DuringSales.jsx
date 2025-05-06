@@ -14,7 +14,7 @@ function DuringSales() {
       <div className="max-w-7xl mx-auto p-6  font-poppins">
         {/* Header Section */}
         <div className="flex justify-between items-center mb-10 font-poppins">
-          <h1 className="text-[35px] font-[600] text-black">During Purchase</h1>
+          <h1 className="text-[35px] font-[600] text-black">During Sales</h1>
 
           {/* Search Bar */}
           <div className="relative w-96">
@@ -44,24 +44,22 @@ function DuringSales() {
             {/* Content Section */}
             <div className="p-6 flex-1 font-poppins">
               <h2 className="text-[25px] font-semibold text-black mb-3">
-                How Can I Find Out the Market Value of the Vehicle I Will Sell?
+                How to Perform Notary Procedures When Selling a Vehicle?
               </h2>
 
               <p className="text-black text-[20px] font-[400] leading-6 mb-4">
-                There are some simple steps you need to follow to find out the
-                price of your car. With these applications, you can sell your
-                car at its real value and get the amount you expect. You need to
-                answer some questions to find out the value of your car. If you
-                are the first user of your car or in other words, if you bought
-                a brand new car, you know if there is any damage....
+                In Türkiye, the official institution where you can make the
+                transfer of your vehicle is the notary public, and the notary
+                process requires great attention in the vehicle sales process.
+                Because legal procedures may seem complicated to some buyers and
+                sellers. For this reason, you should give importance to notary
+                transactions and act carefully to avoid problems. You can start
+                the sales process with a deposit first. The ...
               </p>
 
               <div className="flex justify-between items-center">
-                <Link
-                  to="/purchase-details">
-                <h3  className="text-[#1544AB] text-sm font-medium">
-                  More
-                </h3>
+                <Link to="/purchase-details">
+                  <h3 className="text-[#1544AB] text-sm font-medium">More</h3>
                 </Link>
 
                 <span className="text-xs font-[500] text-[#D9D9D9]">
@@ -87,17 +85,17 @@ function DuringSales() {
             {/* Content Section */}
             <div className="p-6 flex-1 font-poppins">
               <h2 className="text-[25px] font-semibold text-black mb-3">
-                What are the Tips for Selling a Vehicle?
+                How Can I Get Money During Sale?
               </h2>
 
               <p className="text-black text-[20px] font-[400] leading-6 mb-4">
-                Setting a vehicle depends on many criteria and requires a lot of
-                attention, in order to sell a vehicle quickly, some points need
-                to be taken into consideration. For example, offering your
-                vehicle for sale at a reasonable price is among the most
-                important criteris. Apart hom ins you can gain trust by
-                providing buyers with necessary documents such as vehicle
-                inspection Information, Vehicle selling tactics....
+                According to the data of the Turkish Statistical Institute
+                (TUIK), there are more than 20 million vehicles in traffic in
+                our country. This number is increasing with the new vehicle
+                sales that take place every year. In addition, transactions such
+                as handover and transfer are carried out in second-hand vehicles
+                currently in traffic. Money transfer in vehicle sales is one of
+                the most important issues you should pay attention to......
               </p>
 
               <div className="flex justify-between items-center">

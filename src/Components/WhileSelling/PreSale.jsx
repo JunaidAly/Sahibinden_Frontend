@@ -14,7 +14,7 @@ function PreSale() {
       <div className="max-w-7xl mx-auto p-6  font-poppins">
         {/* Header Section */}
         <div className="flex justify-between items-center mb-10 font-poppins">
-          <h1 className="text-[35px] font-[600] text-black">During Purchase</h1>
+          <h1 className="text-[35px] font-[600] text-black">Pre Sale</h1>
 
           {/* Search Bar */}
           <div className="relative w-96">
@@ -58,7 +58,7 @@ function PreSale() {
 
               <div className="flex justify-between items-center">
                 <Link
-                  to="/purchase-details">
+                  to="/sale-details">
                 <h3  className="text-[#1544AB] text-sm font-medium">
                   More
                 </h3>
