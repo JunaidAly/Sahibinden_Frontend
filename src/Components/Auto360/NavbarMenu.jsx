@@ -26,8 +26,8 @@ function NavbarMenu() {
   const links = [
     { name: "While Buying", path: "/", hasDropdown: true, id: "buying" },
     { name: "While Selling", path: "/ad-management", hasDropdown: true, id: "selling" },
-    { name: "Maintenance & Repair", path: "/" },
-    { name: "Credit", path: "/" },
+    { name: "Maintenance & Repair", path: "/maintenance-and-repair" },
+    { name: "Credit", path: "/credit" },
     { name: "Zero Vehicle World", path: "/" },
   ];
   

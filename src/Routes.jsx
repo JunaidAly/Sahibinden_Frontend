@@ -26,6 +26,8 @@ import AutoDictionary from "./Components/WhileBuying/AutoDictionary";
 import PreSale from "./Components/WhileSelling/PreSale";
 import DuringSales from "./Components/WhileSelling/DuringSales";
 import SaleDetails from "./Components/WhileSelling/SaleDetails";
+import MaintenanceAndRepair from "./Components/Maintenance&Repair/ModernLivingHero";
+import Credit from "./Components/Credit/Credit";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -54,7 +56,8 @@ const ProjectRoutes = () => {
         { path: "/pre-sale", element: <PreSale/> },
         { path: "/during-sales", element: <DuringSales/> },
         { path: "/sale-details", element: <SaleDetails/> },
-        
+        { path: "/maintenance-and-repair", element: <MaintenanceAndRepair/> },
+        { path: "/credit", element: <Credit/> },
         
     ]);
     return element;
