@@ -28,6 +28,7 @@ import DuringSales from "./Components/WhileSelling/DuringSales";
 import SaleDetails from "./Components/WhileSelling/SaleDetails";
 import MaintenanceAndRepair from "./Components/Maintenance&Repair/ModernLivingHero";
 import Credit from "./Components/Credit/Credit";
+import ZeroVehicleWorld from "./Components/ZeroVehicleWorld/ZeroVehicleWorld";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -58,6 +59,7 @@ const ProjectRoutes = () => {
         { path: "/sale-details", element: <SaleDetails/> },
         { path: "/maintenance-and-repair", element: <MaintenanceAndRepair/> },
         { path: "/credit", element: <Credit/> },
+        { path: "/zero-vehicle-world", element: <ZeroVehicleWorld/> },
         
     ]);
     return element;

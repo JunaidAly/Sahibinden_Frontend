@@ -28,7 +28,7 @@ function NavbarMenu() {
     { name: "While Selling", path: "/ad-management", hasDropdown: true, id: "selling" },
     { name: "Maintenance & Repair", path: "/maintenance-and-repair" },
     { name: "Credit", path: "/credit" },
-    { name: "Zero Vehicle World", path: "/" },
+    { name: "Zero Vehicle World", path: "/" , hasDropdown: true, id: "zerovehicleworld" },
   ];
   
   const dropdownContents = {
@@ -45,6 +45,14 @@ function NavbarMenu() {
       { name: 'Auto Expertise', path: '/auto-expertise' },
       { name: 'Vehicle Sales Guide', path: '/vehicle-selling-guide' },
       { name: 'Auto Dictionary', path: '/auto-dictionary' }
+    ],
+    zerovehicleworld: [
+      { name: 'Search for new Vehicle', path: '/zero-vehicle-world' },
+      { name: 'Compare new vehicle', path: '/auto-expertise' },
+      { name: 'Zero Vehicle Launch Schedule', path: '/vehicle-selling-guide' },
+      { name: 'Campaign Vehicles', path: '/auto-dictionary' },
+      { name: 'Find an Authorized Dealer', path: '/vehicle-valuation' },
+      { name: 'Electric Vehicle Charging Station', path: '/auto-expertise' },
     ]
   };
 
@@ -80,7 +88,7 @@ function NavbarMenu() {
               </div>
 
               {openDropdown === link.id && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                <div className="absolute top-full left-0 mt-2 w-max bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                   {dropdownContents[link.id].map((item, idx) => (
                     <a
                       key={idx}
