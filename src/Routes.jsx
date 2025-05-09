@@ -34,6 +34,7 @@ import ZeroVehicleLaunchSchedule from "./Components/ZeroVehicleWorld/ZeroVehicle
 import CampaignVehicle from "./Components/ZeroVehicleWorld/CampaignVehicle";
 import AuthorizedDealer from "./Components/ZeroVehicleWorld/AuthorizedDealer";
 import ElectricVehicle from "./Components/ZeroVehicleWorld/ElectricVehicle";
+import Services from "./Pages/Services";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -70,6 +71,7 @@ const ProjectRoutes = () => {
         { path: "/campaign-vehicles", element: <CampaignVehicle/> },
         { path: "/authorized-dealer", element: <AuthorizedDealer/> },
         { path: "/electric-vehicle", element: <ElectricVehicle/> },
+        { path: "/services", element: <Services/> },
         
     ]);
     return element;

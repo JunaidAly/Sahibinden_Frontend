@@ -8,7 +8,7 @@ function NavMenuBar() {
         { name: "My Shopping Transactions", path:"/" },
         { name: "Favorites", path:"/" },
         { name: "Message and Notifications", path:"/" },
-        { name: "Services", path:"/" },
+        { name: "Services", path:"/services" },
         { name: "My Account",path:"/"},
       ];
   return (
