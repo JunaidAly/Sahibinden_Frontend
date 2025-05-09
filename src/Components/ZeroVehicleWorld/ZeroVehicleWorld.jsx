@@ -116,17 +116,24 @@ const PopularBrands =() => {
     return (
         <div className="flex flex-col max-w-7xl mx-auto  ">
             <h2 className="text-[30px] text-black font-[500] mb-8">Popular Brands</h2>
-            <div className="grid grid-cols-5 gap-10">
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
-                <img src="/assets/vehiclecomparison.png" className='w-[200px] h-[112px] '  />
+            <div className="grid grid-cols-5 ">
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+                <img src="/assets/bmw.png" className='w-full h-full '  />
+                <img src="/assets/audi.png" className='w-full h-full '  />
+
+               
                </div>
         </div>
     )   

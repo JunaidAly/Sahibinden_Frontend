@@ -29,6 +29,11 @@ import SaleDetails from "./Components/WhileSelling/SaleDetails";
 import MaintenanceAndRepair from "./Components/Maintenance&Repair/ModernLivingHero";
 import Credit from "./Components/Credit/Credit";
 import ZeroVehicleWorld from "./Components/ZeroVehicleWorld/ZeroVehicleWorld";
+import CompareNewVehicle from "./Components/ZeroVehicleWorld/CompareNewVehicle";
+import ZeroVehicleLaunchSchedule from "./Components/ZeroVehicleWorld/ZeroVehicleLaunchSchedule";
+import CampaignVehicle from "./Components/ZeroVehicleWorld/CampaignVehicle";
+import AuthorizedDealer from "./Components/ZeroVehicleWorld/AuthorizedDealer";
+import ElectricVehicle from "./Components/ZeroVehicleWorld/ElectricVehicle";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -60,6 +65,11 @@ const ProjectRoutes = () => {
         { path: "/maintenance-and-repair", element: <MaintenanceAndRepair/> },
         { path: "/credit", element: <Credit/> },
         { path: "/zero-vehicle-world", element: <ZeroVehicleWorld/> },
+        { path: "/compare-new-vehicle", element: <CompareNewVehicle/> },
+        { path: "/zero-vehicle-launch-schedule", element: <ZeroVehicleLaunchSchedule/> },
+        { path: "/campaign-vehicles", element: <CampaignVehicle/> },
+        { path: "/authorized-dealer", element: <AuthorizedDealer/> },
+        { path: "/electric-vehicle", element: <ElectricVehicle/> },
         
     ]);
     return element;

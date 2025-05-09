@@ -48,11 +48,11 @@ function NavbarMenu() {
     ],
     zerovehicleworld: [
       { name: 'Search for new Vehicle', path: '/zero-vehicle-world' },
-      { name: 'Compare new vehicle', path: '/auto-expertise' },
-      { name: 'Zero Vehicle Launch Schedule', path: '/vehicle-selling-guide' },
-      { name: 'Campaign Vehicles', path: '/auto-dictionary' },
-      { name: 'Find an Authorized Dealer', path: '/vehicle-valuation' },
-      { name: 'Electric Vehicle Charging Station', path: '/auto-expertise' },
+      { name: 'Compare new vehicle', path: '/compare-new-vehicle' },
+      { name: 'Zero Vehicle Launch Schedule', path: '/zero-vehicle-launch-schedule' },
+      { name: 'Campaign Vehicles', path: '/campaign-vehicles' },
+      { name: 'Find an Authorized Dealer', path: '/authorized-dealer' },
+      { name: 'Electric Vehicle Charging Station', path: '/electric-vehicle' },
     ]
   };
 
