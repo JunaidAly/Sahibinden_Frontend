@@ -6,7 +6,7 @@ function NavMenuBar() {
         { name: "Home", path:"/" },
         { name: "Ad Management", path:"/ad-management"  },
         { name: "My Shopping Transactions", path:"/" },
-        { name: "Favorites", path:"/" },
+        { name: "Favorites", path:"/favorites" },
         { name: "Message and Notifications", path:"/" },
         { name: "Services", path:"/services" },
         { name: "My Account",path:"/"},

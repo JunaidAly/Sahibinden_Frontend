@@ -13,7 +13,7 @@ const Accordion = ({ onComponentChange }) => {
     <div className="w-full h-max font-poppins max-w-sm mx-auto border border-[#1E3A8A]">
       {/* Auto 360 Button */}
       <button 
-        className={`w-full text-left p-3 text-2xl font-light ${
+        className={`w-full text-left border border-b-[#1E3A8A] p-3 text-2xl font-light ${
           activeSection === 'auto360' 
             ? 'bg-[#1E3A8A] text-white' 
             : 'bg-white text-[#1E3A8A]'
