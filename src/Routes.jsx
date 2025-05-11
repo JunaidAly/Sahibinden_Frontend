@@ -37,6 +37,7 @@ import ElectricVehicle from "./Components/ZeroVehicleWorld/ElectricVehicle";
 import Services from "./Pages/Services";
 import Favorites from "./Pages/Favorites";
 import MassageAndNotifications from "./Pages/MassageAndNotifications";
+import MyAccount from "./Pages/MyAccount";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -76,6 +77,7 @@ const ProjectRoutes = () => {
         { path: "/services", element: <Services/> },
         { path: "/favorites", element: <Favorites/> },
         { path: "/massage-and-notifications", element: <MassageAndNotifications/> },
+        { path: "/my-account", element: <MyAccount/> },
         
     ]);
     return element;

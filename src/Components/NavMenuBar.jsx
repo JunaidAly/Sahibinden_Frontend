@@ -9,7 +9,7 @@ function NavMenuBar() {
         { name: "Favorites", path:"/favorites" },
         { name: "Message and Notifications", path:"/massage-and-notifications" },
         { name: "Services", path:"/services" },
-        { name: "My Account",path:"/"},
+        { name: "My Account",path:"/my-account"},
       ];
   return (
     <div className="flex items-center h-[70px] justify-center w-full max-w-7xl mx-auto">

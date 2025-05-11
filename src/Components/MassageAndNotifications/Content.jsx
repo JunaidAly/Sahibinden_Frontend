@@ -106,7 +106,7 @@ const InformationComponent = () => {
   
     return (
         <div className="w-full max-w-4xl mx-auto bg-white font-poppins ">
-        <h2 className="text-black text-xl  font-medium mb-10">My Product Offers - I am a Buyer</h2>
+        <h2 className="text-black text-xl  font-medium mb-5">My Product Offers - I am a Buyer</h2>
         
         <div className="flex flex-col shadow-custom-right rounded-lg w-full max-w-4xl mx-auto items-center justify-center py-12">
          {/* Shopping Bags Icon */}
@@ -115,16 +115,16 @@ const InformationComponent = () => {
           </div>
           
           {/* Messages */}
-          <p className="text-center text-gray-800 font-medium mb-1">
+          <p className="text-center text-black font-medium mb-1">
             You Don't Have Any Offers Yet
           </p>
-          <p className="text-center text-gray-700 mb-6">
+          <p className="text-center text-black mb-6">
             Add Products You Don't Use, Evaluate Offers From Buyers And Earn Immediately.
           </p>
           
           {/* Button */}
           <button 
-            className="bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-800 transition-colors"
+            className="bg-[#1544AB] text-white px-4 py-2 rounded-full text-sm font-medium "
           >
             POST AN AD NOW
           </button>
