@@ -27,10 +27,8 @@ const AccountNavigationMenu = ({ onSectionChange }) => {
       [section]: !prev[section]
     }));
     
-    // Notify parent component about the selection
-    if (onSectionChange) {
-      onSectionChange(section);
-    }
+    // REMOVED: onSectionChange callback for parent sections
+    // This ensures parent sections only expand/collapse without triggering component changes
   };
 
   // Handle click on a menu item

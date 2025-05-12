@@ -5,7 +5,7 @@ function NavMenuBar() {
     const links = [
         { name: "Home", path:"/" },
         { name: "Ad Management", path:"/ad-management"  },
-        { name: "My Shopping Transactions", path:"/" },
+        { name: "My Shopping Transactions", path:"/my-shopping-transactions" },
         { name: "Favorites", path:"/favorites" },
         { name: "Message and Notifications", path:"/massage-and-notifications" },
         { name: "Services", path:"/services" },
