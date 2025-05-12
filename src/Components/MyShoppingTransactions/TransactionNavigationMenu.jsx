@@ -214,11 +214,11 @@ function TransactionNavigationMenu({ onSectionChange }) {
         <>
           <button
             className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-10"
-            onClick={() => handleSectionClick("whatIBoughtWithVepy")}
+            onClick={() => handleSectionClick("devicePurchasePage")}
           >
             <span
               className={`text-lg font-normal ${
-                isSectionActive("whatIBoughtWithVepy")
+                isSectionActive("devicePurchasePage")
                   ? "text-[#1544AB]"
                   : "text-[#231E1C]"
               }`}
@@ -229,11 +229,11 @@ function TransactionNavigationMenu({ onSectionChange }) {
 
           <button
             className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-10"
-            onClick={() => handleSectionClick("whatISoldWithBrandNew")}
+            onClick={() => handleSectionClick("deviceSellPage")}
           >
             <span
               className={`text-lg font-normal ${
-                isSectionActive("whatISoldWithBrandNew")
+                isSectionActive("deviceSellPage")
                   ? "text-[#1544AB]"
                   : "text-[#231E1C]"
               }`}
