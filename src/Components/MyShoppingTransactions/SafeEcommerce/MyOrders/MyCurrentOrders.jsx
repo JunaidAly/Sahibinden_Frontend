@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaCaretDown } from "react-icons/fa";
+
 const MyCurrentOrders = () => {
-  const [selectedFilter, setSelectedFilter] = useState('You Do Not Have An Order');
+  const [selectedFilter, setSelectedFilter] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const orders = [
@@ -25,15 +26,15 @@ const MyCurrentOrders = () => {
   return (
     <div className="max-w-4xl w-full mx-auto p-4 font-poppins">
       <div className="bg-white rounded-lg ">
-        <h1 className="text-xl font-semibold p-6 border-b">My Current Orders</h1>
+        <h1 className="text-xl font-semibold ">My Current Orders</h1>
         
         {/* Search Section */}
-        <div className="p-6">
+        <div className="py-4">
           <div className="flex flex-col gap-4 mb-6">
             <input
               type="text"
               placeholder="Among My Current Orders, With The Ad No."
-              className="flex-1 px-4 py-2 border border-[#1544AB] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-4 border border-[#1544AB] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button className="px-6 py-2 max-w-32 bg-[#1544AB] text-white rounded-full ">
               SEARCH
@@ -41,16 +42,17 @@ const MyCurrentOrders = () => {
           </div>
 
           {/* Dropdown Filter */}
-          <div className="relative flex justify-end border border-[#1544AB] rounded-lg p-2">
+          <div  className="relative flex justify-between items-center border border-[#1544AB] rounded-lg p-2">
+          <h1> You Do Not Have An Order</h1>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-full px-4 py-2 max-w-72 border border-[#1544AB] rounded-lg flex items-center justify-between hover:bg-gray-50"
             >
               <span>{selectedFilter}</span>
-              <FaCaretDown className="w-5 h-5 text-[#1544AB]" />
+              <FaCaretDown size={24} className='text-[#1544AB]' />
             </button>
             {isDropdownOpen && (
-              <div className="absolute top-[50px] max-w-72 w-full bg-white border border-[#1544AB] rounded-lg shadow-lg z-10">
+              <div className="absolute top-[50px] right-2 max-w-72 w-full bg-white border border-[#1544AB] rounded-lg shadow-lg z-10">
                 <div className="py-1">
                   {filterOptions.map((filter) => (
                     <div 
@@ -71,22 +73,22 @@ const MyCurrentOrders = () => {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto bg-[#CFCFCF80]">
-          <table className="w-full">
+        <div className="overflow-x-auto max-w-4xl w-full mx-auto bg-[#CFCFCF80] p-2">
+          <table className="w-full border-separate" style={{ borderSpacing: '8px 8px' }}>
             <thead>
-              <tr className=" ">
-                <th className="px-6 py-3 text-left text-sm font-medium text-black border-r border-white">Ad No</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-black border-r border-white">Property Type</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-black border-r border-white">Announcement Date</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-black">Price</th>
+              <tr className="w-full">
+                <th className="px-6 py-3 text-center text-sm font-medium text-black border-r-[1px] border-white">Ad No</th>
+                <th className="px-6 py-3 text-center text-sm font-medium text-black border-r-[1px] border-white">Property Type</th>
+                <th className="px-6 py-3 text-center text-sm font-medium text-black border-r-[1px] border-white">Announcement Date</th>
+                <th className="px-6 py-3 text-center text-sm font-medium text-black">Price</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order, index) => (
-                <tr key={index} className="  ">
-                  <td className="px-6 py-4 text-sm text-black border-r border-white">{order.id}</td>
-                  <td className="px-6 py-4 text-sm text-black border-r border-white">{order.propertyType}</td>
-                  <td className="px-6 py-4 text-sm text-black border-r border-white">{order.date}</td>
+                <tr key={index} className="text-center">
+                  <td className="px-6 py-4 text-sm text-black border-r-[1px] border-white">{order.id}</td>
+                  <td className="px-6 py-4 text-sm text-black border-r-[1px] border-white">{order.propertyType}</td>
+                  <td className="px-6 py-4 text-sm text-black border-r-[1px] border-white">{order.date}</td>
                   <td className="px-6 py-4 text-sm text-black">{order.price}</td>
                 </tr>
               ))}

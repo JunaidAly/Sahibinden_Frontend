@@ -139,6 +139,39 @@ function TransactionNavigationMenu({ onSectionChange }) {
               <>
                 <button
                   className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-16"
+                  onClick={() => handleSectionClick("productIPurchased")}
+                >
+                  <span
+                    className={`text-lg font-normal ${
+                      isSectionActive("productIPurchased")
+                        ? "text-[#1544AB]"
+                        : "text-[#231E1C]"
+                    }`}
+                  >
+                    Product I Purchased
+                  </span>
+                </button>
+
+                <button
+                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-16"
+                  onClick={() => handleSectionClick("productISell")}
+                >
+                  <span
+                    className={`text-lg font-normal ${
+                      isSectionActive("productISell")
+                        ? "text-[#1544AB]"
+                        : "text-[#231E1C]"
+                    }`}
+                  >
+                    Product I Sell
+                  </span>
+                </button>
+              </>
+            )}
+          </div>
+
+          <button
+                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-10"
                   onClick={() => handleSectionClick("billingAddress")}
                 >
                   <span
@@ -153,7 +186,7 @@ function TransactionNavigationMenu({ onSectionChange }) {
                 </button>
 
                 <button
-                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-16"
+                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-10"
                   onClick={() => handleSectionClick("myBankInformation")}
                 >
                   <span
@@ -168,7 +201,7 @@ function TransactionNavigationMenu({ onSectionChange }) {
                 </button>
 
                 <button
-                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-16"
+                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-10"
                   onClick={() => handleSectionClick("headOfficeAddress")}
                 >
                   <span
@@ -181,9 +214,6 @@ function TransactionNavigationMenu({ onSectionChange }) {
                     My Head Office Address
                   </span>
                 </button>
-              </>
-            )}
-          </div>
         </>
       )}
 
@@ -478,6 +508,36 @@ function TransactionNavigationMenu({ onSectionChange }) {
                     }`}
                   >
                     My Products That Are Not On sale
+                  </span>
+                </button>
+
+                <button
+                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-20"
+                  onClick={() => handleSectionClick("mybankInformationSales")}
+                >
+                  <span
+                    className={`text-lg font-normal ${
+                      isSectionActive("mybankInformationSales")
+                        ? "text-[#1544AB]"
+                        : "text-[#231E1C]"
+                    }`}
+                  >
+                    My Bank information
+                  </span>
+                </button>
+
+                <button
+                  className="w-full py-4 px-6 text-left border-t border-[#1544AB] bg-white pl-20"
+                  onClick={() => handleSectionClick("myHeadOfficeSalesAddress")}
+                >
+                  <span
+                    className={`text-lg font-normal ${
+                      isSectionActive("myHeadOfficeSalesAddress")
+                        ? "text-[#1544AB]"
+                        : "text-[#231E1C]"
+                    }`}
+                  >
+                     My Head office address
                   </span>
                 </button>
 

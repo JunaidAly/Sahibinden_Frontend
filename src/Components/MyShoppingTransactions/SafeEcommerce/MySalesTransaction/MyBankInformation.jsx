@@ -1,7 +1,7 @@
 
 
 import React, { useState } from 'react';
-import BankInfoForm from './BankInfoForm'; 
+import BankInfoForm from './BankInfoForm'; // Adjust the import path as needed
 
 function MyBankInformation() {
   const [showBankForm, setShowBankForm] = useState(false);
