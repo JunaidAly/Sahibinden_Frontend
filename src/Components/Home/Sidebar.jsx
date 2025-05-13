@@ -52,7 +52,7 @@ const Sidebar = () => {
   const imgSrcSpare = <img src="/assets/private/spare.svg" alt="" />;
 
   return (
-    <div className="w-64 bg-white shadow-custom h-full overflow-y-auto font-poppins">
+    <div className="max-w-xs w-full bg-white shadow-custom rounded-lg h-full overflow-y-auto font-poppins">
       <div className="p-4">
         <h2 className="text-2xl font-semibold text-[#1544AB] font-monrope mb-4">
           Categories
@@ -62,13 +62,19 @@ const Sidebar = () => {
           {/* Original Categories */}
           <CategoryItem icon={imgSrcHouse} label="Urgent" />
           <CategoryItem icon={imgSrcHouse} label="Last 48 Hours / 1 Week" />
-          <Link to={"/categories-cell-phones"}><CategoryItem icon={imgSrcHouse} label="Refurbished Devices With" /></Link>
+          <Link to={"/categories-cell-phones"}>
+            <CategoryItem icon={imgSrcHouse} label="Refurbished Devices With" />
+          </Link>
 
           {/* Auto360 Category */}
           <li className="text-[#231E1C] font-[500] text-[18px]">
-            <Link to={"/auto-360"}><CategoryHeader icon={imgSrcAuto} label="Auto360" /></Link>
+            <Link to={"/auto-360"}>
+              <CategoryHeader icon={imgSrcAuto} label="Auto360" />
+            </Link>
             <ul className="ml-8 mt-2 space-y-3">
-              <li className="text-[#231E1C] font-[400] font-monrope text-[15px]">Auto Expertise</li>
+              <li className="text-[#231E1C] font-[400] font-monrope text-[15px]">
+                Auto Expertise
+              </li>
             </ul>
             <ToggleButton
               expanded={expanded.auto}
@@ -79,11 +85,13 @@ const Sidebar = () => {
           {/* Real Estate Categories */}
           <CategoryItem icon={imgSrcHouse} label="Real Estate360" />
           <li>
+            <Link to={"/real-estate"}>
             <CategoryHeader
               icon={imgSrcHouse}
               label="Real Estate"
               count="766986"
             />
+            </Link>
             {expanded.realEstate && (
               <ul className="ml-8 mt-2 space-y-3">
                 <SubcategoryItem label="Housing" count="766986" />
@@ -107,7 +115,10 @@ const Sidebar = () => {
             />
             {expanded.vehicle && (
               <ul className="ml-8 mt-2 space-y-3">
-                <Link to={"/categories-cars"}> <SubcategoryItem label="Cars" count="766986" /></Link>  
+                <Link to={"/categories-cars"}>
+                  {" "}
+                  <SubcategoryItem label="Cars" count="766986" />
+                </Link>
                 <SubcategoryItem label="Off-Road" count="766986" />
                 <SubcategoryItem label="Motorcycle" count="766986" />
                 <SubcategoryItem label="Minivan & Panel Van" count="766986" />
@@ -323,7 +334,10 @@ const Sidebar = () => {
                     checked={checked.babysitter}
                     onChange={() => handleCheckboxChange("babysitter")}
                   />
-                  <label htmlFor="babysitter" className="text-[#231E1C] font-monrope text-[15px] font-[400]">
+                  <label
+                    htmlFor="babysitter"
+                    className="text-[#231E1C] font-monrope text-[15px] font-[400]"
+                  >
                     Babysitter & Nanny
                     <span className="text-[12px]">(56)</span>
                   </label>
@@ -332,11 +346,14 @@ const Sidebar = () => {
                   <input
                     type="checkbox"
                     id="elderly"
-                    className="mr-2 h-4 w-5 border-[#1544AB]"
+                    className="mr-2 h-4 w-4 border-[#1544AB]"
                     checked={checked.elderly}
                     onChange={() => handleCheckboxChange("elderly")}
                   />
-                  <label htmlFor="elderly" className="text-[#231E1C] font-monrope text-[15px] font-[400]">
+                  <label
+                    htmlFor="elderly"
+                    className="text-[#231E1C] font-monrope text-[15px] font-[400]"
+                  >
                     Elderly & Patient Caregiver
                     <span className="text-[12px]">(67)</span>
                   </label>
@@ -345,11 +362,14 @@ const Sidebar = () => {
                   <input
                     type="checkbox"
                     id="cleaner"
-                    className="mr-2 h-4 w-5 border-[#1544AB]"
+                    className="mr-2 h-4 w-4 border-[#1544AB]"
                     checked={checked.cleaner}
                     onChange={() => handleCheckboxChange("cleaner")}
                   />
-                  <label htmlFor="cleaner" className="text-[#231E1C] font-monrope text-[15px] font-[400]">
+                  <label
+                    htmlFor="cleaner"
+                    className="text-[#231E1C] font-monrope text-[15px] font-[400]"
+                  >
                     Cleaner & Housekeeper
                     <span className="text-[12px]">(78)</span>
                   </label>

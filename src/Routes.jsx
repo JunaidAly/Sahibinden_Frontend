@@ -39,6 +39,7 @@ import Favorites from "./Pages/Favorites";
 import MassageAndNotifications from "./Pages/MassageAndNotifications";
 import MyAccount from "./Pages/MyAccount";
 import MyShoppingTransactions from "./Pages/MyShoppingTransactions";
+import RealEstate from "./Components/RealEstate/RealEstate";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -80,6 +81,7 @@ const ProjectRoutes = () => {
         { path: "/massage-and-notifications", element: <MassageAndNotifications/> },
         { path: "/my-account", element: <MyAccount/> },
         { path: "/my-shopping-transactions", element: <MyShoppingTransactions/> },
+        { path: "/real-estate", element: <RealEstate/> },
         
     ]);
     return element;
