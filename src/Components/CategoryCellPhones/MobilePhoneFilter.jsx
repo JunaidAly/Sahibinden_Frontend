@@ -64,7 +64,7 @@ const MobilePhoneFilter = () => {
   };
 
   return (
-    <div className="w-80 bg-white  rounded-lg overflow-hidden shadow-custom h-[1220px] ">
+    <div className="w-80 bg-white  rounded-lg overflow-hidden m-5 shadow-custom h-[1220px] ">
       <div className="p-4">
         {/* Mobile Phone Brands Section with Blue Scrollbar */}
         <div className="relative  ">

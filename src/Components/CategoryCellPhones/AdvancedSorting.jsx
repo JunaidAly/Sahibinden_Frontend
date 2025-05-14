@@ -2,7 +2,7 @@ import React from 'react'
 
 function AdvancedSorting() {
   return (
-    <div className='flex items-center justify-center'>
+    <div className='flex items-center justify-between'>
         <input
               type="text"
               name="Advanced Sorting"

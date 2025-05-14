@@ -114,24 +114,24 @@ const VehicleComparisonComponent = () => {
 
 const PopularBrands =() => {
     return (
-        <div className="flex flex-col max-w-7xl mx-auto  ">
+        <div className="flex flex-col max-w-7xl mx-auto w-full  ">
             <h2 className="text-[30px] text-black font-[500] mb-8">Popular Brands</h2>
-            <div className="grid grid-cols-5 ">
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
-                <img src="/assets/bmw.png" className='w-full h-full '  />
-                <img src="/assets/audi.png" className='w-full h-full '  />
+            <div className="grid grid-cols-5 gap-5  ">
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg l '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/bmw.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
+                <img src="/assets/audi.png" className='w-[260px] h-[180px] shadow-custom-diagonal p-5 rounded-lg  '  />
 
                
                </div>

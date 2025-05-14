@@ -52,7 +52,7 @@ const Sidebar = () => {
   const imgSrcSpare = <img src="/assets/private/spare.svg" alt="" />;
 
   return (
-    <div className="max-w-xs w-full bg-white shadow-custom rounded-lg h-full overflow-y-auto font-poppins">
+    <div className="max-w-xs w-full bg-white shadow-custom rounded-lg h-full m-5 overflow-y-auto font-poppins">
       <div className="p-4">
         <h2 className="text-2xl font-semibold text-[#1544AB] font-monrope mb-4">
           Categories

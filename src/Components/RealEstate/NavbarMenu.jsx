@@ -27,7 +27,7 @@ function NavbarMenu() {
     { name: "While Buying", path: "/", hasDropdown: true, id: "buying" },
     { name: "When Selling", path: "/", hasDropdown: true, id: "selling" },
     { name: "When Renting", path: "/" , hasDropdown: true, id: "renting" },
-    { name: "Credit", path: "/credit" },
+    { name: "Credit", path: "/credit-estate" },
    
   ];
   

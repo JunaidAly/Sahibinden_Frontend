@@ -7,12 +7,14 @@ import RealEstateIndex from './RealEstateIndex'
 import RealEstateExpertise from './RealEstateExpertise'
 import Credit from '../RealEstate/CreditOffer'
 import RealEstateGuide from './RealEstateGuide'
+import RealEstateServices from './RealEstateServices'
 function RealEstate() {
   return (
     <>
     <Navbar/>
     <NavbarMenu/>
-    <div className='max-w-7xl w-full mx-auto font-poppins'>
+    <div className='w-full mx-auto font-poppins'>     
+        <RealEstateServices/>
         <RealEstateIndex/>
         <RealEstateExpertise/>
         <Credit/>

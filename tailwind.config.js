@@ -23,6 +23,10 @@ export default {
         'custom-right': '2px 0px 10px 0px #00000040',
         'custom-diagonal': '2px 2px 10px 0px #00000040',
       },
+      colors: {
+        'primaryBlue': '#1544AB',
+        'primarygray': '#8D8D8D',
+      },
     },
   },
   plugins: [

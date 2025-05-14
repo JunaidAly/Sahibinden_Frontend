@@ -30,8 +30,11 @@ const CreditOffers = () => {
   };
 
   return (
-    <div className="max-w-7xl w-full mx-auto   mt-12 overflow-hidden">
-      <div className=" p-10 max-w-7xl mx-auto w-full rounded-lg shadow-custom-diagonal">
+    <>
+    
+    <div className="w-full max-w-[82rem] mx-auto  my-14  ">
+    <h1 className="mt-8 mb-4 ml-4 font-poppins text-xl font-medium">Cradit Offers</h1>
+      <div className="  w-full max-w-7xl m-auto  bg-white shadow-custom-right rounded-lg p-5   ">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Column - Loan Form */}
           <div className="w-full md:w-1/3 shadow-custom-diagonal p-6 bg-white rounded-lg">
@@ -145,6 +148,7 @@ const CreditOffers = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,5 +1,7 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
+import SignUpForm from "./Pages/SignUpForm";
+import SignInForm from "./Pages/LoginForm";
 import Home from "./Pages/Home";
 import AdDetails from "./Pages/AdDetails";
 import PostAnAdd from "./Pages/PostAnAdd";
@@ -40,9 +42,12 @@ import MassageAndNotifications from "./Pages/MassageAndNotifications";
 import MyAccount from "./Pages/MyAccount";
 import MyShoppingTransactions from "./Pages/MyShoppingTransactions";
 import RealEstate from "./Components/RealEstate/RealEstate";
+import CreditRealEstate from "./Components/RealEstate/Credit";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
+        { path: "/signup", element: <SignUpForm/> },
+        { path: "/signin", element: <SignInForm/> },
         { path: "/ad-details", element: <AdDetails/> },
         { path: "/post-an-add", element: <PostAnAdd/> },   
         { path: "/category-selection-details", element: <CategorySelectionDetails/> }, 
@@ -82,6 +87,7 @@ const ProjectRoutes = () => {
         { path: "/my-account", element: <MyAccount/> },
         { path: "/my-shopping-transactions", element: <MyShoppingTransactions/> },
         { path: "/real-estate", element: <RealEstate/> },
+        { path: "/credit-estate", element: <CreditRealEstate/> },
         
     ]);
     return element;

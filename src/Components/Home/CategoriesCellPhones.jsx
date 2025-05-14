@@ -18,7 +18,7 @@ function CategoriesCellPhones() {
       <div className="flex flex-col md:flex-row   ">
         <SideBar />
         <main className="flex-1 p-6">
-        <div className='flex gap-[18rem] items-center'>
+        <div className='flex justify-between items-center'>
           <h2 className="text-[30px] font-[600] ml-5  font-poppins  text-left text-[#231E1C]">
             Refurbished Cell Phones
           </h2>

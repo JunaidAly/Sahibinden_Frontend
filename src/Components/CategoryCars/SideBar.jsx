@@ -65,7 +65,7 @@ const CustomScrollbar = ({ children, maxHeight = '400px' }) => {
 // Demo component
 const SideBar= () => {
   return (
-    <div className="w-[330px] h-[1220px] flex flex-col gap-5 bg-white shadow-custom rounded-lg ">
+    <div className="w-[330px] h-[1220px] flex flex-col gap-5 m-5 bg-white shadow-custom rounded-lg ">
       <div className="p-4">
         <h2 className="text-xl font-[600] font-monrope  text-[#1544AB] mb-3">Car</h2>
         
