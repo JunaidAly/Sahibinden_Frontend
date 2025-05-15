@@ -33,7 +33,7 @@ const CreditOffers = () => {
 
   return (
     <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-custom-diagonal mt-4 overflow-hidden">
-      <div className="p-10">      
+      <div className="p-10">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Column - Loan Form */}
           <div className="w-full md:w-1/3 shadow-custom-diagonal p-6 bg-white rounded-lg">
@@ -41,26 +41,26 @@ const CreditOffers = () => {
             <div className="flex rounded-full overflow-hidden border border-[#1544AB] mb-4">
               <button
                 className={`flex-1 py-2 text-sm rounded-full font-medium ${
-                  activeTab === 'consumer' 
-                    ? 'bg-[#1544AB] text-white' 
-                    : 'bg-white text-[#1544AB]'
+                  activeTab === "consumer"
+                    ? "bg-[#1544AB] text-white"
+                    : "bg-white text-[#1544AB]"
                 }`}
-                onClick={() => handleTabChange('consumer')}
+                onClick={() => handleTabChange("consumer")}
               >
                 Consumer Loan
               </button>
               <button
                 className={`flex-1 py-2 text-sm rounded-full font-medium ${
-                  activeTab === 'vehicle' 
-                    ? 'bg-[#1544AB] text-white' 
-                    : 'bg-white text-[#1544AB]'
+                  activeTab === "vehicle"
+                    ? "bg-[#1544AB] text-white"
+                    : "bg-white text-[#1544AB]"
                 }`}
-                onClick={() => handleTabChange('vehicle')}
+                onClick={() => handleTabChange("vehicle")}
               >
                 Vehicle Loan
               </button>
             </div>
-            
+
             {/* Loan Amount Input */}
             <div className="mb-4">
               <input
@@ -71,22 +71,32 @@ const CreditOffers = () => {
                 className="w-full p-3 border border-[#1544AB] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1544AB]"
               />
             </div>
-            
+
             {/* Maturity Dropdown */}
             <div className="mb-4 relative">
-              <div 
+              <div
                 className="w-full p-3 border border-[#1544AB]  focus:outline-none focus:ring-1 focus:ring-[#1544AB] rounded-md flex justify-between items-center cursor-pointer"
                 onClick={handleMaturityToggle}
               >
-                <span className={selectedMaturity ? 'text-gray-900' : 'text-gray-400'}>
-                  {selectedMaturity || 'Maturity'}
+                <span
+                  className={
+                    selectedMaturity ? "text-gray-900" : "text-gray-400"
+                  }
+                >
+                  {selectedMaturity || "Maturity"}
                 </span>
                 <FaCaretDown size={24} className="text-[#1544AB]" />
               </div>
-              
+
               {maturityOpen && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg">
-                  {['12 Months', '24 Months', '36 Months', '48 Months', '60 Months'].map((option) => (
+                  {[
+                    "12 Months",
+                    "24 Months",
+                    "36 Months",
+                    "48 Months",
+                    "60 Months",
+                  ].map((option) => (
                     <div
                       key={option}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
@@ -98,35 +108,41 @@ const CreditOffers = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Calculate Button */}
             <button
               onClick={handleCalculate}
               className="w-full bg-[#1544AB] text-white py-3 rounded-full hover:bg-blue-700 transition-colors"
             >
-              Calculate Consumer Loan
+              Housing Loan Offers
             </button>
           </div>
-          
+
           {/* Right Column - Description and Image */}
           <div className="w-full md:w-2/3 flex  gap-20 ">
             <div className="pr-4 max-w-xs">
               <h3 className="text-xl font-bold text-black mb-2">
-                Easily Choose The Offer That Suits You Best For Vehicle Loan Offers.
+                Housing Loan Offers
               </h3>
               <p className="text-black mb-4">
-                When buying a house, you can easily apply for a loan by comparing the housing or consumer loan rates that suit you on a single page on sahibinden.com.
+                When buying a house, you can easily apply for a loan by
+                comparing the housing or consumer loan rates that suit you on a
+                single page on sahibinden.com.
               </p>
               <a href="#" className="text-[#1544AB]  font-medium">
                 Detailed Information
               </a>
             </div>
-            
+
             <div className="flex items-center">
               <div className="relative w-[275px] h-[275px]">
                 <div className="absolute">
-                  <div  className="w-[275px] h-[275px]">
-                    <img src="/assets/creditform.png" alt="Credit Image" className="w-full h-full object-cover " />
+                  <div className="w-[275px] h-[275px]">
+                    <img
+                      src="/assets/creditform.png"
+                      alt="Credit Image"
+                      className="w-full h-full object-cover "
+                    />
                   </div>
                 </div>
               </div>

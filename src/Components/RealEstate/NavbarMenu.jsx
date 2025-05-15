@@ -35,7 +35,7 @@ function NavbarMenu() {
     buying: [
       { name: 'Real Estate Expertise', path: '/real-estate-expertise' },
       { name: 'Real Estate Index', path: '/real-estate-index' },
-      { name: 'Credit', path: '/vehicle-damage-inquiry' },
+      { name: 'Credit', path: '/credit-estate' },
       { name: 'Property Buying Guide', path: '/property-buying-guide' },
       { name: 'Real Estate Dictionary', path: '/vehicle-buying-guide' },
     ],
