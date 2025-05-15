@@ -33,10 +33,10 @@ function NavbarMenu() {
   
   const dropdownContents = {
     buying: [
-      { name: 'Real Estate Expertise', path: '/vehicle-comparison' },
-      { name: 'Real Estate Index', path: '/vehicle-valuation' },
+      { name: 'Real Estate Expertise', path: '/real-estate-expertise' },
+      { name: 'Real Estate Index', path: '/real-estate-index' },
       { name: 'Credit', path: '/vehicle-damage-inquiry' },
-      { name: 'Property Buying Guide', path: '/auto-expertise' },
+      { name: 'Property Buying Guide', path: '/property-buying-guide' },
       { name: 'Real Estate Dictionary', path: '/vehicle-buying-guide' },
     ],
     selling: [

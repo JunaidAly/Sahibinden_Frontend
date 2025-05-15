@@ -43,6 +43,12 @@ import MyAccount from "./Pages/MyAccount";
 import MyShoppingTransactions from "./Pages/MyShoppingTransactions";
 import RealEstate from "./Components/RealEstate/RealEstate";
 import CreditRealEstate from "./Components/RealEstate/Credit";
+import RealEstateExpertise from "./Components/RealEstate/RealEstateExpertise/ExpertisePage";
+import RealEstateIndex from "./Components/RealEstate/RealEstateIndex/IndexPage";
+import BuyingGuidePage from "./Components/RealEstate/PropertyBuyingGuide/BuyingGuidePage";
+import SellingGuides from "./Components/RealEstate/PropertyBuyingGuide/SellingGuides";
+import PurchaseDetailsRealEstate from "./Components/RealEstate/PropertyBuyingGuide/PurchaseDetails";
+import PurchaseDetailsOverview from "./Components/RealEstate/PropertyBuyingGuide/PurchaseDetailsOverview";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -88,6 +94,12 @@ const ProjectRoutes = () => {
         { path: "/my-shopping-transactions", element: <MyShoppingTransactions/> },
         { path: "/real-estate", element: <RealEstate/> },
         { path: "/credit-estate", element: <CreditRealEstate/> },
+        { path: "/real-estate-expertise", element: <RealEstateExpertise/> },
+        { path: "/real-estate-index", element: <RealEstateIndex/> },
+        { path: "/property-buying-guide", element: <BuyingGuidePage/> },
+        { path: "/selling-guides", element: <SellingGuides/> },
+        { path: "/purchase-details-real-estate", element: <PurchaseDetailsRealEstate/> },
+        { path: "/purchase-details-overview", element: <PurchaseDetailsOverview/> },
         
     ]);
     return element;
