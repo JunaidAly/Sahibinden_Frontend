@@ -49,6 +49,9 @@ import BuyingGuidePage from "./Components/RealEstate/PropertyBuyingGuide/BuyingG
 import SellingGuides from "./Components/RealEstate/PropertyBuyingGuide/SellingGuides";
 import PurchaseDetailsRealEstate from "./Components/RealEstate/PropertyBuyingGuide/PurchaseDetails";
 import PurchaseDetailsOverview from "./Components/RealEstate/PropertyBuyingGuide/PurchaseDetailsOverview";
+import RealEstateDictionary from "./Components/RealEstate/PropertyBuyingGuide/RealEstateDictionary";
+import RentalGuidePage from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/RentalGuidePage";
+import RentingGuides from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/RentingGuides";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -100,6 +103,9 @@ const ProjectRoutes = () => {
         { path: "/selling-guides", element: <SellingGuides/> },
         { path: "/purchase-details-real-estate", element: <PurchaseDetailsRealEstate/> },
         { path: "/purchase-details-overview", element: <PurchaseDetailsOverview/> },
+        { path: "/real-estate-dictionary", element: <RealEstateDictionary/> },
+        { path: "/property-rental-guide", element: <RentalGuidePage/> },
+        { path: "/renting-guides", element: <RentingGuides/> },
         
     ]);
     return element;

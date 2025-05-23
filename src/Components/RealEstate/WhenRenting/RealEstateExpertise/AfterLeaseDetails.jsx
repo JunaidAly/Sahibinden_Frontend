@@ -1,36 +1,40 @@
-
 import React, { useState } from "react";
 import Navbar from '../../Navbar'
 import Footer from '../../Footer'
 import NavbarMenu from '../NavbarMenu'
 import CommentForm from '../../Home/CommentForm'
 import { Link } from "react-router-dom";
-function PurchaseDetailsOverview() {
+
+const AfterLeaseDetails = () => {
+
     const [activeTab, setActiveTab] = useState("info");
-    
-      const tabs = [
-        { id: "before", label: "Before Purchase" ,path: "/purchase-details-real-estate" },
-        { id: "during", label: "During Purchase" ,path: "/purchase-details-real-estate" },
-        { id: "after", label: "After Purchase"   ,path: "/purchase-details-real-estate" },
-      ];
-    
-      const defectiveCharacteristics = [
-        "The residence's installation projects such as electricity, natural gas and water have not been completed.",
-        "Presence of deep cracks in the columns and beams of the house that may pose a danger.",
-        "Presence of deep cracks in the columns and beams of the house that may pose a danger",
-        "The house does not comply with the zoning plan",
-        "Lack of building permit",
-        "Areas such as fire escapes and elevators are not constructed in accordance with the legislation.",
-        "The house is mortgaged.",
-        "Lack of static reinforced concrete project.",
-      ];
-    
-      const defectiveProperty = [
-        "Termination of the contract, i.e. return of the sold real estate",
-        "Request a discount on the sales price in proportion to the defect",
-        "Requesting the seller to repair or fix the deficiency and pay the costs.",
-        "Replacing the residence with another residence of the same characteristics",
-      ];
+        
+          const tabs = [
+            { id: "before", label: "Before Renting" ,path: "/purchase-details-real-estate" },
+            { id: "after", label: "After Lease"   ,path: "/purchase-details-real-estate" },
+          ];
+        
+          const defectiveCharacteristics = [
+            "The residence's installation projects such as electricity, natural gas and water have not been completed.",
+            "Presence of deep cracks in the columns and beams of the house that may pose a danger.",
+            "The house does not comply with the zoning plan.",
+            "Lack of building permit.",
+            "Areas such as fire escapes and elevators are not constructed in accordance with the legislation.",
+            "The building does not have balcony and roof drains.",
+            "The house is mortgaged.",
+            "Lack of static reinforced concrete project.",
+          ];
+        
+          const managementPlan = [
+            "General Provisions",
+            "Definitions",
+            "Governing Bodies",
+            "Rights and Obligations of Flat Owners",
+            "Participation in Common Expenses",
+            "Innovations and Additions",
+            "Temporary Provisions",
+          ];
+
   return (
     <>
       <Navbar />
@@ -39,7 +43,7 @@ function PurchaseDetailsOverview() {
         {/* Header Section */}
         <div className=" flex flex-row  justify-between mb-3">
           <h1 className="text-[30px] max-w-[53rem] font-[600] text-black mb-6">
-            Which Houses Fall into the Defective Category?{" "}
+            Why is a Management Plan Important for Apartment and Site Residents?
           </h1>
 
           <div className="flex space-x-4 mb-6">
@@ -75,51 +79,57 @@ function PurchaseDetailsOverview() {
 
         <div className="  text-black max-w-7xl mb-10">
           <p className="text-[20px] font-[500] text-black">
-            Defective housing is a real estate that does not meet the
-            specifications specified by the seller, does not meet the agreed
-            technical specifications, and prevents the buyer from benefiting
-            from the house as required. Law No. 6506 on Consumer Protection
-            states that the seller is responsible for defective goods and the
-            buyer has certain rights in this case.
+            The management style of an apartment or site and the rules such as
+            the salaries to be received by the managers are determined by the
+            management plan. According to Article 28 of the Law on Condominiums
+            No. 634, the management plan is a contract binding on all
+            condominium owners. In case of disagreements regarding an article
+            not included in the management plan, the articles of the relevant
+            law are applied.
           </p>
         </div>
 
         {/* Characteristics Section */}
         <div className="bg-white   mb-8">
           <h2 className="text-[25px] font-bold text-black mb-4">
-            What are the Characteristics of a Defective House?
+            Why is a Management Plan Important?
           </h2>
           <p className="text-[20px] font-[500] text-black">
-            Although the scope of the definition of defective goods specified in
-            Article 8 of the relevant law is wide, the following examples of
-            defective housing can be given:
+            If there is a disagreement between people living in an apartment or
+            site, the rules specified in the management plan are applied. Since
+            disagreements are resolved within the framework of these rules, it
+            is important for real estate owners to be informed about the
+            apartment management plan. <br /> In addition, issues such as
+            manager selection, meeting times, shared responsibilities or
+            prohibitions are also determined by the management plan. People who
+            want to buy real estate have the right to request and examine the
+            management plan from the General Directorate of Land Registry and
+            Cadastre. The possibility of encountering an unexpected situation
+            can be eliminated by reading the management plan before transferring
+            the title deed.
           </p>
-
-          <ul className="space-y-2 mb-6">
-            {defectiveCharacteristics.map((item, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-black mr-2">•</span>
-                <span className="text-[20px] font-[500] text-black">
-                  {item}
-                </span>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        {/* Defective Section */}
+        {/* Consumer Rights Section */}
         <div className="bg-white ">
           <h2 className="text-[25px] font-bold text-black mb-4">
-            What are the Characteristics of a Defective House?
+            How to Prepare an Apartment Management Plan?
           </h2>
           <p className="text-[20px] font-[500] text-black mb-6">
-            Although the scope of the definition of defective goods specified in
-            Article 8 of the relevant law is wide, the following examples of
-            defective housing can be given
+            The apartment or site management plan is determined when the
+            condominium is established. In other words, if an apartment is to be
+            purchased from an apartment where the condominium is established,
+            there is also a management plan. However, if the condominium is not
+            yet established, a management plan sample can be obtained from the
+            Land Registry and Cadastre Directorates. The condominium owners can
+            add new items to the sample management plan. The newly added items
+            are written on the management plan pages with the notary seal and
+            signed by the condominium owners. The sections in the management
+            plan are as follows:
           </p>
 
           <ul className="space-y-2 mb-6">
-            {defectiveCharacteristics.map((item, index) => (
+            {managementPlan.map((item, index) => (
               <li key={index} className="flex items-start">
                 <span className="text-black mr-2">•</span>
                 <span className="text-[20px] font-[500] text-black">
@@ -132,38 +142,16 @@ function PurchaseDetailsOverview() {
 
         <div className="bg-white   mb-8">
           <h2 className="text-[25px] font-bold text-black mb-4">
-            What are the rights of the buyer in a defective property?
+            How to Change the Management Plan?
           </h2>
-          <p className="text-[20px] font-[500] text-black mb-3">
-            If the person purchasing the property notices that the house is
-            defective, they must notify the seller within 30 days after the
-            sale. This notification must be made to the seller via a notary or
-            registered letter. After notifying the seller, a defective goods
-            lawsuit can be filed. <br /> Defects that are called hidden defects
-            and that are discovered during use or as a result of an expert's
-            examination can be reported within 5 years. 5 years is the statute
-            of limitations for defective housing. The consumer rights in
-            defective housing specified in Article 11 of the relevant law are as
-            follows:
-          </p>
-
-          <ul className="space-y-2 mb-6">
-            {defectiveProperty.map((item, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-black mr-2">•</span>
-                <span className="text-[20px] font-[500] text-black">
-                  {item}
-                </span>
-              </li>
-            ))}
-          </ul>
-
           <p className="text-[20px] font-[500] text-black">
-            The consumer can only use one of these rights. According to Article
-            12 of the Consumer Protection Law, if the defects in the house are
-            grossly defective or concealed by fraud, the 5-year limitation
-            period does not apply. In such cases, the period for the consumer to
-            use their rights is unlimited.
+            According to Article 28 of the relevant Law, in order to make
+            changes to the management plan, the approval of 4/5 of the flat
+            owners must be obtained. Each real estate owner has one vote,
+            regardless of the size or price of their flats. Owners of more than
+            one flat have more than one vote, provided that it does not exceed
+            1/3 of all votes. In addition, flat owners have the right to appeal
+            to the court regarding the changed decision.
           </p>
         </div>
 
@@ -218,7 +206,7 @@ function PurchaseDetailsOverview() {
       <CommentForm />
       <Footer />
     </>
-  );
+  )
 }
 
-export default PurchaseDetailsOverview
+export default AfterLeaseDetails

@@ -37,7 +37,7 @@ function NavbarMenu() {
       { name: 'Real Estate Index', path: '/real-estate-index' },
       { name: 'Credit', path: '/credit-estate' },
       { name: 'Property Buying Guide', path: '/property-buying-guide' },
-      { name: 'Real Estate Dictionary', path: '/vehicle-buying-guide' },
+      { name: 'Real Estate Dictionary', path: '/real-estate-dictionary' },
     ],
     selling: [
       { name: 'Real Estate Index', path: '/vehicle-valuation' },
@@ -45,8 +45,8 @@ function NavbarMenu() {
       { name: 'Real Estate Dictionary', path: '/vehicle-selling-guide' },
     ],
     renting: [
-      { name: 'Real Estate Index', path: '/zero-vehicle-world' },
-      { name: 'Property Rental Guide', path: '/compare-new-vehicle' },
+      { name: 'Real Estate Index', path: '/real-estate-index' },
+      { name: 'Property Rental Guide', path: '/property-rental-guide' },
       { name: 'Real Estate Dictionary', path: '/zero-vehicle-launch-schedule' },
     ]
   };
