@@ -52,6 +52,10 @@ import PurchaseDetailsOverview from "./Components/RealEstate/PropertyBuyingGuide
 import RealEstateDictionary from "./Components/RealEstate/PropertyBuyingGuide/RealEstateDictionary";
 import RentalGuidePage from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/RentalGuidePage";
 import RentingGuides from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/RentingGuides";
+import BeforeRenting from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/BeforeRenting";
+import AfterLease from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/AfterLease";
+import BeforeRentingOverview from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/BeforeRentingOverview";
+import AfterLeaseOverview from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/AfterLeaseOverview";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -106,6 +110,10 @@ const ProjectRoutes = () => {
         { path: "/real-estate-dictionary", element: <RealEstateDictionary/> },
         { path: "/property-rental-guide", element: <RentalGuidePage/> },
         { path: "/renting-guides", element: <RentingGuides/> },
+        { path: "/before-renting", element: <BeforeRenting/> },
+        { path: "/after-lease", element: <AfterLease/> },
+        { path: "/before-renting-overview", element: <BeforeRentingOverview/> },
+        { path: "/after-lease-overview", element: <AfterLeaseOverview/> }
         
     ]);
     return element;

@@ -15,7 +15,7 @@ function RentalGuidePage() {
       description:
         "Finding a rental house is a difficult process. Doing your research well is the most important step in finding a house that suits your needs. We have compiled the things you need to pay attention to during this process in our guide.",
       image: "/assets/purchase.png",
-      path: "/purchase-details-real-estate", // Add path for navigation
+      path: "/before-renting", // Add path for navigation
     },
     {
       id: "after-lease",
@@ -23,7 +23,7 @@ function RentalGuidePage() {
       description:
         "You have found the right house for you and agreed on the terms. So what should you pay attention to during the contract phase? The information you may need is in our rental guide.",
       image: "/assets/purchase.png",
-      path: "/purchase-details-real-estate", // Add path for navigation
+      path: "/after-lease", // Add path for navigation
     }
   ];
   return (
@@ -31,7 +31,7 @@ function RentalGuidePage() {
       <Navbar />
       <NavbarMenu />
       <div className="min-h-screen font-poppins ">
-        <Link to="/selling-guides">
+        <Link to="/renting-guides">
           <div className="bg-white font-poppins rounded-lg  max-w-7xl w-full mx-auto my-8">
             {/* Header Section */}
             <div className="flex justify-between items-center mb-5 font-poppins">
