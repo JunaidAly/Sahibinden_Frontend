@@ -16,7 +16,7 @@ function Favorites() {
     <>
         <Navbar />
         <NavMenuBar />
-        <div className='mt-10 flex flex-row   p-5 gap-5'>
+        <div className='mt-10 flex flex-row max-w-7xl mx-auto   p-5 gap-5'>
             <Accordion onComponentChange={handleComponentChange} />
             <FavoritesContent activeComponent={activeComponent} />
         </div>

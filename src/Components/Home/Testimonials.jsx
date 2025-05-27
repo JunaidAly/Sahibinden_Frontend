@@ -21,7 +21,7 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="flex items-center justify-center px-10 py-16  bg-[#EFF2F799]">
+    <section className="flex items-center justify-center px-10 py-16 max-w-7xl w-full mx-auto  bg-[#EFF2F799]">
       {/* Left Side */}
       <div className=" flex flex-col justify-center items-baseline gap-14 w-[451px] h-[223px]">
         <h2 className="text-[61px] font-[400] leading-[111%] text-[#010101] ">

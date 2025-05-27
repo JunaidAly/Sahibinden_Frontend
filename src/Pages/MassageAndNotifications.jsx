@@ -15,7 +15,7 @@ function MassageAndNotifications() {
          <>
          <Navbar />
             <NavMenuBar />
-            <div className='mt-10 flex flex-row justify-center p-5 gap-5'>
+            <div className='mt-10 flex flex-row justify-center p-5 gap-5 max-w-7xl mx-auto'>
                 <NavigationMenu  onSectionChange={handleComponentChange}/>
                 <Content activeComponent={activeComponent} />
                 </div>

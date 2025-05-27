@@ -54,7 +54,7 @@ const VehicleComparisonComponent = () => {
   
     return (
       <>
-        <div className=" p-6 bg-white font-poppins">
+        <div className=" p-6 bg-white font-poppins max-w-7xl mx-auto">
           <h1 className="text-[30px] text-black font-[500] mb-8">
             Vehicle Comparison
           </h1>

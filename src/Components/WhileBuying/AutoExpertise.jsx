@@ -44,7 +44,8 @@ export const AutoExpertiseForm = () => {
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   return (
-    <div className="max-w-5xl ml-5 p-4 font-poppins bg-white rounded">
+    <div className="max-w-7xl w-full mx-auto p-4 font-poppins bg-white rounded">
+      <div className="max-w-5xl  ">
         <h2 className="text-[30px] font-[500] text-black">Auto Expertise</h2>
         <p className="mt-2 font-[400] text-[20px] leading-7 text-black">
           If you are wondering where to get expertise service: choose one of the
@@ -93,6 +94,7 @@ export const AutoExpertiseForm = () => {
             <button className="w-[300px] px-3 font-Inter font-[400] py-2 text-sm text-white bg-[#1544AB] rounded">
               Select branch and purchase
             </button>
+          </div>
           </div>
         </div>
       </div>

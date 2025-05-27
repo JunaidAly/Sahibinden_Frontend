@@ -27,17 +27,17 @@ function Home() {
         </main>
       </div>
       <div>
-        <div className="flex flex-col gap-2 p-7 ">
+        <div className="flex flex-col gap-2 p-7 max-w-7xl mx-auto ">
           <h1 className="font-poppins font-[500] text-[25px]">Auto360</h1>
           <Auto360 />
         </div>
-        <div className="flex flex-col gap-2 p-7">
+        <div className="flex flex-col gap-2 p-7 max-w-7xl mx-auto">
           <h1 className="font-poppins font-[500] text-[25px]">
             Real Estate360
           </h1>
           <RealEstate360 />
         </div>
-        <div className="flex flex-col gap-2 p-7">
+        <div className="flex flex-col gap-2 p-7 max-w-7xl mx-auto">
           <h1 className="font-poppins font-[500] text-[25px]">Shopping Blog</h1>
           <ShoppingBlog />
         </div>

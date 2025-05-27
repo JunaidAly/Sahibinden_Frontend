@@ -16,7 +16,7 @@ function MyAccount() {
     <>
     <Navbar />
     <NavMenuBar />
-    <div className='mt-10 flex flex-row justify-center p-5 gap-5'>
+    <div className='mt-10 flex flex-row justify-center max-w-7xl mx-auto p-5 gap-5'>
     <NavigationMenu  onSectionChange={handleComponentChange} />
     <MyAccountContent activeComponent={activeComponent} />
     </div>

@@ -17,7 +17,7 @@ function MyShoppingTransactions() {
     <>
       <Navbar />
       <NavMenuBar />
-      <div className="mt-5 flex flex-row justify-center p-5 gap-5">
+      <div className="mt-5 flex flex-row justify-center p-5 gap-5 2xl:gap-10 max-w-7xl mx-auto">
         <TransactionNavigationMenu onSectionChange={handleComponentChange} />
         <ContentShoppingTransaction activeComponent={activeComponent} />
       </div>

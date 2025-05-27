@@ -32,8 +32,8 @@ const CreditOffers = () => {
   return (
     <>
     
-    <div className="w-full max-w-[82rem] mx-auto  my-14  ">
-    <h1 className="mt-8 mb-4 ml-4 font-poppins text-xl font-medium">Cradit Offers</h1>
+    <div className="w-full max-w-7xl mx-auto  my-14  ">
+    <h1 className="mt-8 mb-4  font-poppins text-xl font-medium">Cradit Offers</h1>
       <div className="  w-full max-w-7xl m-auto  bg-white shadow-custom-right rounded-lg p-5   ">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Column - Loan Form */}

@@ -3,8 +3,8 @@ import { Link } from "react-router";
 const Navbar = () => {
   
   return (
-    <nav className="flex flex-col  items-center justify-center max-w-7xl w-full  gap-2 bg-white ">
-      <div className="flex items-center   w-full">
+    <nav className="flex flex-col  items-center justify-center mx-auto w-full  gap-2 bg-white ">
+      <div className="flex items-center justify-between  w-full">
       {/* Left: Logo */}
       <Link to={"/"}>
       <div className="flex items-center">
@@ -39,7 +39,7 @@ const Navbar = () => {
       </div>
 
       {/* Right: Icons + Button */}
-      <div className="flex items-center relative left-10 space-x-6">
+      <div className="flex items-center  space-x-6 mr-10">
         {/* Notification Icons */}
         <Link to={"/cart"}>
         <div className="relative">

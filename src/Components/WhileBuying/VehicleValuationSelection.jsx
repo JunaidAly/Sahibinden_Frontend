@@ -26,7 +26,7 @@ const VehicleValuationSelection = () => {
       const colors = ['Diesel'];
 
   return (
-    <div className="p-8  max-w-7xl bg-white rounded-lg shadow-custom font-poppins">
+    <div className="p-8  max-w-7xl mx-auto bg-white rounded-lg shadow-custom font-poppins">
       <div className="mb-8">
         <h1 className="text-[30px] font-[500] text-black mb-2">Vehicle Valuation</h1>
         <p className="text-[20px] font-[500] text-[#888F9F]">Select the vehicle you are interested in below.</p>

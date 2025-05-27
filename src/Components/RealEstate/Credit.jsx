@@ -286,8 +286,8 @@ function Credit() {
       <Navbar />
       <NavbarMenu />
       
-      <div className='font-poppins'>
-        <h2 className="text-2xl font-medium text-black ml-9 mb-4">Credit Offers</h2>
+      <div className='font-poppins max-w-7xl mx-auto'>
+        <h2 className="text-2xl font-medium text-black  mb-4">Credit Offers</h2>
         <CreditOffers />
       </div>
       <DetailedInformation />

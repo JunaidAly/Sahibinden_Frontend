@@ -10,7 +10,7 @@ function ShoppingBlog() {
         
       ];
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 w-[963px] h-[130px]  '>
+    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5   '>
       {product.map((item) => (
         <div
           key={item.id}
