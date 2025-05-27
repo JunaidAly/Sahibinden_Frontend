@@ -10,12 +10,12 @@ import CategoriesCars from "./Components/Home/CategoriesCars";
 import CategoriesCellPhones from "./Components/Home/CategoriesCellPhones";
 import AdManagement from "./Pages/AdManagement";
 import BuyNow from "./Components/AdManagement/BuyNow";
-import Auto360 from "./Components/Auto360";
+import Auto360Page from "./Components/Auto360/Auto360Page";
 import VehicleComparisonComponent from "./Components/WhileBuying/VehicleComparisonComponent";
 import VehicleValuationComponent from "./Components/WhileBuying/VehicleValuation";
 import VehicleDamageInquiry from "./Components/WhileBuying/VehicleDamageInquiry";
 import PastQueries from "./Components/WhileBuying/PastQueries";
-import AutoExpertise from "./Components/Auto360/index"
+import AutoExpertise from "./Components/WhileBuying/AutoExpertise"
 import WhileBuyingGuide from "./Components/WhileBuying/WhileBuyingGuide";
 import WhileSellingGuide from "./Components/WhileSelling/WhileSellingGuide";
 import DuringPurchase from "./Components/WhileBuying/DuringPurchase";
@@ -56,6 +56,10 @@ import BeforeRenting from "./Components/RealEstate/WhenRenting/PropertyRentalGui
 import AfterLease from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/AfterLease";
 import BeforeRentingOverview from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/BeforeRentingOverview";
 import AfterLeaseOverview from "./Components/RealEstate/WhenRenting/PropertyRentalGuide/AfterLeaseOverview";
+import SellingGuidePage from "./Components/RealEstate/WhenSelling/SellingGuidePage";
+import PreSales from "./Components/RealEstate/WhenSelling/PreSales";
+import PreSalesOverview from "./Components/RealEstate/WhenSelling/PreSalesOverview";
+import CartPage from "./Components/Cart/CartPage";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -68,7 +72,7 @@ const ProjectRoutes = () => {
         { path: "/categories-cell-phones", element: <CategoriesCellPhones/> },
         { path: "/ad-management", element: <AdManagement/> },
         { path: "/buy-now", element: <BuyNow/> },
-        { path: "/auto-360", element: <Auto360/> },
+        { path: "/auto360-page", element: <Auto360Page/> },
         { path: "/vehicle-comparison", element: <VehicleComparisonComponent/> },
         { path: "/vehicle-valuation", element: <VehicleValuationComponent/> },
         { path: "/vehicle-damage-inquiry", element: <VehicleDamageInquiry/> },
@@ -113,7 +117,11 @@ const ProjectRoutes = () => {
         { path: "/before-renting", element: <BeforeRenting/> },
         { path: "/after-lease", element: <AfterLease/> },
         { path: "/before-renting-overview", element: <BeforeRentingOverview/> },
-        { path: "/after-lease-overview", element: <AfterLeaseOverview/> }
+        { path: "/after-lease-overview", element: <AfterLeaseOverview/> },
+        { path: "/selling-guides-page", element: <SellingGuidePage/> },
+        { path: "/pre-sales", element: <PreSales/> },
+        { path: "/pre-sales-overview", element: <PreSalesOverview/> },
+        { path: "/cart", element: <CartPage/> },
         
     ]);
     return element;

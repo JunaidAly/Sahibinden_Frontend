@@ -1,18 +1,17 @@
-import React from 'react'
-import { useState } from 'react';
-import { MapPin, ChevronDown, Search } from 'lucide-react';
+import React from "react";
+import { useState } from "react";
+import { MapPin, ChevronDown, Search } from "lucide-react";
 import { FaCaretDown } from "react-icons/fa";
-import Navbar from '../Navbar';
-import NavbarMenu from '../Auto360/NavbarMenu';
-import Footer from '../Footer';
-import CommentForm from '../Home/CommentForm';
-
+import Navbar from "../Navbar";
+import NavbarMenu from "../Auto360/NavbarMenu";
+import Footer from "../Footer";
+import CommentForm from "../Home/CommentForm";
 
 const CreditOffers = () => {
-  const [activeTab, setActiveTab] = useState('consumer');
-  const [loanAmount, setLoanAmount] = useState('');
+  const [activeTab, setActiveTab] = useState("consumer");
+  const [loanAmount, setLoanAmount] = useState("");
   const [maturityOpen, setMaturityOpen] = useState(false);
-  const [selectedMaturity, setSelectedMaturity] = useState('');
+  const [selectedMaturity, setSelectedMaturity] = useState("");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -28,13 +27,17 @@ const CreditOffers = () => {
   };
 
   const handleCalculate = () => {
-    console.log('Calculating loan with:', { loanAmount, selectedMaturity, type: activeTab });
+    console.log("Calculating loan with:", {
+      loanAmount,
+      selectedMaturity,
+      type: activeTab,
+    });
     // Implement loan calculation logic
   };
 
   return (
     <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-custom-diagonal mt-4 overflow-hidden">
-      <div className="p-10">      
+      <div className="p-10">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Column - Loan Form */}
           <div className="w-full md:w-1/3 shadow-custom-diagonal p-6 bg-white rounded-lg">
@@ -42,26 +45,26 @@ const CreditOffers = () => {
             <div className="flex rounded-full overflow-hidden border border-[#1544AB] mb-4">
               <button
                 className={`flex-1 py-2 text-sm rounded-full font-medium ${
-                  activeTab === 'consumer' 
-                    ? 'bg-[#1544AB] text-white' 
-                    : 'bg-white text-[#1544AB]'
+                  activeTab === "consumer"
+                    ? "bg-[#1544AB] text-white"
+                    : "bg-white text-[#1544AB]"
                 }`}
-                onClick={() => handleTabChange('consumer')}
+                onClick={() => handleTabChange("consumer")}
               >
                 Consumer Loan
               </button>
               <button
                 className={`flex-1 py-2 text-sm rounded-full font-medium ${
-                  activeTab === 'vehicle' 
-                    ? 'bg-[#1544AB] text-white' 
-                    : 'bg-white text-[#1544AB]'
+                  activeTab === "vehicle"
+                    ? "bg-[#1544AB] text-white"
+                    : "bg-white text-[#1544AB]"
                 }`}
-                onClick={() => handleTabChange('vehicle')}
+                onClick={() => handleTabChange("vehicle")}
               >
                 Vehicle Loan
               </button>
             </div>
-            
+
             {/* Loan Amount Input */}
             <div className="mb-4">
               <input
@@ -72,22 +75,32 @@ const CreditOffers = () => {
                 className="w-full p-3 border border-[#1544AB] rounded-md focus:outline-none focus:ring-1 focus:ring-[#1544AB]"
               />
             </div>
-            
+
             {/* Maturity Dropdown */}
             <div className="mb-4 relative">
-              <div 
+              <div
                 className="w-full p-3 border border-[#1544AB]  focus:outline-none focus:ring-1 focus:ring-[#1544AB] rounded-md flex justify-between items-center cursor-pointer"
                 onClick={handleMaturityToggle}
               >
-                <span className={selectedMaturity ? 'text-gray-900' : 'text-gray-400'}>
-                  {selectedMaturity || 'Maturity'}
+                <span
+                  className={
+                    selectedMaturity ? "text-gray-900" : "text-gray-400"
+                  }
+                >
+                  {selectedMaturity || "Maturity"}
                 </span>
                 <FaCaretDown size={24} className="text-[#1544AB]" />
               </div>
-              
+
               {maturityOpen && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg">
-                  {['12 Months', '24 Months', '36 Months', '48 Months', '60 Months'].map((option) => (
+                  {[
+                    "12 Months",
+                    "24 Months",
+                    "36 Months",
+                    "48 Months",
+                    "60 Months",
+                  ].map((option) => (
                     <div
                       key={option}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
@@ -99,7 +112,7 @@ const CreditOffers = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Calculate Button */}
             <button
               onClick={handleCalculate}
@@ -108,26 +121,33 @@ const CreditOffers = () => {
               Calculate Consumer Loan
             </button>
           </div>
-          
+
           {/* Right Column - Description and Image */}
           <div className="w-full md:w-2/3 flex  gap-20 ">
             <div className="pr-4 max-w-xs">
               <h3 className="text-xl font-bold text-black mb-2">
-                Easily Choose The Offer That Suits You Best For Vehicle Loan Offers.
+                Easily Choose The Offer That Suits You Best For Vehicle Loan
+                Offers.
               </h3>
               <p className="text-black mb-4">
-                When buying a house, you can easily apply for a loan by comparing the housing or consumer loan rates that suit you on a single page on sahibinden.com.
+                When buying a house, you can easily apply for a loan by
+                comparing the housing or consumer loan rates that suit you on a
+                single page on sahibinden.com.
               </p>
               <a href="#" className="text-[#1544AB]  font-medium">
                 Detailed Information
               </a>
             </div>
-            
+
             <div className="flex items-center">
               <div className="relative w-[275px] h-[275px]">
                 <div className="absolute">
-                  <div  className="w-[275px] h-[275px]">
-                    <img src="/assets/creditform.png" alt="Credit Image" className="w-full h-full object-cover " />
+                  <div className="w-[275px] h-[275px]">
+                    <img
+                      src="/assets/creditform.png"
+                      alt="Credit Image"
+                      className="w-full h-full object-cover "
+                    />
                   </div>
                 </div>
               </div>
@@ -138,7 +158,6 @@ const CreditOffers = () => {
     </div>
   );
 };
-
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -251,7 +270,7 @@ const FAQComponent = () => {
       </h2>
       <div className="space-y-4 ">
         {faqItems.map((item, index) => (
-          <FAQItem key={index} question={item.question} answer={item.answer}  />
+          <FAQItem key={index} question={item.question} answer={item.answer} />
         ))}
       </div>
     </div>
@@ -298,75 +317,11 @@ function Credit() {
     <>
       <Navbar />
       <NavbarMenu />
-      <div className="relative w-full overflow-hidden mt-10 bg-white">
-        {/* Main content */}
-        <div className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center relative z-10">
-          {/* Left content */}
-          <div className="w-full  font-poppins md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
-            <div className="ml-14">
-              <h1 className="text-5xl md:text-6xl font-bold text-[#091638] leading-tight mb-6">
-                Modern living
-                <br />
-                for everyone
-              </h1>
-              <p className="text-lg text-[#091638] mb-12 max-w-lg">
-                We provide a complete service for the sale, purchase or rental
-                of various items. We have been operating in Spain more than 15
-                years.
-              </p>
-            </div>
 
-            {/* Search form */}
-            <div className="bg-white relative md:w-[700px] left-20 p-4 rounded-md shadow-custom-diagonal">
-              <div className="flex flex-col md:flex-row gap-5 ">
-                {/* Location input */}
-                <div className="relative flex-grow">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#888F9F]">
-                    <MapPin size={20} />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="w-full py-4 pl-12 pr-4 border placeholder:text-[17px] placeholder:font-[400] border-[#888F9F]  rounded-[4px]"
-                  />
-                </div>
-
-                {/* Property type dropdown */}
-                <div className="relative border rounded-sm w-[250px]   border-[#888F9F] flex-grow">
-                  <select className="w-full py-4 px-4 appearance-none text-[#888F9F] ">
-                    <option>Property type</option>
-                    <option>Houses</option>
-                    <option>Apartments</option>
-                    <option>Cars</option>
-                  </select>
-                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <ChevronDown size={20} className="text-[#888F9F]" />
-                  </div>
-                </div>
-
-                {/* Search button */}
-                <button className="bg-[#1544AB] text-white rounded-[4px]   font-medium text-[17px] py-4 px-8 flex items-center justify-center ">
-                  <Search size={20} className="mr-2" />
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Right image */}
-          <div className="w-full md:w-[40%]">
-            <div className="rounded-lg overflow-hidden">
-              <img
-                src="/assets/credit.png"
-                alt="Luxury car with headlights on at sunset"
-                className="w-full h-auto object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className='font-poppins'>
-        <h2 className="text-[35px] font-medium text-black ml-9 mb-4">Credit Offers</h2>
+      <div className="font-poppins">
+        <h2 className="text-3xl font-medium text-black ml-9 mb-4">
+          Credit Offers
+        </h2>
         <CreditOffers />
       </div>
       <DetailedInformation />
@@ -377,4 +332,4 @@ function Credit() {
   );
 }
 
-export default Credit
+export default Credit;

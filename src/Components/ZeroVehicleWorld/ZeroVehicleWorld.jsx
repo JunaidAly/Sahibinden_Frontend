@@ -112,7 +112,7 @@ const VehicleComparisonComponent = () => {
   };
 
 
-const PopularBrands =() => {
+ const PopularBrands =() => {
     return (
         <div className="flex flex-col max-w-7xl mx-auto w-full  ">
             <h2 className="text-[30px] text-black font-[500] mb-8">Popular Brands</h2>

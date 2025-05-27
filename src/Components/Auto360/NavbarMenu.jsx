@@ -1,11 +1,10 @@
-
-
-
 import React, { useState, useRef, useEffect } from 'react';
+import { Link, useLocation } from 'react-router';
 
 function NavbarMenu() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRefs = useRef({});
+  const location = useLocation();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -60,6 +59,17 @@ function NavbarMenu() {
     setOpenDropdown(openDropdown === id ? null : id);
   };
 
+  // Check if a dropdown link should be active (either main link or any dropdown item matches current path)
+  const isDropdownLinkActive = (link) => {
+    if (location.pathname === link.path) return true;
+    
+    if (link.hasDropdown && dropdownContents[link.id]) {
+      return dropdownContents[link.id].some(item => location.pathname === item.path);
+    }
+    
+    return false;
+  };
+
   return (
     <div className="flex items-center h-[70px] justify-center w-full max-w-7xl mx-auto">
       <div className="flex gap-8 cursor-pointer">
@@ -73,7 +83,7 @@ function NavbarMenu() {
               <div
                 onClick={() => toggleDropdown(link.id)}
                 className={`text-[16px] font-[400] font-poppins flex items-center gap-1 ${
-                  link.active ? "text-[#1544AB]" : "text-[#231E1C]"
+                  isDropdownLinkActive(link) ? "text-[#1544AB]" : "text-[#231E1C]"
                 }`}
               >
                 {link.name}
@@ -90,28 +100,30 @@ function NavbarMenu() {
               {openDropdown === link.id && (
                 <div className="absolute top-full left-0 mt-2 w-max bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                   {dropdownContents[link.id].map((item, idx) => (
-                    <a
+                    <Link
                       key={idx}
-                      href={item.path}
-                      className="block px-4 py-3 text-sm font-[400] font-poppins text-[#231E1C] hover:bg-gray-50 hover:text-[#1544AB]"
+                      to={item.path}
+                      className={`block px-4 py-3 text-sm font-[400] font-poppins hover:bg-gray-50 hover:text-[#1544AB] ${
+                        location.pathname === item.path ? "text-[#1544AB] bg-gray-50" : "text-[#231E1C]"
+                      }`}
                       onClick={() => setOpenDropdown(null)}
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
           ) : (
-            <a
+            <Link
               key={index}
-              href={link.path}
+              to={link.path}
               className={`text-[16px] font-[400] font-poppins ${
-                link.active ? "text-[#1544AB]" : "text-[#231E1C]"
+                location.pathname === link.path ? "text-[#1544AB]" : "text-[#231E1C]"
               }`}
             >
               {link.name}
-            </a>
+            </Link>
           )
         )}
       </div>

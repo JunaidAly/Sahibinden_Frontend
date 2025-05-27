@@ -1,36 +1,29 @@
 import React from "react";
-import { useState } from 'react'
-import Navbar from '../../Navbar'
-import Footer from '../../Footer'
-import NavbarMenu from '../../RealEstate/NavbarMenu'
-import CommentForm from '../../Home/CommentForm'
+import { useState } from "react";
+import Navbar from "../../Navbar";
+import Footer from "../../Footer";
+import NavbarMenu from "../../RealEstate/NavbarMenu";
+import CommentForm from "../../Home/CommentForm";
 import { Link } from "react-router-dom";
+import { Search } from "lucide-react";
 
-function BuyingGuidePage() {
+function SellingGuidePage() {
   const guides = [
     {
-      id: "before-purchase",
-      title: "Before Purchase",
+      id: "pre-sales",
+      title: "Pre-Sales",
       description:
-        "Do you know what you may need before buying a property? We have prepared a comprehensive guide for you, all the information you need is here.",
+        "Do you know what you may need before selling your property? We have prepared a comprehensive guide for you, all the information you need is here.",
       image: "/assets/purchase.png",
-      path: "/purchase-details-real-estate", // Add path for navigation
+      path: "/pre-sales", // Add path for navigation
     },
     {
-      id: "during-purchase",
-      title: "During Purchase",
+      id: "during-sales",
+      title: "During Sales",
       description:
-        "You have found your dream house, agreed and decided to buy. You can easily find what you need to pay attention to during the purchasing process in our guide.",
+        "Are you renting a home or office? The Real Estate Rental Guide will provide you with all the answers you need and help you with the rental process.",
       image: "/assets/purchase.png",
-      path: "/purchase-details-real-estate", // Add path for navigation
-    },
-    {
-      id: "after-purchase",
-      title: "After Purchase",
-      description:
-        "if you are wondering what you need to do to keep your home safe, our post-purchase guide is the right place for you.",
-      image: "/assets/purchase.png",
-      path: "/purchase-details-real-estate", // Add path for navigation
+      path: "/pre-sales", // Add path for navigation
     },
   ];
   return (
@@ -40,18 +33,35 @@ function BuyingGuidePage() {
       <div className="min-h-screen font-poppins ">
         <Link to="/selling-guides">
           <div className="bg-white font-poppins rounded-lg  max-w-7xl w-full mx-auto my-8">
+            {/* Header Section */}
+            <div className="flex justify-between items-center mb-5 font-poppins">
+              <h1 className="text-[35px] font-[600] text-black">
+                 Real Estate Sales Guide
+              </h1>
+              {/* Search Bar */}
+              <div className="relative w-96">
+                <input
+                  type="text"
+                  placeholder="Type the content you want to search"
+                  className="w-full pl-4 pr-10 py-2 border border-[#1544AB] rounded-md placeholder-[#D9D9D9] text-gray-700 font-semibold"
+                />
+                <button className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <Search className="w-5 h-5 text-[#1544AB]" />
+                </button>
+              </div>
+            </div>
             {/* Content Section */}
             <div className="flex  items-center gap-96  shadow-custom-diagonal p-5  rounded-lg">
               {/* Left Content */}
               <div className="flex flex-col max-w-xl ">
                 <h2 className="text-[25px] font-[600] text-black mb-4">
-                  Home Buying Guide in 10 Steps
+                  10 Step Home Selling Guide
                 </h2>
 
                 <p className="text-gray-700 text-sm leading-relaxed mb-4">
                   We have summarized the information for you may need and what
-                  you need to do when buying a house in 10 steps and compiled it
-                  in a guide. With the 10- Step Home Buying Guide, your mind
+                  you need to do when selling a house in 10 steps and compiled
+                  it in a guide. With the 10- Step Home Selling Guide, your mind
                   will be at ease and your job will be easy.
                 </p>
 
@@ -76,7 +86,7 @@ function BuyingGuidePage() {
         </Link>
 
         <div className="max-w-7xl w-full mx-auto p-6 font-poppins shadow-custom-diagonal rounded-lg">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {guides.map((guide) => (
               <div
                 key={guide.id}
@@ -118,4 +128,4 @@ function BuyingGuidePage() {
   );
 }
 
-export default BuyingGuidePage;
+export default SellingGuidePage;

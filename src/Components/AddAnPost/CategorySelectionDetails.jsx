@@ -51,7 +51,7 @@ const CategorySelectionDetails = () => {
   return (
     <>
     <Navbar />
-    <div className="max-w-[1300px] mx-auto p-8 font-poppins bg-white rounded-xl shadow-custom">
+    <div className="max-w-[1300px] mx-auto p-8 mt-10 font-poppins bg-white rounded-xl shadow-custom">
       <h1 className="text-2xl font-[500] text-black mb-4">Step by Step Select Catgory</h1>
       <h2 className="text-xl text-[#888F9F] text-[20px] font-[500] mb-6">Real Estate</h2>
       

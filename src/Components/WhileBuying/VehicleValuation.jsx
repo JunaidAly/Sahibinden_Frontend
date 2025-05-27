@@ -11,10 +11,10 @@ import VehicleValuationSelection from './VehicleValuationSelection';
 
 export const VehicleValuationInfo = ({ onNavigateToSelection }) => {
   return (
-    <div className="max-w-7xl mx-auto p-6 mb-10 md:p-8 lg:p-12 rounded-lg font-poppins shadow-custom">
+    <div className="max-w-7xl mx-auto p-6 mb-10 md:p-8 lg:p-12 rounded-lg font-poppins shadow-custom-diagonal">
       <h1 className="text-3xl text-black font-[500] mb-8">Vehicle Valuation</h1>
 
-      <p className="text-3xl text-black font-[500] mb-8 max-w-[1300px]">
+      <p className="text-2xl text-black font-[500] mb-8 max-w-[1300px]">
         Learn the estimated market value of the vehicle you want to buy or sell
         with our "Vehicle Valuation Service"! This service is offered by
         utilizing the current and comprehensive ad data on sahibinden.com.
@@ -28,7 +28,7 @@ export const VehicleValuationInfo = ({ onNavigateToSelection }) => {
       </button>
 
       <div className="text-[#888F9F]   max-w-[1300px]">
-        <p className="text-[20px] font-[600]">
+        <p className="text-lg font-[600]">
           sahibinden.com is not responsible for any damages that users or third
           parties may suffer in the event that any transaction, including
           purchase or sale, is made or not made based on the information

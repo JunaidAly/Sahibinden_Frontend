@@ -3,8 +3,8 @@ import { Link } from "react-router";
 const Navbar = () => {
   
   return (
-    <nav className="flex flex-col  items-center justify-center gap-2 bg-white ">
-      <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+    <nav className="flex flex-col  items-center justify-center max-w-7xl w-full  gap-2 bg-white ">
+      <div className="flex items-center   w-full">
       {/* Left: Logo */}
       <Link to={"/"}>
       <div className="flex items-center">
@@ -39,23 +39,34 @@ const Navbar = () => {
       </div>
 
       {/* Right: Icons + Button */}
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center relative left-10 space-x-6">
         {/* Notification Icons */}
+        <Link to={"/cart"}>
         <div className="relative">
           <FaShoppingCart className="text-[#1544AB] text-xl" />
           <span className="absolute -top-2 -right-2 bg-[#1544AB] text-white rounded-full text-xs px-1">1</span>
         </div>
+        </Link>
+
+        <Link to={"/massage-and-notifications"}>
         <div className="relative">
           <FaEnvelope className="text-[#1544AB] text-xl" />
           <span className="absolute -top-2 -right-2 bg-[#1544AB] text-white rounded-full text-xs px-1">1</span>
         </div>
+        </Link>
+
+        <Link to={"/massage-and-notifications"}>
         <div className="relative">
           <FaBell className="text-[#1544AB] text-xl" />
           <span className="absolute -top-2 -right-2 bg-[#1544AB] text-white rounded-full text-xs px-1">1</span>
         </div>
+        </Link>
+
+        <Link to={"/favorites"}>
         <div>
           <FaStar className="text-[#1544AB] text-xl" />
         </div>
+        </Link>
 
         {/* Post Ad Button */}
         <Link to={"/post-an-add"}>

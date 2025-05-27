@@ -7,7 +7,7 @@ import Footer from '../Footer';
 import CommentForm from '../Home/CommentForm';
 
 
-const CreditOffers = () => {
+export const CreditOffers = () => {
   const [activeTab, setActiveTab] = useState('consumer');
   const [loanAmount, setLoanAmount] = useState('');
   const [maturityOpen, setMaturityOpen] = useState(false);
