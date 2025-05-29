@@ -76,6 +76,19 @@ const Sidebar = () => {
                 Auto Expertise
               </li>
             </ul>
+            {expanded.auto && (
+              <ul className="ml-8 mt-2 space-y-3">
+                <SubcategoryItem label="Vehicle Damage Inquiry"/>
+                <SubcategoryItem label="Vehicle Comparison"/>
+                <SubcategoryItem label="Vehicle Valuation"/>
+                <SubcategoryItem label="Maintenance & Repair"/>
+                <SubcategoryItem label="Auto Dictionary"/>
+                <SubcategoryItem label="Vehicle Buying Guide"/>
+                <SubcategoryItem label="Vehicle Sales Guide"/>
+                <SubcategoryItem label="Credit"/>
+                <SubcategoryItem label="Zero World Vehicle"/>
+              </ul>
+            )}
             <ToggleButton
               expanded={expanded.auto}
               onClick={() => toggleExpand("auto")}
@@ -98,6 +111,9 @@ const Sidebar = () => {
                 <SubcategoryItem label="Workplace" count="766986" />
                 <SubcategoryItem label="Land" count="766986" />
                 <SubcategoryItem label="Housing Projects" count="766986" />
+                <SubcategoryItem label="Building" count="766986" />
+                <SubcategoryItem label="Timeshare" count="766986" />
+                <SubcategoryItem label="Tourist Facility" count="766986" />
               </ul>
             )}
             <ToggleButton
@@ -116,17 +132,22 @@ const Sidebar = () => {
             {expanded.vehicle && (
               <ul className="ml-8 mt-2 space-y-3">
                 <Link to={"/categories-cars"}>
-                  {" "}
                   <SubcategoryItem label="Cars" count="766986" />
                 </Link>
                 <SubcategoryItem label="Off-Road" count="766986" />
+                <SubcategoryItem label="Electric Vehicles" count="766986" />
                 <SubcategoryItem label="Motorcycle" count="766986" />
                 <SubcategoryItem label="Minivan & Panel Van" count="766986" />
-                <SubcategoryItem label="Commercial Vehicles" count="766986" />
-                <SubcategoryItem label="Electric Vehicles" count="766986" />
+                <SubcategoryItem label="Commercial Vehicles" count="766986" />           
                 <SubcategoryItem label="Rental Cars" count="766986" />
                 <SubcategoryItem label="Marine Vehicles" count="766986" />
                 <SubcategoryItem label="Damaged Vehicles" count="766986" />
+                <SubcategoryItem label="Caravan" count="766986" />
+                <SubcategoryItem label="Classic Vehicles" count="766986" />
+                <SubcategoryItem label="Aircraft" count="766986" />
+                <SubcategoryItem label="ATV" count="766986" />
+                <SubcategoryItem label="UTV" count="766986" />
+                <SubcategoryItem label="Disabled Plate Vehicles" count="766986" />
               </ul>
             )}
             <ToggleButton
@@ -173,6 +194,23 @@ const Sidebar = () => {
                 <SubcategoryItem label="Home Decoration" count="766986" />
                 <SubcategoryItem label="Home Electronics" count="766986" />
                 <SubcategoryItem label="Electrical Appliances" count="766986" />
+                <SubcategoryItem label="Clothing & Accessories" count="766986" />
+                <SubcategoryItem label="Hours" count="766986" />
+                <SubcategoryItem label="Mother & Baby" count="766986" />
+                <SubcategoryItem label="Personal Care & Cosmetics" count="766986" />
+                <SubcategoryItem label="Hobbies & Toys" count="766986" />
+                <SubcategoryItem label="Gamers Only" count="766986" />
+                <SubcategoryItem label="Books,Magazines & Films" count="766986" />
+                <SubcategoryItem label="Music" count="766986" />
+                <SubcategoryItem label="Sports" count="766986" />
+                <SubcategoryItem label="Jewelry, Gems & Gold" count="766986" />
+                <SubcategoryItem label="Collection" count="766986" />
+                <SubcategoryItem label="Antiques" count="766986" />
+                <SubcategoryItem label="Garden & DIY Market" count="766986" />
+                <SubcategoryItem label="Technical Electronics" count="766986" />
+                <SubcategoryItem label="Office & Stationery" count="766986" />
+                <SubcategoryItem label="Food & Beverage" count="766986" />
+                <SubcategoryItem label="Everything Else" count="766986" />
               </ul>
             )}
             <ToggleButton
@@ -213,6 +251,10 @@ const Sidebar = () => {
                   label="Agricultural Machinery"
                   count="766986"
                 />
+                 <SubcategoryItem
+                  label="Industry"
+                  count="766986"
+                />
                 <SubcategoryItem label="Electricity & Energy" count="766986" />
               </ul>
             )}
@@ -232,8 +274,11 @@ const Sidebar = () => {
             {expanded.craftsmen && (
               <ul className="ml-8 mt-2 space-y-3">
                 <SubcategoryItem label="Home Renovation & Decoration" />
+                <SubcategoryItem label="Transport" />
                 <SubcategoryItem label="Vehicle Service & Maintenance" />
                 <SubcategoryItem label="Repair & Technical Service" />
+                <SubcategoryItem label="Wedding & Event" />
+                <SubcategoryItem label="other" />
               </ul>
             )}
             <ToggleButton
@@ -257,6 +302,19 @@ const Sidebar = () => {
                   count="67"
                 />
                 <SubcategoryItem label="Foreign Language" count="78" />
+                <SubcategoryItem label="Computer" count="99" />
+                <SubcategoryItem label="Steering Wheel" count="74" />
+                <SubcategoryItem label="Sports" count="74" />
+                <SubcategoryItem label="Art" count="74" />
+                <SubcategoryItem label="Dance" count="74" />
+                <SubcategoryItem label="Music & Instruments" count="74" />
+                <SubcategoryItem label="Theatre & Acting" count="74" />
+                <SubcategoryItem label="Personal Development" count="74" />
+                <SubcategoryItem label="Vocational Courses" count="74" />
+                <SubcategoryItem label="Special Education" count="74" />
+                <SubcategoryItem label="Child Development" count="74" />
+                <SubcategoryItem label="Eloquence & Diction" count="74" />
+                <SubcategoryItem label="Photography" count="74" />
               </ul>
             )}
             <ToggleButton
@@ -283,6 +341,27 @@ const Sidebar = () => {
                 <SubcategoryItem label="Beauty & Care" count="99" />
                 <SubcategoryItem label="IT & Software Development" count="74" />
                 <SubcategoryItem label="Human Resources" count="74" />
+                <SubcategoryItem label="Human Resources " count="74" />
+                <SubcategoryItem label="Building & Construction" count="74" />
+                <SubcategoryItem label="Business & Strategic Management" count="74" />
+                <SubcategoryItem label="Protection & Security" count="74" />
+                <SubcategoryItem label="Logistics & Transportation" count="74" />
+                <SubcategoryItem label="Stores and Retail" count="74" />
+                <SubcategoryItem label="Accounting, Finance & Banking" count="74" />
+                <SubcategoryItem label="Engineering" count="74" />
+                <SubcategoryItem label="Customer Service" count="74" />
+                <SubcategoryItem label="Office Management & Administrative Affairs " count="74" />
+                <SubcategoryItem label="Part Time & Additional Job Opportunities" count="74" />
+                <SubcategoryItem label="Marketing & Product Management" count="74" />
+                <SubcategoryItem label="Radio, Cinema & Television " count="74" />
+                <SubcategoryItem label="Restaurant & Accommodation" count="74" />
+                <SubcategoryItem label="Health" count="74" />
+                <SubcategoryItem label="Sales" count="74" />
+                <SubcategoryItem label="Repair & Maintenance" count="74" />
+                <SubcategoryItem label="Agriculture & Livestock" count="74" />
+                <SubcategoryItem label="Design & Creativity" count="74" />
+                <SubcategoryItem label="Textiles & Clothing" count="74" />
+                <SubcategoryItem label="Production & Manufacturing" count="74" />
               </ul>
             )}
             <ToggleButton
@@ -309,6 +388,8 @@ const Sidebar = () => {
                 <SubcategoryItem label="Cattle" count="74" />
                 <SubcategoryItem label="Small Livestock" count="74" />
                 <SubcategoryItem label="Marine Creatures" count="74" />
+                <SubcategoryItem label="Reptiles" count="74" />
+                <SubcategoryItem label="Insects" count="74" />
               </ul>
             )}
             <ToggleButton
@@ -325,55 +406,10 @@ const Sidebar = () => {
               count="766986"
             />
             {expanded.helpSeekers && (
-              <ul className="ml-8 mt-2 space-y-3">
-                <li className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="babysitter"
-                    className="mr-2 h-4 w-4 border-[#1544AB] "
-                    checked={checked.babysitter}
-                    onChange={() => handleCheckboxChange("babysitter")}
-                  />
-                  <label
-                    htmlFor="babysitter"
-                    className="text-[#231E1C] font-monrope text-[15px] font-[400]"
-                  >
-                    Babysitter & Nanny
-                    <span className="text-[12px]">(56)</span>
-                  </label>
-                </li>
-                <li className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="elderly"
-                    className="mr-2 h-4 w-4 border-[#1544AB]"
-                    checked={checked.elderly}
-                    onChange={() => handleCheckboxChange("elderly")}
-                  />
-                  <label
-                    htmlFor="elderly"
-                    className="text-[#231E1C] font-monrope text-[15px] font-[400]"
-                  >
-                    Elderly & Patient Caregiver
-                    <span className="text-[12px]">(67)</span>
-                  </label>
-                </li>
-                <li className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="cleaner"
-                    className="mr-2 h-4 w-4 border-[#1544AB]"
-                    checked={checked.cleaner}
-                    onChange={() => handleCheckboxChange("cleaner")}
-                  />
-                  <label
-                    htmlFor="cleaner"
-                    className="text-[#231E1C] font-monrope text-[15px] font-[400]"
-                  >
-                    Cleaner & Housekeeper
-                    <span className="text-[12px]">(78)</span>
-                  </label>
-                </li>
+             <ul className="ml-8 mt-2 space-y-3">
+                <SubcategoryItem label="Babysitter & Nanny" count="56" />
+                <SubcategoryItem label="Elderly & Patient Caregiver" count="67" />
+                <SubcategoryItem label="Cleaner & Housekeeper" count="78" />
               </ul>
             )}
             <ToggleButton

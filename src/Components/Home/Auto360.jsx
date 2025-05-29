@@ -48,12 +48,12 @@ function Auto360() {
   ];
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 w-[1320px]'>
+    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 max-w-7xl gap-24'>
       {product.map((item) => (
         <Link
           key={item.id}
-          to={item.route}
-          className='flex flex-col items-center justify-center bg-white/20 backdrop-blur-sm rounded-[10px] shadow-lg w-[175px] h-[150px] hover:bg-white/30 hover:scale-105 transition-all duration-300 cursor-pointer'
+          to= {item.route}
+          className='flex flex-col items-center justify-center bg-white/20 backdrop-blur-sm rounded-[10px] shadow-custom-light w-[175px] h-[150px] hover:bg-white/30 hover:scale-105 transition-all duration-300 cursor-pointer'
         >
           <img src={item.image} alt={item.name} className="w-12 h-12 object-contain mb-2" />
           <h2 className="text-sm font-semibold text-center">{item.name}</h2>

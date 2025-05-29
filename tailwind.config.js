@@ -22,6 +22,7 @@ export default {
         'custom': '0px 4px 20px 0px #0000001A',
         'custom-right': '2px 0px 10px 0px #00000040',
         'custom-diagonal': '2px 2px 10px 0px #00000040',
+        'custom-light': '0px 4px 20px 0px #0000001A',
       },
       colors: {
         'primaryBlue': '#1544AB',
