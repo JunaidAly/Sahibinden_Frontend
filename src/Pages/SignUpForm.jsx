@@ -1,9 +1,24 @@
 import React, { useState } from 'react';
-import { FaEye, FaEyeSlash,  FaApple, } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaApple } from 'react-icons/fa';
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router';
+import { auth, db } from '../../firebase'; // Import your firebase config and firestore
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  GoogleAuthProvider,
+  updateProfile 
+} from 'firebase/auth';
+import { 
+  doc, 
+  setDoc, 
+  serverTimestamp 
+} from 'firebase/firestore';
+
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -18,11 +33,134 @@ const SignUpForm = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const handleSubmit = (e) => {
+  // Function to create user document in Firestore
+  const createUserDocument = async (user, additionalData = {}) => {
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        displayName: user.displayName || `${formData.firstName} ${formData.lastName}`,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        emailVerified: user.emailVerified,
+        photoURL: user.photoURL || null,
+        ...additionalData
+      };
+
+      await setDoc(userDocRef, userData);
+      console.log('User document created successfully in Firestore');
+      
+    } catch (error) {
+      console.error('Error creating user document:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    
+    if (!formData.agreeToTerms) {
+      setError('Please agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        formData.email, 
+        formData.password
+      );
+      
+      // Update user profile with display name
+      await updateProfile(userCredential.user, {
+        displayName: `${formData.firstName} ${formData.lastName}`
+      });
+
+      // Create user document in Firestore
+      await createUserDocument(userCredential.user, {
+        signUpMethod: 'email'
+      });
+
+      console.log('User created successfully:', userCredential.user);
+      // You can redirect to dashboard or show success message here
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error('Signup error:', error);
+      
+      // Handle different error types
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          setError('An account with this email already exists');
+          break;
+        case 'auth/weak-password':
+          setError('Password should be at least 6 characters');
+          break;
+        case 'auth/invalid-email':
+          setError('Please enter a valid email address');
+          break;
+        default:
+          setError('Something went wrong. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
+    
+    const provider = new GoogleAuthProvider();
+    
+    try {
+      const result = await signInWithPopup(auth, provider);
+      
+      // Extract name from Google profile
+      const displayName = result.user.displayName || '';
+      const nameParts = displayName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      // Create user document in Firestore for Google sign-in
+      await createUserDocument(result.user, {
+        signUpMethod: 'google',
+        firstName: firstName,
+        lastName: lastName
+      });
+      
+      console.log('Google sign-in successful:', result.user);
+      // You can redirect to dashboard or show success message here
+      window.location.href = '/'; 
+      
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      
+      switch (error.code) {
+        case 'auth/popup-closed-by-user':
+          setError('Sign-in was cancelled');
+          break;
+        case 'auth/popup-blocked':
+          setError('Popup was blocked. Please allow popups and try again');
+          break;
+        default:
+          setError('Google sign-in failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,6 +174,13 @@ const SignUpForm = () => {
             Quick & Simple way to Automate your payment
           </p>
         </div>
+        
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -147,9 +292,10 @@ const SignUpForm = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primaryBlue"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primaryBlue hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign Up
+              {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </div>
 
@@ -157,7 +303,7 @@ const SignUpForm = () => {
           <div className="text-center">
             <span className="text-sm text-gray-600">
               Already a member?{' '}
-              <Link to={"/signin"} className="font-medium text-primaryBlue ">
+              <Link to="/signin" className="font-medium text-primaryBlue hover:underline">
                 Sign In
               </Link>
             </span>
@@ -165,6 +311,9 @@ const SignUpForm = () => {
 
           {/* OR Divider */}
           <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500">OR</span>
             </div>
@@ -172,10 +321,19 @@ const SignUpForm = () => {
 
           {/* Social Login Options */}
           <div className="flex justify-center space-x-8">
-            <button type="button" >
+            <button 
+              type="button" 
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110 transition-transform"
+            >
               <FcGoogle className="w-8 h-8" />
             </button>
-            <button type="button" className="text-black">
+            <button 
+              type="button" 
+              className="text-black hover:scale-110 transition-transform"
+              disabled
+            >
               <FaApple className="w-8 h-8" />
             </button>
           </div>

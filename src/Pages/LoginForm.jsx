@@ -1,11 +1,21 @@
+
 import React, { useState } from 'react';
-import { FaEye, FaEyeSlash,  FaApple,  } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaApple } from 'react-icons/fa';
 import { FcGoogle } from "react-icons/fc";
 import { Link } from 'react-router-dom';
-
+import { auth } from '../../firebase'; // Import your firebase config
+import { 
+  signInWithEmailAndPassword, 
+  signInWithPopup, 
+  GoogleAuthProvider,
+  sendPasswordResetEmail 
+} from 'firebase/auth';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,11 +28,117 @@ const LoginForm = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
+    if (resetEmailSent) setResetEmailSent(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setLoading(true);
+    setError('');
+
+    try {
+      // Sign in with email and password
+      const userCredential = await signInWithEmailAndPassword(
+        auth, 
+        formData.email, 
+        formData.password
+      );
+      
+      console.log('User signed in successfully:', userCredential.user);
+      // You can redirect to dashboard or show success message here
+      window.location.href = '/' 
+      
+    } catch (error) {
+      console.error('Sign-in error:', error);
+      
+      // Handle different error types
+      switch (error.code) {
+        case 'auth/user-not-found':
+          setError('No account found with this email address');
+          break;
+        case 'auth/wrong-password':
+          setError('Incorrect password. Please try again');
+          break;
+        case 'auth/invalid-email':
+          setError('Please enter a valid email address');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many failed attempts. Please try again later');
+          break;
+        default:
+          setError('Sign-in failed. Please check your credentials and try again');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
+    
+    const provider = new GoogleAuthProvider();
+    
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log('Google sign-in successful:', result.user);
+      // You can redirect to dashboard or show success message here
+      window.location.href = '/'
+      
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      
+      switch (error.code) {
+        case 'auth/popup-closed-by-user':
+          setError('Sign-in was cancelled');
+          break;
+        case 'auth/popup-blocked':
+          setError('Popup was blocked. Please allow popups and try again');
+          break;
+        case 'auth/account-exists-with-different-credential':
+          setError('An account already exists with this email using a different sign-in method');
+          break;
+        default:
+          setError('Google sign-in failed. Please try again');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      setError('Please enter your email address first');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      await sendPasswordResetEmail(auth, formData.email);
+      setResetEmailSent(true);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      
+      switch (error.code) {
+        case 'auth/user-not-found':
+          setError('No account found with this email address');
+          break;
+        case 'auth/invalid-email':
+          setError('Please enter a valid email address');
+          break;
+        default:
+          setError('Failed to send password reset email. Please try again');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,6 +152,20 @@ const LoginForm = () => {
             Quick & Simple way to Automate your payment
           </p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Success Message for Password Reset */}
+        {resetEmailSent && (
+          <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
+            Password reset email sent! Check your inbox and follow the instructions.
+          </div>
+        )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -113,23 +243,26 @@ const LoginForm = () => {
                 </label>
               </div>
               <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-primarygray underline"
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                  className="font-medium text-primarygray underline hover:text-blue-600 disabled:opacity-50"
                 >
                   Forgot Password?
-                </a>
+                </button>
               </div>
             </div>
           </div>
 
-          {/* PROCEED Button */}
+          {/* Sign In Button */}
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-white bg-primaryBlue"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-white bg-primaryBlue hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In with your email
+              {loading ? 'Signing In...' : 'Sign In with your email'}
             </button>
           </div>
 
@@ -138,8 +271,8 @@ const LoginForm = () => {
             <span className="text-base text-black">
               Not a member?{" "}
               <Link
-                to={"/signup"}
-                className="font-medium text-primaryBlue"
+                to="/signup"
+                className="font-medium text-primaryBlue hover:underline"
               >
                 Sign Up
               </Link>
@@ -148,6 +281,9 @@ const LoginForm = () => {
 
           {/* OR USE Divider */}
           <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white text-black text-base">
                 OR USE
@@ -157,10 +293,19 @@ const LoginForm = () => {
 
           {/* Social Login Options */}
           <div className="flex justify-center space-x-8">
-            <button type="button">
+            <button 
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110 transition-transform"
+            >
               <FcGoogle className="w-8 h-8" />
             </button>
-            <button type="button" className="text-black">
+            <button 
+              type="button" 
+              className="text-black hover:scale-110 transition-transform"
+              disabled
+            >
               <FaApple className="w-8 h-8" />
             </button>
           </div>
