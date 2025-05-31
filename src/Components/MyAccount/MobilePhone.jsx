@@ -1,6 +1,85 @@
-import React from 'react'
+
+
+import React, { useState, useEffect } from 'react';
+import { doc, updateDoc, getFirestore } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../../../firebase'; // Adjust path to your firebase config
 
 function MobilePhone() {
+  const [user, loading, error] = useAuthState(auth);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const db = getFirestore();
+
+  // Format phone number as user types
+  const formatPhoneNumber = (value) => {
+    // Remove all non-digits
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Format as +90(XXX)XX XXX
+    if (phoneNumber.length <= 3) {
+      return `+90(${phoneNumber}`;
+    } else if (phoneNumber.length <= 5) {
+      return `+90(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3)}`;
+    } else {
+      return `+90(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}`;
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhoneNumber(formatted);
+  };
+
+  const handleAddPhoneNumber = async () => {
+    if (!user) {
+      setMessage('Please log in to add your phone number.');
+      return;
+    }
+
+    // Basic validation
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    if (cleanPhone.length < 10) {
+      setMessage('Please enter a valid phone number.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setMessage('');
+
+    try {
+      // Reference to the user's document
+      const userDocRef = doc(db, 'users', user.uid);
+      
+      // Update the document with phone number and updatedAt timestamp
+      await updateDoc(userDocRef, {
+        phoneNumber: phoneNumber,
+        updatedAt: new Date().toISOString()
+      });
+
+      setMessage('Phone number added successfully!');
+      // Optionally clear the input
+      // setPhoneNumber('');
+    } catch (error) {
+      console.error('Error updating phone number:', error);
+      setMessage('Error adding phone number. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Clear message after 5 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
     <div className="max-w-4xl w-full mx-auto font-poppins">
       <h1 className="text-xl font-medium text-black">Mobile Phone</h1>
@@ -14,23 +93,44 @@ function MobilePhone() {
           verification.
         </p>
         <div className="flex-1 gap-2 items-center mt-2">
-          <text className="w-full ">Mobile Phone Number</text>
+          <label className="w-full block text-sm font-medium text-black mb-1">
+            Mobile Phone Number
+          </label>
           <input
             type="text"
+            value={phoneNumber}
+            onChange={handlePhoneChange}
             placeholder="+90(__)__ ___"
-            className="w-full px-4 py-3 border placeholder:text-black border-[#1544AB] rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+            maxLength={14}
+            className="w-full px-4 py-3 border placeholder:text-gray-400 border-[#1544AB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
+        {message && (
+          <div className={`mt-3 p-3 rounded-md text-sm ${
+            message.includes('Error') || message.includes('Please') 
+              ? 'bg-red-100 text-red-700' 
+              : 'bg-green-100 text-green-700'
+          }`}>
+            {message}
+          </div>
+        )}
+
         <button
           type="button"
-          className="px-5 py-2 mt-2  capitalize bg-[#1544AB] text-white font-medium rounded-full"
+          onClick={handleAddPhoneNumber}
+          disabled={isSubmitting || !phoneNumber.trim()}
+          className={`px-5 py-2 mt-4 capitalize font-medium rounded-full transition-colors ${
+            isSubmitting || !phoneNumber.trim()
+              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+              : 'bg-[#1544AB] text-white hover:bg-blue-700'
+          }`}
         >
-          add my phone number
+          {isSubmitting ? 'Adding...' : 'Add My Phone Number'}
         </button>
       </div>
     </div>
   );
 }
 
-export default MobilePhone
+export default MobilePhone;
