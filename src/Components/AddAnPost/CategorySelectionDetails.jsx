@@ -103,3 +103,4 @@ const CategorySelectionDetails = () => {
 };
 
 export default CategorySelectionDetails;
+
