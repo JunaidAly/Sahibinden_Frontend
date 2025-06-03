@@ -1,7 +1,7 @@
 
 
 import { FaShoppingCart, FaEnvelope, FaBell, FaStar } from "react-icons/fa";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase"; // Adjust the path to your Firebase config
 
@@ -35,7 +35,17 @@ const Navbar = () => {
         {/* Left: Logo */}
         <Link to={"/"}>
           <div className="flex items-center">
-            <img src="assets/logo.svg" alt="Logo" className="h-[80px] w-[150px]"/>
+            <img 
+              src="/assets/logo.svg" 
+              alt="Logo" 
+              className="h-[80px] w-[150px]"
+              onError={(e) => {
+                console.error('Logo failed to load:', e.target.src);
+                // Fallback handling
+                e.target.style.display = 'none';
+                e.target.parentNode.innerHTML = '<div class="h-[80px] w-[150px] bg-blue-600 text-white flex items-center justify-center font-bold">LOGO</div>';
+              }}
+            />
           </div>
         </Link>
         

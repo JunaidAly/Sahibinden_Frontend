@@ -67,7 +67,7 @@ const ProjectRoutes = () => {
         { path: "/signin", element: <SignInForm/> },
         { path: "/ad-details", element: <AdDetails/> },
         { path: "/post-an-add", element: <PostAnAdd/> },   
-        { path: "/category-selection-details", element: <CategorySelectionDetails/> }, 
+        { path: "/category-selection-details/:categorySlug", element: <CategorySelectionDetails/> }, 
         { path: "/categories-cars", element: <CategoriesCars/> },
         { path: "/categories-cell-phones", element: <CategoriesCellPhones/> },
         { path: "/ad-management", element: <AdManagement/> },
