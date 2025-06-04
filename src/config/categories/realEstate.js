@@ -34,19 +34,14 @@ export const realEstateConfig = {
       { id: "readyToMove", label: "Ready to Move" },
     ],
     building: [
-      { id: "residentialBuilding", label: "Residential Building" },
-      { id: "commercialBuilding", label: "Commercial Building" },
-      { id: "mixedUse", label: "Mixed Use" },
+      { id: "BuildingForSale", label: "For Sale" },
+      { id: "BuildingForRent", label: "For Rent" },
     ],
     timeshare: [
-      { id: "beach", label: "Beach Resort" },
-      { id: "mountain", label: "Mountain Resort" },
-      { id: "city", label: "City Resort" },
-    ],
-    touristFacility: [
-      { id: "hotel", label: "Hotel" },
-      { id: "resort", label: "Resort" },
-      { id: "guesthouse", label: "Guest House" },
+      { id: "timeshareSale", label: "For sale" },],
+    housingforsale: [
+      { id: "hotel", label: "For Sale" },
+      { id: "resort", label: "For Rent" },
     ],
   },
   level3: {
@@ -428,5 +423,28 @@ export const realEstateConfig = {
       { id: "apartment", label: "Apartment" },
       { id: "villa", label: "Villa" },
     ],
+   hotel: [
+  { id: "hotelForSale", label: "Hotel For Sale" },
+  { id: "hotelForRent", label: "Hotel For Rent" },
+  { id: "hotel", label: "Hotel" },
+  { id: "apartHotel", label: "Apart Hotel" },
+  { id: "boutiqueHotel", label: "Boutique Hotel" },
+  { id: "motel", label: "Motel" },
+  { id: "hostel", label: "Hostel" },
+  { id: "campingSiteMocamp", label: "Camping Site (Mocamp)" },
+  { id: "holidayVillage", label: "Holiday Village" },
+],
+resort: [
+  { id: "hotelForSale", label: "Hotel For Sale" },
+  { id: "hotelForRent", label: "Hotel For Rent" },
+  { id: "hotel", label: "Hotel" },
+  { id: "apartHotel", label: "Apart Hotel" },
+  { id: "boutiqueHotel", label: "Boutique Hotel" },
+  { id: "motel", label: "Motel" },
+  { id: "hostel", label: "Hostel" },
+  { id: "campingSiteMocamp", label: "Camping Site (Mocamp)" },
+  { id: "holidayVillage", label: "Holiday Village" },
+  { id: "beach", label: "Beach" },
+]
   },
 };
