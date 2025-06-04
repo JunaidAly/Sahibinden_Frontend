@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Add useNavigate import
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import CommentForm from '../Home/CommentForm';
@@ -17,6 +17,7 @@ import {
 
 const CategorySelectionDetails = () => {
   const { categorySlug } = useParams();
+  const navigate = useNavigate(); // Add this hook
   const [selectedLevel1, setSelectedLevel1] = useState(null);
   const [selectedLevel2, setSelectedLevel2] = useState(null);
   const [selectedLevel3, setSelectedLevel3] = useState(null);
@@ -88,8 +89,8 @@ const CategorySelectionDetails = () => {
     
     console.log('Category selection complete:', selectionData);
     
-    // TODO: Handle navigation to next step or save selection
-    // Example: navigate('/post-details', { state: selectionData });
+    // Navigate to post-details route with selection data
+    navigate('/post-details', { state: selectionData });
   };
 
   // Loading state
