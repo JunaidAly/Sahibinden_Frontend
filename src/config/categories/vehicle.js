@@ -2750,6 +2750,163 @@ export const vehicleConfig = {
       { id: "rs", label: "RS" },
       { id: "s-series", label: "S Series" },
     ],
+    bmw: [
+      { id: "series-1", label: "Series 1" },
+      { id: "2-series", label: "2 Series" },
+      { id: "3-series", label: "3 Series" },
+      { id: "4-series", label: "4 Series" },
+      { id: "5-series", label: "5 Series" },
+      { id: "6-series", label: "6 Series" },
+      { id: "7-series", label: "7 Series" },
+      { id: "8-series", label: "8 Series" },
+      { id: "i-series", label: "i Series" },
+      { id: "m-series", label: "M Series" },
+      { id: "z-series", label: "Z Series" },
+    ],
+    byd: [
+      { id: "dolphin", label: "Dolphin" },
+      { id: "seal", label: "Seal" },
+    ],
+    citroen: [
+      { id: "c-elysee", label: "C-Elysee" },
+      { id: "c3", label: "C3" },
+      { id: "c4", label: "C4" },
+      { id: "c4x", label: "C4X" },
+      { id: "e-c4", label: "e-C4" },
+      { id: "e-c4-x", label: "e-C4 X" },
+    ],
+    cupra:[
+      { id: "born", label: "Born" },
+      { id: "leon", label: "Leon" },
+    ],
+    dacia:[
+      { id: "jogger", label: "Jogger" },
+    ],
+    dsAutomobiles:[
+      { id: "ds-4", label: "DS4" },
+    ],
+    ferrari: [
+  { id: "296", label: "296" },
+  { id: "812", label: "812" },
+  { id: "rome", label: "Rome" },
+  { id: "sf90", label: "SF90" }
+],
+    fiat: [
+      { id: "aegean", label: "Aegean" },
+    ],
+    ford: [
+      { id: "focus", label: "Focus" },
+    ],
+    honda: [
+      { id: "city", label: "City" },
+      { id: "civic", label: "Civic" },
+      { id: "jazz", label: "Jazz" },
+    ],
+    hyundai: [
+    { id: "elantra", label: "Elantra" },
+    { id: "i10", label: "i10" },
+    { id: "i20", label: "i20" },
+    { id: "i20n", label: "i20N" },
+    { id: "ionic 6", label: "Ionic 6" }
+],
+jaguar:[
+      { id: "f-type", label: "F-Type" },
+      { id: "xe", label: "XE" },
+      { id: "xf", label: "XF" },
+],
+    kia:[
+      { id: "ceed", label: "Ceed" },
+      { id: "cerato", label: "Cerato" },
+      { id: "picanto", label: "Picanto" },
+    ],
+    lexus: [
+  { id: "spouse", label: "SPOUSE" },
+  { id: "lc-convertible", label: "LC Convertible" },
+  { id: "lm", label: "LM" },
+  { id: "ls", label: "LS" }
+],
+maserati: [
+  { id: "ghibli", label: "Ghibli" },
+  { id: "gran-cabrio", label: "Gran Cabrio" },
+  { id: "granturismo", label: "GranTurismo" },
+  { id: "granturismo-e", label: "GranTurismo E" },
+  { id: "mc20", label: "MC20" },
+  { id: "quattroporte", label: "Quattroporte" }
+],
+    mercedesBenz: [
+  { id: "a-series", label: "A Series" },
+  { id: "amg-gt", label: "AMG GT" },
+  { id: "b-series", label: "B Series" },
+  { id: "c-series", label: "C Series" },
+  { id: "claa", label: "CLAA" },
+  { id: "cle", label: "CLE" },
+  { id: "e-series", label: "E Series" },
+  { id: "eqe", label: "EQE" },
+  { id: "eqs", label: "EQS" },
+  { id: "maybach-s", label: "Maybach S" },
+  { id: "s-series", label: "S Series" },
+  { id: "sl", label: "SL" }
+],
+ mini:[
+  {id: "cooper", label: "Cooper"},
+  {id: "coopers", label: "Cooper S"},
+],
+opel: [
+  { id: "astra", label: "Astra" },
+  { id: "astra-e", label: "Astra-e" },
+  { id: "corsa", label: "Corsa" },
+  { id: "corsa-e", label: "Corsa-e" }
+],
+peugeot: [
+  { id: "208", label: "208" },
+  { id: "308", label: "308" },
+  { id: "508", label: "508" },
+  { id: "e-208", label: "e-208" },
+  { id: "e-308", label: "e-308" }
+],
+porsche:[
+  { id: "panamera", label: "Panamera" },
+  { id: "taycan", label: "Taycan" }
+],
+renault: [
+  { id: "clio", label: "Clio" },
+  { id: "megane", label: "Megane" },
+  { id: "megane-e-tech", label: "Megane E-Tech" },
+  { id: "taliант", label: "Taliант" }
+],
+  seat: [
+    { id: "ibiza", label: "Ibiza" },
+    { id: "leon", label: "Leon" },
+  ],
+  skoda: [
+    { id: "fabia", label: "Fabia" },
+    { id: "octavia", label: "Octavia" },
+    { id: "scala", label: "Scala" },
+    { id: "superb", label: "Superb" },
+  ],
+  suzuki:[
+    { id: "swift", label: "Swift" },
+  ],
+  tesla:[
+    { id: "model-y", label: "Model Y" },
+  ],
+  toyota: [
+    { id: "corolla", label: "Corolla" },
+    { id: "race", label: "Race" },
+  ],
+  volkswagen: [
+  { id: "golf", label: "Golf" },
+  { id: "id7", label: "ID.7" },
+  { id: "passat-variant", label: "Passat Variant" },
+  { id: "polo", label: "Polo" }
+],
+volvo: [
+    { id: "s60", label: "S60" },
+    { id: "s90", label: "S90" },
+    { id: "v60 crosscountry", label: "V60 CrossCountry" },
+    { id: "v90 crosscountry", label: "V90 CrossCountry" }
+]
+
   },
   level5: {
     a3: [
@@ -2757,44 +2914,88 @@ export const vehicleConfig = {
       { id: "gasoline-lpg", label: "Gasoline & LPG" },
       { id: "hybrid", label: "Hybrid" },
     ],
-    a4:[
+    a4: [
       { id: "diesel", label: "Diesel" },
       { id: "gasoline", label: "Gasoline" },
       { id: "gasoline-lpg", label: "Gasoline & LPG" },
       { id: "hybrid", label: "Hybrid" },
-    ]
+    ],
+    "series-1": [
+      { id: "diesel", label: "Diesel" },
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+      { id: "hybrid", label: "Hybrid" },
+    ],
+    "2-series": [
+      { id: "diesel", label: "Diesel" },
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+      { id: "hybrid", label: "Hybrid" },
+    ],
+    "3-series": [
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+    ],
+    "4-series": [
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+    ],
+    "5-series": [
+      { id: "diesel", label: "Diesel" },
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+      { id: "hybrid", label: "Hybrid" },
+    ],
+    "6-series": [
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+      { id: "hybrid", label: "Hybrid" },
+    ],
+    "7-series": [
+      { id: "diesel", label: "Diesel" },
+      { id: "hybrid", label: "Hybrid" },
+    ],
+    "8-series": [
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+    ],
+    "i-series": [{ id: "electric", label: "Electric" }],
+    "m-series": [
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+    ],
+    "z-series": [
+      { id: "gasoline", label: "Gasoline" },
+      { id: "gasoline-lpg", label: "Gasoline & LPG" },
+    ],
+    dolphin: [{ id: "electric", label: "Electric" }],
+    seal: [{ id: "electric", label: "Electric" }],
   },
   level6: {
-   gasoline: [
-  { id: "hatchback-5-doors", label: "Hatchback 5 doors" },
-  { id: "sedan-4-doors", label: "Sedan 4 doors" }
-],
-"gasoline-lpg":[
-  { id: "hatchback-5-doors", label: "Hatchback 5 doors" },
-  { id: "sedan-4-doors", label: "Sedan 4 doors" }
-],
-hybrid:[
-  { id: "hatchback-5-doors", label: "Hatchback 5 doors" },
-  { id: "sedan-4-doors", label: "Sedan 4 doors" }
-],
-diesel:[
-  { id: "stationWagon-5-doors", label: "Hatchback 5 doors" },
-  { id: "sedan-4-doors", label: "Sedan 4 doors" }
-]
+    gasoline: [
+      { id: "hatchback-5-doors", label: "Hatchback 5 doors" },
+      { id: "sedan-4-doors", label: "Sedan 4 doors" },
+    ],
+    "gasoline-lpg": [
+      { id: "hatchback-5-doors", label: "Hatchback 5 doors" },
+      { id: "sedan-4-doors", label: "Sedan 4 doors" },
+    ],
+    hybrid: [
+      { id: "hatchback-5-doors", label: "Hatchback 5 doors" },
+      { id: "sedan-4-doors", label: "Sedan 4 doors" },
+    ],
+    diesel: [
+      { id: "stationWagon-5-doors", label: "Hatchback 5 doors" },
+      { id: "sedan-4-doors", label: "Sedan 4 doors" },
+    ],
+    electric: [{ id: "hatchback-5-doors", label: "Hatchback 5 doors" }],
   },
   level7: {
-    "hatchback-5-doors": [
-      { id: "automatic", label: "Automatic" },
-    ],
-    "sedan-4-doors": [
-       { id: "automatic", label: "Automatic" },
-      
-    ],
+    "hatchback-5-doors": [{ id: "automatic", label: "Automatic" }],
+    "sedan-4-doors": [{ id: "automatic", label: "Automatic" }],
   },
   level8: {
-    automatic: [
-      { id: "a3-sportsback", label: "A3 Sportsback" },
-    ]
+    automatic: [{ id: "a3-sportsback", label: "A3 Sportsback" }],
   },
   level9: {
     "a3-sportsback": [
