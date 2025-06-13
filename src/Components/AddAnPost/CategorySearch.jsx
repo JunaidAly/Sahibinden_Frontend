@@ -1,45 +1,3 @@
-// import React from "react";
-
-// function CategorySearch() {
-//   return (
-//     <div className="flex flex-col gap-4 max-w-[1300px] mt-10 mx-auto h-[300px] ">
-//       <h2 className="text-2xl font-[500] text-black  ">
-//         Select Category by searching with keyword
-//       </h2>
-//       {/* Center: Search Bar */}
-//       <div className="flex-1 ">
-//         <div className="flex items-center w-[370px] border border-[#1544AB] rounded-md overflow-hidden">
-//           <input
-//             type="text"
-//             placeholder="Type the content you want to search"
-//             className="w-[464px] px-4 py-2 outline-none font-sans font-[700] text-gray-700 placeholder-[#D9D9D9]"
-//           />
-//           <button className="px-3  text-[#1544AB]">
-//             <svg
-//               xmlns="http://www.w3.org/2000/svg"
-//               fill="none"
-//               viewBox="0 0 24 24"
-//               strokeWidth={2}
-//               stroke="currentColor"
-//               className="w-6 h-6"
-//             >
-//               <path
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//                 d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-//               />
-//             </svg>
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default CategorySearch;
-
-
-
 
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
@@ -67,58 +25,124 @@ function CategorySearch() {
   // Get all available categories from your config
   const availableCategories = getAvailableCategories();
 
-  // Function to search through all categories and their subcategories
+  // Enhanced function to search through all categories and build proper selections
   const searchCategories = (query) => {
     if (!query || query.trim().length < 2) {
       return [];
     }
 
-    // Use the utility function from categories config
-    return searchCategoriesAndSubcategories(query, 15); // Limit to 15 results
-  };
+    // Use the utility function from categories config if it exists
+    if (typeof searchCategoriesAndSubcategories === 'function') {
+      return searchCategoriesAndSubcategories(query, 15);
+    }
 
-  // Recursive function to search through subcategories
-  const searchSubcategories = (categorySlug, currentSelections, level, maxLevel, searchQuery, results, categoryTitle) => {
-    if (level > maxLevel) return;
+    // Fallback manual search
+    const results = [];
+    const searchQuery = query.toLowerCase().trim();
 
-    const levelOptions = getLevelOptions(categorySlug, currentSelections);
-    const levelKey = `level${level}`;
-    const options = levelOptions[levelKey] || [];
-
-    options.forEach(option => {
-      const optionLabel = option.label.toLowerCase();
+    // Search through each available category
+    availableCategories.forEach(categorySlug => {
+      const categoryTitle = getCategoryTitle(categorySlug);
+      const maxLevel = getMaxLevel(categorySlug);
       
-      // Check if this option matches the search
-      if (optionLabel.includes(searchQuery)) {
-        const newSelections = { ...currentSelections, [levelKey]: option.id };
-        const selectedLabels = getSelectedLabels(categorySlug, newSelections);
-        
-        // Build the full path
-        const pathParts = [categoryTitle];
-        for (let i = 1; i <= level; i++) {
-          const levelLabel = selectedLabels[`level${i}`];
-          if (levelLabel) {
-            pathParts.push(levelLabel);
-          }
-        }
-        
+      // Check if main category matches
+      if (categoryTitle.toLowerCase().includes(searchQuery)) {
         results.push({
           categorySlug,
           categoryTitle,
-          selections: newSelections,
-          level,
-          fullPath: pathParts.join(' → '),
-          matchType: 'subcategory',
-          option: option
+          selections: {},
+          level: 0,
+          fullPath: categoryTitle,
+          matchType: 'category',
+          option: null
         });
       }
 
-      // Continue searching deeper levels
-      if (level < maxLevel) {
-        const newSelections = { ...currentSelections, [levelKey]: option.id };
-        searchSubcategories(categorySlug, newSelections, level + 1, maxLevel, searchQuery, results, categoryTitle);
-      }
+      // Search through all subcategory levels
+      searchSubcategoriesRecursively(categorySlug, {}, 1, maxLevel, searchQuery, results, categoryTitle);
     });
+
+    // Sort results by relevance (exact matches first, then by level)
+    return results
+      .sort((a, b) => {
+        // Prioritize exact matches
+        const aExact = a.categoryTitle.toLowerCase() === searchQuery || 
+                      (a.option && a.option.label.toLowerCase() === searchQuery);
+        const bExact = b.categoryTitle.toLowerCase() === searchQuery || 
+                      (b.option && b.option.label.toLowerCase() === searchQuery);
+        
+        if (aExact && !bExact) return -1;
+        if (!aExact && bExact) return 1;
+        
+        // Then by category type (main categories first)
+        if (a.matchType === 'category' && b.matchType !== 'category') return -1;
+        if (a.matchType !== 'category' && b.matchType === 'category') return 1;
+        
+        // Then by level (lower levels first)
+        return a.level - b.level;
+      })
+      .slice(0, 15); // Limit to 15 results
+  };
+
+  // Recursive function to search through subcategories and build proper selection objects
+  const searchSubcategoriesRecursively = (categorySlug, currentSelections, level, maxLevel, searchQuery, results, categoryTitle) => {
+    if (level > maxLevel) return;
+
+    try {
+      const levelOptions = getLevelOptions(categorySlug, currentSelections);
+      const levelKey = `level${level}`;
+      const options = levelOptions[levelKey] || [];
+
+      options.forEach(option => {
+        const optionLabel = option.label.toLowerCase();
+        
+        // Check if this option matches the search
+        if (optionLabel.includes(searchQuery)) {
+          const newSelections = { ...currentSelections, [levelKey]: option.id };
+          
+          // Build the full path
+          const pathParts = [categoryTitle];
+          
+          // Build path by getting labels for each selection
+          for (let i = 1; i <= level; i++) {
+            const iLevelKey = `level${i}`;
+            if (newSelections[iLevelKey]) {
+              // Get the option label for this level
+              const iLevelOptions = getLevelOptions(categorySlug, 
+                Object.fromEntries(Object.entries(newSelections).filter(([key]) => {
+                  const levelNum = parseInt(key.replace('level', ''));
+                  return levelNum < i;
+                }))
+              );
+              const iOptions = iLevelOptions[iLevelKey] || [];
+              const iOption = iOptions.find(opt => opt.id === newSelections[iLevelKey]);
+              if (iOption) {
+                pathParts.push(iOption.label);
+              }
+            }
+          }
+          
+          results.push({
+            categorySlug,
+            categoryTitle,
+            selections: newSelections,
+            level,
+            fullPath: pathParts.join(' → '),
+            matchType: 'subcategory',
+            option: option,
+            matchedLabel: option.label
+          });
+        }
+
+        // Continue searching deeper levels with current selection
+        if (level < maxLevel) {
+          const newSelections = { ...currentSelections, [levelKey]: option.id };
+          searchSubcategoriesRecursively(categorySlug, newSelections, level + 1, maxLevel, searchQuery, results, categoryTitle);
+        }
+      });
+    } catch (error) {
+      console.warn(`Error searching level ${level} for category ${categorySlug}:`, error);
+    }
   };
 
   // Handle search input change with debouncing
@@ -135,10 +159,16 @@ function CategorySearch() {
     searchTimeoutRef.current = setTimeout(() => {
       if (value.trim().length >= 2) {
         setIsSearching(true);
-        const results = searchCategories(value);
-        setSearchResults(results);
-        setShowResults(true);
-        setIsSearching(false);
+        try {
+          const results = searchCategories(value);
+          setSearchResults(results);
+          setShowResults(true);
+        } catch (error) {
+          console.error('Search error:', error);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
       } else {
         setSearchResults([]);
         setShowResults(false);
@@ -146,17 +176,19 @@ function CategorySearch() {
     }, 300); // 300ms delay
   };
 
-  // Handle result selection
+  // Enhanced result selection handler
   const handleResultSelect = (result) => {
+    console.log('Selected search result:', result);
+    console.log('Selections to be passed:', result.selections);
+    
     if (result.matchType === 'category') {
-      // Navigate to category page
-      navigate(`/category/${result.categorySlug}`);
+      // Navigate to category page without pre-filled selections
+      navigate(`/category-selection-details/${result.categorySlug}`);
     } else {
       // Navigate to category page with pre-filled selections
-      navigate(`/category/${result.categorySlug}`, { 
+      navigate(`/category-selection-details/${result.categorySlug}`, { 
         state: { 
-          prefilledSelections: result.selections,
-          searchTerm: searchTerm 
+          prefilledSelections: result.selections
         } 
       });
     }
@@ -171,10 +203,16 @@ function CategorySearch() {
   const handleSearchClick = () => {
     if (searchTerm.trim().length >= 2) {
       setIsSearching(true);
-      const results = searchCategories(searchTerm);
-      setSearchResults(results);
-      setShowResults(true);
-      setIsSearching(false);
+      try {
+        const results = searchCategories(searchTerm);
+        setSearchResults(results);
+        setShowResults(true);
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
     }
   };
 
@@ -182,6 +220,8 @@ function CategorySearch() {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearchClick();
+    } else if (e.key === 'Escape') {
+      setShowResults(false);
     }
   };
 
@@ -251,9 +291,9 @@ function CategorySearch() {
           </button>
         </div>
 
-        {/* Search Results Dropdown */}
+        {/* Enhanced Search Results Dropdown */}
         {showResults && (
-          <div className="absolute  left-0 w-[464px] bg-white border border-gray-200 rounded-md shadow-lg max-h-[300px] overflow-y-auto z-50 mt-1">
+          <div className="absolute left-0 w-[464px] bg-white border border-gray-200 rounded-md shadow-lg max-h-[400px] overflow-y-auto z-50 mt-1">
             {searchResults.length > 0 ? (
               <>
                 <div className="px-4 py-2 bg-gray-50 border-b text-sm text-gray-600 font-medium">
@@ -261,7 +301,7 @@ function CategorySearch() {
                 </div>
                 {searchResults.map((result, index) => (
                   <div
-                    key={index}
+                    key={`${result.categorySlug}-${result.level}-${index}`}
                     onClick={() => handleResultSelect(result)}
                     className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                   >
@@ -291,13 +331,17 @@ function CategorySearch() {
                   </div>
                 ))}
               </>
-            ) : (
+            ) : searchTerm.trim().length >= 2 ? (
               <div className="px-4 py-8 text-center text-gray-500">
                 <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <div className="text-sm">No categories found</div>
                 <div className="text-xs text-gray-400 mt-1">Try a different search term</div>
+              </div>
+            ) : (
+              <div className="px-4 py-4 text-center text-gray-400 text-sm">
+                Type at least 2 characters to search
               </div>
             )}
           </div>
