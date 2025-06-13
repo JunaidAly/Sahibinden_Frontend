@@ -389,7 +389,6 @@
 
 
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../Navbar';
@@ -407,50 +406,227 @@ import {
   getMaxLevel
 } from '../../config/categories';
 
-// Function to generate vehicle data based on selections
-const generateVehicleData = (categorySlug, selections, selectedLabels) => {
+// Function to generate vehicle data based on selections from category system
+const generateVehicleDataFromSelections = (categorySlug, selections, categoryConfig) => {
   if (categorySlug !== 'vehicles' && categorySlug !== 'vehicle') {
     return [];
   }
 
-  // Extract selected values from the labels
-  const brand = selectedLabels.level1 || 'Unknown Brand';
-  const model = selectedLabels.level2 || 'Unknown Model';
-  const year = selectedLabels.level3 || '2024';
-  const bodyType = selectedLabels.level4 || 'Sedan';
-  const engine = selectedLabels.level5 || '2.0L';
-
-  // Generate realistic vehicle variants based on selections
-  const vehicles = [];
-  
-  // Generate different engine variants
-  const engineVariants = [
-    { power: '190 HP', displacement: '1984 cm3', fuel: 'Gasoline', gear: 'Manual' },
-    { power: '245 HP', displacement: '1984 cm3', fuel: 'Gasoline', gear: 'Automatic' },
-    { power: '310 HP', displacement: '1984 cm3', fuel: 'Gasoline', gear: 'Automatic' },
-  ];
-
-  // Add diesel variants if applicable
-  if (engine.includes('TDI') || engine.includes('Diesel')) {
-    engineVariants.push(
-      { power: '150 HP', displacement: '1968 cm3', fuel: 'Diesel', gear: 'Manual' },
-      { power: '190 HP', displacement: '1968 cm3', fuel: 'Diesel', gear: 'Automatic' }
-    );
+  // Check if selection is complete
+  if (!isSelectionComplete(categorySlug, selections)) {
+    return [];
   }
 
-  engineVariants.forEach((variant, index) => {
-    vehicles.push({
-      subModel: `${model} ${variant.power.split(' ')[0]}${variant.fuel === 'Diesel' ? ' TDI' : ' TFSI'}`,
-      fuel: variant.fuel,
-      caseType: `${bodyType} ${bodyType.toLowerCase().includes('suv') ? '5' : '4'} doors`,
-      enginePower: variant.power,
-      engineDisplacement: variant.displacement,
-      gear: variant.gear,
-      yearsOfProduction: `${year} - ${parseInt(year) + 1}`
-    });
-  });
+  // Get selected labels for each level
+  const selectedLabels = getSelectedLabels(categorySlug, selections);
+  
+  // Get the current level options to check for next level options
+  const levelOptions = getLevelOptions(categorySlug, selections);
+  
+  // Map data from specific levels:
+  // sub model = level8 + level9 (combine if both exist)
+  // fuel = level5
+  // case type = level6  
+  // gear = level7
+  // year of production = level2
+  
+  const yearOfProduction = selectedLabels.level2 || '2024';
+  const fuel = selectedLabels.level5 || 'Gasoline';
+  const caseType = selectedLabels.level6 || 'Sedan';
+  const gear = selectedLabels.level7 || 'Automatic';
+  const level8Data = selectedLabels.level8 || '';
+  const level9Data = selectedLabels.level9 || '';
+  
+  // Combine level8 and level9 for sub model
+  let subModel = level8Data;
+  if (level9Data) {
+    subModel = level8Data ? `${level8Data} ${level9Data}` : level9Data;
+  }
+  
+  // If we don't have level8/level9 data yet, check if there are options for the next level
+  const nextLevelAfterCurrent = Math.max(...Object.keys(selections).map(key => parseInt(key.replace('level', '')))) + 1;
+  const nextLevelOptions = levelOptions[`level${nextLevelAfterCurrent}`] || [];
+  
+  // If we have complete selection up to level 9, create single vehicle entry
+  if (subModel) {
+    return [{
+      id: 'selected-vehicle',
+      subModel: subModel,
+      fuel: fuel,
+      caseType: caseType,
+      enginePower: generateEnginePower(fuel, caseType),
+      engineDisplacement: generateEngineDisplacement(fuel, caseType),
+      gear: gear,
+      yearsOfProduction: formatYearOfProduction(yearOfProduction)
+    }];
+  }
+  
+  // If we have next level options (level8 or level9 variants), create multiple entries
+  if (nextLevelOptions.length > 0) {
+    return nextLevelOptions.map((option, index) => ({
+      id: option.id || `vehicle-${index}`,
+      subModel: option.label || option.name || `Variant ${index + 1}`,
+      fuel: fuel,
+      caseType: caseType,
+      enginePower: generateEnginePower(fuel, caseType, option.label),
+      engineDisplacement: generateEngineDisplacement(fuel, caseType, option.label),
+      gear: gear,
+      yearsOfProduction: formatYearOfProduction(yearOfProduction)
+    }));
+  }
+  
+  // Fallback: Generate basic variants based on current selections
+  return generateFallbackVehicleData(selectedLabels, fuel, caseType, gear, yearOfProduction);
+};
 
-  return vehicles;
+// Helper functions to generate custom values according to car type
+const generateEnginePower = (fuel, caseType, subModel = '') => {
+  // Base power values by fuel type
+  const basePowerByFuel = {
+    'Gasoline': 180,
+    'Diesel': 150,
+    'Hybrid': 200,
+    'Electric': 250,
+    'Petrol': 180
+  };
+  
+  // Multipliers by case type
+  const caseTypeMultiplier = {
+    'Sedan': 1.0,
+    'SUV': 1.3,
+    'Coupe': 1.1,
+    'Hatchback': 0.9,
+    'Wagon': 1.1,
+    'Convertible': 1.2,
+    'Pickup': 1.4,
+    'Van': 1.2
+  };
+  
+  let basePower = basePowerByFuel[fuel] || 180;
+  
+  // Detect case type from caseType string
+  let multiplier = 1.0;
+  Object.keys(caseTypeMultiplier).forEach(type => {
+    if (caseType.toLowerCase().includes(type.toLowerCase())) {
+      multiplier = caseTypeMultiplier[type];
+    }
+  });
+  
+  // Additional variations based on sub model keywords
+  if (subModel) {
+    if (subModel.toLowerCase().includes('sport') || subModel.toLowerCase().includes('s-line')) {
+      multiplier *= 1.3;
+    } else if (subModel.toLowerCase().includes('eco') || subModel.toLowerCase().includes('base')) {
+      multiplier *= 0.8;
+    } else if (subModel.toLowerCase().includes('turbo') || subModel.toLowerCase().includes('charged')) {
+      multiplier *= 1.4;
+    }
+  }
+  
+  const finalPower = Math.round(basePower * multiplier);
+  return `${finalPower} HP`;
+};
+
+const generateEngineDisplacement = (fuel, caseType, subModel = '') => {
+  // Base displacement values by fuel type (in cm3)
+  const baseDisplacementByFuel = {
+    'Gasoline': 2000,
+    'Diesel': 2000,
+    'Hybrid': 1800,
+    'Electric': 0, // Electric motors don't have displacement
+    'Petrol': 2000
+  };
+  
+  // Multipliers by case type
+  const caseTypeMultiplier = {
+    'Sedan': 1.0,
+    'SUV': 1.5,
+    'Coupe': 1.2,
+    'Hatchback': 0.8,
+    'Wagon': 1.1,
+    'Convertible': 1.3,
+    'Pickup': 1.8,
+    'Van': 1.4
+  };
+  
+  let baseDisplacement = baseDisplacementByFuel[fuel] || 2000;
+  
+  // For electric vehicles, return N/A or 0
+  if (fuel === 'Electric') {
+    return 'Electric Motor';
+  }
+  
+  // Detect case type from caseType string
+  let multiplier = 1.0;
+  Object.keys(caseTypeMultiplier).forEach(type => {
+    if (caseType.toLowerCase().includes(type.toLowerCase())) {
+      multiplier = caseTypeMultiplier[type];
+    }
+  });
+  
+  // Additional variations based on sub model keywords
+  if (subModel) {
+    if (subModel.toLowerCase().includes('sport') || subModel.toLowerCase().includes('s-line')) {
+      multiplier *= 1.2;
+    } else if (subModel.toLowerCase().includes('eco') || subModel.toLowerCase().includes('base')) {
+      multiplier *= 0.7;
+    } else if (subModel.toLowerCase().includes('turbo') || subModel.toLowerCase().includes('charged')) {
+      multiplier *= 1.3;
+    }
+  }
+  
+  const finalDisplacement = Math.round(baseDisplacement * multiplier);
+  return `${finalDisplacement} cm3`;
+};
+
+const formatYearOfProduction = (year) => {
+  const yearNum = parseInt(year);
+  if (isNaN(yearNum)) {
+    return '2024 - 2024';
+  }
+  return `${yearNum} - ${yearNum}`;
+};
+
+// Updated fallback function to use the correct parameters
+const generateFallbackVehicleData = (selectedLabels, fuel, caseType, gear, yearOfProduction) => {
+  const brand = selectedLabels.level1 || 'Unknown Brand';
+  const model = selectedLabels.level2 || selectedLabels.level3 || selectedLabels.level4 || 'Unknown Model';
+
+  // Generate basic variants when no specific level8/level9 data exists
+  const variants = [
+    {
+      id: 'variant-1',
+      subModel: `${model} Base`,
+      fuel: fuel,
+      caseType: caseType,
+      enginePower: generateEnginePower(fuel, caseType, 'Base'),
+      engineDisplacement: generateEngineDisplacement(fuel, caseType, 'Base'),
+      gear: gear,
+      yearsOfProduction: formatYearOfProduction(yearOfProduction)
+    },
+    {
+      id: 'variant-2',
+      subModel: `${model} Comfort`,
+      fuel: fuel,
+      caseType: caseType,
+      enginePower: generateEnginePower(fuel, caseType, 'Comfort'),
+      engineDisplacement: generateEngineDisplacement(fuel, caseType, 'Comfort'),
+      gear: gear,
+      yearsOfProduction: formatYearOfProduction(yearOfProduction)
+    },
+    {
+      id: 'variant-3',
+      subModel: `${model} Sport`,
+      fuel: fuel,
+      caseType: caseType,
+      enginePower: generateEnginePower(fuel, caseType, 'Sport'),
+      engineDisplacement: generateEngineDisplacement(fuel, caseType, 'Sport'),
+      gear: gear,
+      yearsOfProduction: formatYearOfProduction(yearOfProduction)
+    }
+  ];
+
+  return variants;
 };
 
 const CategorySelectionDetails = () => {
@@ -706,10 +882,24 @@ const CategorySelectionDetails = () => {
   // Get selected labels for breadcrumb
   const selectedLabels = categoryData ? getSelectedLabels(categorySlug, selections) : {};
 
-  // Generate vehicle data based on selections for vehicles category
+  // Generate vehicle data from selections for vehicles category
   const vehicleData = (categorySlug === 'vehicles' || categorySlug === 'vehicle') && selectionComplete 
-    ? generateVehicleData(categorySlug, selections, selectedLabels) 
+    ? generateVehicleDataFromSelections(categorySlug, selections, categoryData) 
     : [];
+
+  // Debug log for vehicle data generation
+  if (process.env.NODE_ENV === 'development' && (categorySlug === 'vehicles' || categorySlug === 'vehicle')) {
+    console.log('Vehicle data generation debug:');
+    console.log('Selected labels:', selectedLabels);
+    console.log('Mapped vehicle data:');
+    console.log('- Year of Production (level2):', selectedLabels.level2);
+    console.log('- Fuel (level5):', selectedLabels.level5);
+    console.log('- Case Type (level6):', selectedLabels.level6);
+    console.log('- Gear (level7):', selectedLabels.level7);
+    console.log('- Sub Model part 1 (level8):', selectedLabels.level8);
+    console.log('- Sub Model part 2 (level9):', selectedLabels.level9);
+    console.log('Generated vehicles:', vehicleData);
+  }
 
   // Create columns for all available levels
   const renderLevelColumns = () => {
@@ -792,7 +982,7 @@ const CategorySelectionDetails = () => {
             
             {/* Vehicle Table - Inside scrollable area for vehicle categories */}
             {selectionComplete && (categorySlug === 'vehicles' || categorySlug === 'vehicle') && (
-              <div className="w-[600px] flex-shrink-0">
+              <div className="w-[750px] flex-shrink-0">
                 <VehicleTable 
                   vehicles={vehicleData} 
                   onVehicleSelect={handleVehicleSelect}
@@ -928,45 +1118,50 @@ const VehicleConfirmationPanel = ({ onContinue, selectedVehicle }) => (
   </div>
 );
 
-// Vehicle Table Component
+// Updated Vehicle Table Component with Radio Buttons and All Fields
 const VehicleTable = ({ vehicles, onVehicleSelect, selectedLabels, selectedVehicle }) => {
   return (
     <div className="w-full">
-
       {/* Vehicle table */}
       <div className="bg-white max-w-7xl rounded-lg shadow-custom overflow-hidden mt-2">
-        <div className=" w-full max-h-[400px] overflow-y-auto">
+        <div className="w-full max-h-[400px] overflow-y-auto">
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Select
+                </th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Sub Model
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fuel
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Case Type
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Engine Power
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Engine Displacement
+                </th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Gear
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Action
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Years of Production
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {vehicles.length > 0 ? (
                 vehicles.map((vehicle, index) => {
-                  const isSelected = selectedVehicle && selectedVehicle.subModel === vehicle.subModel;
+                  const isSelected = selectedVehicle && (selectedVehicle.id === vehicle.id || selectedVehicle.subModel === vehicle.subModel);
                   
                   return (
                     <tr 
-                      key={index} 
+                      key={vehicle.id || index} 
                       className={`transition-colors cursor-pointer ${
                         isSelected 
                           ? 'bg-blue-50 border-l-4 border-[#1544AB]' 
@@ -974,55 +1169,49 @@ const VehicleTable = ({ vehicles, onVehicleSelect, selectedLabels, selectedVehic
                       }`}
                       onClick={() => onVehicleSelect(vehicle)}
                     >
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        <input
+                          type="radio"
+                          name="vehicleSelection"
+                          checked={isSelected}
+                          onChange={() => onVehicleSelect(vehicle)}
+                          className="w-4 h-4 text-[#1544AB] bg-gray-100 border-gray-300 focus:ring-[#1544AB] focus:ring-2"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                         {vehicle.subModel}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
                         {vehicle.fuel}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
                         {vehicle.caseType}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
                         {vehicle.enginePower}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
+                        {vehicle.engineDisplacement}
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
                         {vehicle.gear}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onVehicleSelect(vehicle);
-                          }}
-                          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                            isSelected
-                              ? 'bg-[#1544AB] text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-[#1544AB] hover:text-white'
-                          }`}
-                        >
-                          {isSelected ? 'Selected' : 'Select'}
-                        </button>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900">
+                        {vehicle.yearsOfProduction}
                       </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan="6" className="px-4 py-4 text-center text-sm text-gray-500">
+                  <td colSpan="8" className="px-4 py-4 text-center text-sm text-gray-500">
                     No vehicles found for your selection
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
-        </div>
-        
-        {/* "I couldn't find my vehicle on the list" link */}
-        <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-          <button className="text-[#1544AB] hover:text-blue-700 text-sm font-medium transition-colors">
-            I couldn't find my vehicle on the list
-          </button>
         </div>
       </div>
     </div>
