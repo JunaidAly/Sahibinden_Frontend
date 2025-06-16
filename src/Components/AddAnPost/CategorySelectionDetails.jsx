@@ -814,23 +814,64 @@ const CategorySelectionDetails = () => {
   };
 
   // Handle continue button click
+  // const handleContinue = () => {
+  //   const selectedLabels = getSelectedLabels(categorySlug, selections);
+    
+  //   const selectionData = {
+  //     category: categorySlug,
+  //     categoryTitle: categoryData?.title,
+  //     selections: selections,
+  //     labels: selectedLabels,
+  //     maxLevel: maxLevel,
+  //     selectedVehicle: selectedVehicle
+  //   };
+    
+  //   console.log('Category selection complete:', selectionData);
+    
+  //   // Navigate to post-details route with selection data
+  //   navigate('/post-details', { state: selectionData });
+  // };
+
+
   const handleContinue = () => {
-    const selectedLabels = getSelectedLabels(categorySlug, selections);
-    
-    const selectionData = {
-      category: categorySlug,
-      categoryTitle: categoryData?.title,
-      selections: selections,
-      labels: selectedLabels,
-      maxLevel: maxLevel,
-      selectedVehicle: selectedVehicle
-    };
-    
-    console.log('Category selection complete:', selectionData);
-    
-    // Navigate to post-details route with selection data
-    navigate('/post-details', { state: selectionData });
+  const selectedLabels = getSelectedLabels(categorySlug, selections);
+  
+  const selectionData = {
+    category: categorySlug,
+    categoryTitle: categoryData?.title,
+    selections: selections,
+    labels: selectedLabels,
+    maxLevel: maxLevel,
+    selectedVehicle: selectedVehicle
   };
+  
+  console.log('Category selection complete:', selectionData);
+  
+  // Map category slugs to form categories
+  const categoryMapping = {
+    'vehicles': 'vehicle',
+    'vehicle': 'vehicle',
+    'property': 'property',
+    'real-estate': 'property',
+    'spare-parts': 'product',
+    'products': 'product',
+    'electronics': 'product',
+    'furniture': 'product',
+    'clothing': 'product',
+    'books': 'product',
+    'sports': 'product'
+  };
+  
+  const mappedCategory = categoryMapping[categorySlug] || 'product';
+  
+  // Navigate to PropertyListingForm with selection data
+  navigate('/post-ad', { 
+    state: { 
+      ...selectionData,
+      mappedCategory: mappedCategory
+    } 
+  });
+};
 
   // Handle vehicle selection
   const handleVehicleSelect = (vehicle) => {
@@ -1118,7 +1159,7 @@ const VehicleConfirmationPanel = ({ onContinue, selectedVehicle }) => (
   </div>
 );
 
-// Updated Vehicle Table Component with Radio Buttons and All Fields
+// Updated Vehicle Table Component with fixed radio buttons
 const VehicleTable = ({ vehicles, onVehicleSelect, selectedLabels, selectedVehicle }) => {
   return (
     <div className="w-full">
@@ -1157,7 +1198,7 @@ const VehicleTable = ({ vehicles, onVehicleSelect, selectedLabels, selectedVehic
             <tbody className="bg-white divide-y divide-gray-200">
               {vehicles.length > 0 ? (
                 vehicles.map((vehicle, index) => {
-                  const isSelected = selectedVehicle && (selectedVehicle.id === vehicle.id || selectedVehicle.subModel === vehicle.subModel);
+                  const isSelected = Boolean(selectedVehicle && (selectedVehicle.id === vehicle.id || selectedVehicle.subModel === vehicle.subModel));
                   
                   return (
                     <tr 
@@ -1173,6 +1214,7 @@ const VehicleTable = ({ vehicles, onVehicleSelect, selectedLabels, selectedVehic
                         <input
                           type="radio"
                           name="vehicleSelection"
+                          value={vehicle.id || vehicle.subModel || `vehicle-${index}`}
                           checked={isSelected}
                           onChange={() => onVehicleSelect(vehicle)}
                           className="w-4 h-4 text-[#1544AB] bg-gray-100 border-gray-300 focus:ring-[#1544AB] focus:ring-2"
