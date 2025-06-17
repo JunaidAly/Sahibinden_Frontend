@@ -481,197 +481,225 @@ export default function DynamicListingForm() {
     return data.secure_url; // Return just the URL for imageUrls array
   };
 
-  // Handle form submission
-  const handleSubmit = async () => {
-    // Check if user is authenticated
-    if (!user) {
-      alert('Please log in to post an ad');
-      return;
+
+
+  // Updated handleSubmit function
+
+const handleSubmit = async () => {
+  // Check if user is authenticated
+  if (!user) {
+    alert('Please log in to post an ad');
+    return;
+  }
+
+  // Validate required fields
+  if (!selectedCategory) {
+    alert('Please select a category');
+    return;
+  }
+  
+  if (!formData.price) {
+    alert('Please fill in Price');
+    return;
+  }
+
+  if (selectedImages.length === 0) {
+    alert('Please select at least one image');
+    return;
+  }
+
+  setUploading(true);
+  setUploadProgress(0);
+
+  try {
+    setUploadProgress(25);
+    const uploadedFiles = await uploadFiles();
+    setUploadProgress(50);
+
+    // Get image URLs (filter out video URLs if needed)
+    const imageUrls = uploadedFiles.filter(url => typeof url === 'string');
+
+    // Construct location from address fields
+    const locationParts = [formData.neighbourhood, formData.district, formData.province].filter(Boolean);
+    const location = locationParts.join(', ');
+
+    // Map categories to match your exact Firebase structure
+    let categoryName = '';
+    if (selectedCategory === 'property') {
+      categoryName = 'Real Estate';
+    } else if (selectedCategory === 'vehicle') {
+      categoryName = 'Vehicles';
+    } else if (selectedCategory === 'product') {
+      categoryName = 'Spare Parts, Accessories, hardware & Tuning';
+    } else if (selectedCategory === 'animal') {
+      categoryName = 'Animal Kingdom';
     }
 
-    // Validate required fields
-    if (!selectedCategory) {
-      alert('Please select a category');
-      return;
+    // Get next index and generate custom addID
+    const { nextIndex, addID } = await getNextCategoryIndexAndAddID(user.uid, categoryName);
+    setUploadProgress(60);
+
+    // Prepare data according to your exact Firebase structure
+    let adData = {};
+
+    if (selectedCategory === 'property') {
+      adData = {
+        addID: addID,
+        announcementDate: new Date().toISOString().split('T')[0],
+        category: categorySelectionData?.labels?.category || 'Real Estate',
+        subcategory: categorySelectionData?.labels?.level1 || '',
+        thirdLevel: categorySelectionData?.labels?.level2 || '',
+        fourthLevel: categorySelectionData?.labels?.level3 || '',
+        propertyType: formData.propertyType || '',
+        price: formData.price || '',
+        grossArea: formData.grossArea || '',
+        netArea: formData.netArea || '',
+        numberOfRooms: formData.numberOfRooms || '',
+        heating: formData.heating || '',
+        numberOfBathrooms: formData.numberOfBathrooms || '',
+        kitchen: formData.kitchen || '',
+        parking: formData.parking || '',
+        furnished: formData.furnished || '',
+        usageStatus: formData.usageStatus || '',
+        withinSite: formData.withinSite || '',
+        siteName: formData.siteName || '',
+        imageUrls: imageUrls,
+        location: location || '',
+        fromWhom: 'Owner',
+        createdAt: new Date(),
+        adStatus: 'active',
+        userUID: user.uid
+      };
+    } else if (selectedCategory === 'vehicle') {
+      adData = {
+        addID: addID,
+        category: categorySelectionData?.labels?.category || 'Vehicles',
+        subcategory: categorySelectionData?.labels?.level1 || '',
+        thirdLevel: categorySelectionData?.labels?.level2 || '',
+        fourthLevel: categorySelectionData?.labels?.level3 || '',
+        brand: formData.brand || '',
+        model: formData.model || '',
+        year: formData.year || '',
+        price: formData.price || '',
+        location: location || '',
+        fuelType: formData.fuelType || '',
+        gear: formData.gear || '',
+        vehicleStatus: formData.vehicleStatus || '',
+        km: formData.km || '',
+        caseType: formData.caseType || '',
+        enginePower: formData.enginePower || '',
+        engineDisplacement: formData.engineDisplacement || '',
+        traction: formData.traction || '',
+        door: formData.door || '',
+        color: formData.color || '',
+        guarantee: formData.guarantee || '',
+        seriousDamage: formData.seriousDamage || '',
+        plateNationality: formData.plateNationality || '',
+        fromWhom: formData.fromWhom || 'Owner',
+        swap: formData.swap || '',
+        imageUrls: imageUrls,
+        createdAt: new Date(),
+        adStatus: 'active',
+        userUID: user.uid
+      };
+    } else if (selectedCategory === 'product') {
+      adData = {
+        addID: addID,
+        category: categorySelectionData?.labels?.category || 'Spare Parts',
+        subcategory: categorySelectionData?.labels?.level1 || '',
+        thirdLevel: categorySelectionData?.labels?.level2 || '',
+        fourthLevel: categorySelectionData?.labels?.level3 || '',
+        spareCategory: formData.spareCategory || '',
+        type: formData.type || '',
+        product: formData.product || '',
+        vehicleBrand: formData.vehicleBrand || '',
+        vehicleSeries: formData.vehicleSeries || '',
+        productBrand: formData.productBrand || '',
+        fromWhom: formData.fromWhom || 'Owner',
+        usedSpareParts: formData.usedSpareParts || '',
+        swap: formData.swap || '',
+        partCondition: formData.status || '', // Renamed to avoid duplicate
+        price: formData.price || '',
+        location: location || '',
+        imageUrls: imageUrls,
+        createdAt: new Date(),
+        adStatus: 'active', // Renamed to avoid duplicate
+        userUID: user.uid
+      };
+    } else if (selectedCategory === 'animal') {
+      adData = {
+        addID: addID,
+        category: categorySelectionData?.labels.category || 'Animal Kingdom',
+        subcategory: categorySelectionData?.labels?.level1 || '',
+        thirdLevel: categorySelectionData?.labels?.level2 || '',
+        fourthLevel: categorySelectionData?.labels?.level3 || '',
+        type: formData.type || '',
+        race: formData.race || '',
+        age: formData.age || '',
+        gender: formData.gender || '',
+        price: formData.price || '',
+        location: location || '',
+        fromWhom: formData.fromWhom || 'Owner',
+        imageUrls: imageUrls,
+        createdAt: new Date(),
+        adStatus: 'active',
+        userUID: user.uid
+      };
     }
+
+    setUploadProgress(85);
     
-    if (!formData.price) {
-      alert('Please fill in Price');
-      return;
-    }
-
-    if (selectedImages.length === 0) {
-      alert('Please select at least one image');
-      return;
-    }
-
-    setUploading(true);
-    setUploadProgress(0);
-
+    // Save to Firestore in array-like structure
+    const userDocRef = doc(db, 'allAddsPost', user.uid);
+    
     try {
-      setUploadProgress(25);
-      const uploadedFiles = await uploadFiles();
-      setUploadProgress(50);
-
-      // Get image URLs
-      const imageUrls = uploadedFiles.filter(url => typeof url === 'string');
-
-      // Construct location from address fields
-      const locationParts = [formData.neighbourhood, formData.district, formData.province].filter(Boolean);
-      const location = locationParts.join(', ');
-
-      // Map categories to match your database structure
-      let categoryName = '';
-      if (selectedCategory === 'property') {
-        categoryName = 'Real Estate';
-      } else if (selectedCategory === 'vehicle') {
-        categoryName = 'Vehicles';
-      } else if (selectedCategory === 'product') {
-        categoryName = 'Spare Parts, Accessories, hardware & Tuning';
-      } else if (selectedCategory === 'animal') {
-        categoryName = 'Animal Kingdom';
-      }
-
-      // Get next index and generate custom addID
-      const { nextIndex, addID } = await getNextCategoryIndexAndAddID(user.uid, categoryName);
-      setUploadProgress(60);
-
-      // Prepare data according to mobile app structure
-      let adData = {};
-
-      if (selectedCategory === 'property') {
-        adData = {
-          addID: addID,
-          announcementDate: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
-          category: categorySelectionData?.labels?.level1 || 'Real Estate',
-          subcategory: categorySelectionData?.labels?.level2 || '',
-          thirdLevel: categorySelectionData?.labels?.level3 || '',
-          fourthLevel: categorySelectionData?.labels?.level4 || '',
-          propertyType: formData.propertyType || '',
-          price: formData.price || '',
-          grossArea: formData.grossArea || '',
-          netArea: formData.netArea || '',
-          numberOfRooms: formData.numberOfRooms || '',
-          heating: formData.heating || '',
-          numberOfBathrooms: formData.numberOfBathrooms || '',
-          kitchen: formData.kitchen || '',
-          parking: formData.parking || '',
-          furnished: formData.furnished || '',
-          usageStatus: formData.usageStatus || '',
-          withinSite: formData.withinSite || '',
-          siteName: formData.siteName || '',
-          imageUrls: imageUrls,
-          location: location || '',
-          fromWhom: 'Owner' // Default value
-        };
-      } else if (selectedCategory === 'vehicle') {
-        adData = {
-          addID: addID,
-          category: categorySelectionData?.labels?.level1 || 'Vehicles',
-          subcategory: categorySelectionData?.labels?.level2 || '',
-          thirdLevel: categorySelectionData?.labels?.level3 || '',
-          fourthLevel: categorySelectionData?.labels?.level4 || '',
-          brand: formData.brand || '',
-          model: formData.model || '',
-          year: formData.year || '',
-          price: formData.price || '',
-          location: location || '',
-          fuelType: formData.fuelType || '',
-          gear: formData.gear || '',
-          vehicleStatus: formData.vehicleStatus || '',
-          km: formData.km || '',
-          caseType: formData.caseType || '',
-          enginePower: formData.enginePower || '',
-          engineDisplacement: formData.engineDisplacement || '',
-          traction: formData.traction || '',
-          door: formData.door || '',
-          color: formData.color || '',
-          guarantee: formData.guarantee || '',
-          seriousDamage: formData.seriousDamage || '',
-          plateNationality: formData.plateNationality || '',
-          fromWhom: formData.fromWhom || 'Owner',
-          swap: formData.swap || '',
-          imageUrls: imageUrls
-        };
-      } else if (selectedCategory === 'product') { // Spare Parts
-        adData = {
-          addID: addID,
-          category: categorySelectionData?.labels?.level1 || 'Spare Parts',
-          subcategory: categorySelectionData?.labels?.level2 || '',
-          thirdLevel: categorySelectionData?.labels?.level3 || '',
-          fourthLevel: categorySelectionData?.labels?.level4 || '',
-          spareCategory: formData.spareCategory || '',
-          type: formData.type || '',
-          product: formData.product || '',
-          vehicleBrand: formData.vehicleBrand || '',
-          vehicleSeries: formData.vehicleSeries || '',
-          productBrand: formData.productBrand || '',
-          fromWhom: formData.fromWhom || 'Owner',
-          usedSpareParts: formData.usedSpareParts || '',
-          swap: formData.swap || '',
-          status: formData.status || '',
-          price: formData.price || '',
-          location: location || '',
-          imageUrls: imageUrls
-        };
-      } else if (selectedCategory === 'animal') {
-        adData = {
-          addID: addID,
-          category: categorySelectionData?.labels?.level1 || 'Animal Kingdom',
-          subcategory: categorySelectionData?.labels?.level2 || '',
-          thirdLevel: categorySelectionData?.labels?.level3 || '',
-          fourthLevel: categorySelectionData?.labels?.level4 || '',
-          type: formData.type || '',
-          race: formData.race || '',
-          age: formData.age || '',
-          gender: formData.gender || '',
-          price: formData.price || '',
-          location: location || '',
-          fromWhom: formData.fromWhom || 'Owner',
-          imageUrls: imageUrls
-        };
-      }
-
-      // Add common metadata
-      adData.createdAt = new Date();
-      adData.status = 'active';
-      adData.userUID = user.uid;
-
-      setUploadProgress(85);
-      
-      // Save to Firestore in the category-based structure
-      const userDocRef = doc(db, 'allAddsPost', user.uid);
-      
-      // Check if user document exists
+      // Get existing document
       const userDocSnap = await getDoc(userDocRef);
       
       if (!userDocSnap.exists()) {
-        // Create new user document with the first ad in the category
-        await setDoc(userDocRef, {
-          [categoryName]: {
-            [nextIndex.toString()]: adData
-          }
-        });
+        // Create new document with proper array-like structure
+        const newDocument = {
+          [categoryName]: [adData] // Store as array
+        };
+        await setDoc(userDocRef, newDocument);
+        console.log('Created new user document with array structure:', newDocument);
       } else {
-        // Get existing data
+        // Update existing document
         const existingData = userDocSnap.data();
         
-        // Prepare update object
-        const updateData = {
-          ...existingData,
-          [categoryName]: {
-            ...((existingData[categoryName]) || {}),
-            [nextIndex.toString()]: adData
-          }
-        };
+        // Ensure the category exists as an array
+        if (!existingData[categoryName]) {
+          existingData[categoryName] = [];
+        }
         
-        // Update existing user document with new ad in the category
-        await setDoc(userDocRef, updateData);
+        // Convert to array if it's not already (for backward compatibility)
+        if (!Array.isArray(existingData[categoryName])) {
+          // Convert object structure to array
+          const objectData = existingData[categoryName];
+          const arrayData = [];
+          Object.keys(objectData).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
+            if (/^\d+$/.test(key)) {
+              arrayData.push(objectData[key]);
+            }
+          });
+          existingData[categoryName] = arrayData;
+        }
+        
+        // Add the new ad to the array
+        existingData[categoryName].push(adData);
+        
+        // Update the document
+        await setDoc(userDocRef, existingData);
+        console.log('Updated existing document with array structure:', existingData);
       }
       
       setUploadProgress(100);
       
-      alert(`Your ad has been posted successfully in ${categoryName} with ID: ${addID}!`);
+      const arrayIndex = userDocSnap.exists() && Array.isArray(userDocSnap.data()[categoryName]) 
+        ? userDocSnap.data()[categoryName].length 
+        : 0;
+      
+      alert(`Your ad has been posted successfully!\nCategory: ${categoryName}\nAd ID: ${addID}\nArray Index: ${arrayIndex}`);
       
       // Reset form
       setSelectedCategory('');
@@ -687,14 +715,67 @@ export default function DynamicListingForm() {
       setSelectedImages([]);
       setSelectedVideo(null);
       
-    } catch (error) {
-      console.error('Error posting ad:', error);
-      alert(`Failed to post ad: ${error.message}`);
-    } finally {
-      setUploading(false);
-      setUploadProgress(0);
+    } catch (firestoreError) {
+      console.error('Firestore error:', firestoreError);
+      throw new Error(`Database save failed: ${firestoreError.message}`);
     }
-  };
+    
+  } catch (error) {
+    console.error('Error posting ad:', error);
+    alert(`Failed to post ad: ${error.message}`);
+  } finally {
+    setUploading(false);
+    setUploadProgress(0);
+  }
+};
+
+// Updated function to work with array structure
+const getNextCategoryIndexAndAddID = async (userUID, categoryName) => {
+  try {
+    const userDocRef = doc(db, 'allAddsPost', userUID);
+    const userDocSnap = await getDoc(userDocRef);
+    
+    if (!userDocSnap.exists()) {
+      // First ad for this user
+      return {
+        nextIndex: 0,
+        addID: generateAddID(userUID, 1)
+      };
+    }
+    
+    const userData = userDocSnap.data();
+    
+    // Count total ads across all categories to determine the next addID number
+    let totalAdsCount = 0;
+    Object.keys(userData).forEach(category => {
+      if (Array.isArray(userData[category])) {
+        totalAdsCount += userData[category].length;
+      } else if (typeof userData[category] === 'object' && userData[category] !== null) {
+        // Handle old object structure for backward compatibility
+        const categoryAds = Object.keys(userData[category]).filter(key => /^\d+$/.test(key));
+        totalAdsCount += categoryAds.length;
+      }
+    });
+    
+    // Check if the category exists and is an array
+    const categoryExists = userData[categoryName] && Array.isArray(userData[categoryName]);
+    const nextIndex = categoryExists ? userData[categoryName].length : 0;
+    
+    return {
+      nextIndex: nextIndex,
+      addID: generateAddID(userUID, totalAdsCount + 1)
+    };
+    
+  } catch (error) {
+    console.error('Error getting next category index and addID:', error);
+    // Fallback to safe values
+    return {
+      nextIndex: 0,
+      addID: generateAddID(userUID, Date.now())
+    };
+  }
+};
+
 
 
 // Show loading state while checking authentication

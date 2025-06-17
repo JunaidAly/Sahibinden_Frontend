@@ -26,106 +26,291 @@ function FavoritesContent({ activeComponent }) {
     );
   };
 
- 
-  const renderFavoriteListing = () => {
-    const [lists, setLists] = useState([
-      { id: 1, name: 'My Favorite List', count: 0 }
-    ]);
-    const [showModal, setShowModal] = useState(false);
-    const [newListName, setNewListName] = useState('');
-  
-    const handleCreateNewList = () => {
-      setShowModal(true);
-    };
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-      setNewListName('');
-    };
-  
-    const handleSaveList = () => {
-      if (newListName.trim()) {
-        setLists([...lists, { 
-          id: lists.length + 1, 
-          name: newListName, 
-          count: 0 
-        }]);
-        handleCloseModal();
-      }
-    };
-    return (
-      <>
-       <div className="px-4 w-full font-poppins  ">
-      <h2 className="text-2xl font-[400] mb-4">Favorite Listings</h2>
-      
-      <div className="grid grid-cols-2 h-[300px] gap-4">
-        {/* Existing favorite list */}
-        <div className="bg-[#1544AB] border border-[#1544AB] text-white rounded-md p-6 flex flex-col items-center justify-center h-full shadow-sm">
-          <h3 className="font-medium text-center text-xl">My Favorite List</h3>
-          <p className="text-xl mt-2">({lists[0].count} listings)</p>
-        </div>
-        
-        {/* Create new list card */}
-        <div 
-          onClick={handleCreateNewList}
-          className="border border-[#1544AB] rounded-md p-6 flex flex-col items-center justify-center h-full cursor-pointer hover:border-blue-400 hover:bg-gray-50 transition-colors duration-200 shadow-sm"
-        >
-          <div className="text-[#1544AB] mb-2">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-          </div>
-          <p className="text-[#1544AB] text-xl">Create New List</p>
-        </div>
-      </div>
 
-      {/* Create New List Modal */}
-      {showModal && (
-        <>
-          <div className="fixed inset-0 bg-black bg-opacity-30" onClick={handleCloseModal}></div>
-          <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
-            <div className="bg-white w-full max-w-lg rounded-lg border border-blue-900 overflow-hidden">
-              <div className="p-6 flex justify-between items-center border-b">
-                <h3 className="text-xl font-medium">Create New List</h3>
-                <button 
-                  onClick={handleCloseModal}
-                  className="p-1 rounded-full hover:bg-gray-100"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
+
+
+  const renderFavoriteListing = () => {
+  const [lists, setLists] = useState([
+    { id: 1, name: 'My Favorite List', count: 0, isDefault: true }
+  ]);
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newListName, setNewListName] = useState('');
+  const [editingList, setEditingList] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(null);
+
+  const handleCreateNewList = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setNewListName('');
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEditingList(null);
+    setNewListName('');
+  };
+
+  const handleSaveList = () => {
+    if (newListName.trim()) {
+      const newList = { 
+        id: Date.now(),
+        name: newListName, 
+        count: 0,
+        isDefault: false
+      };
+      setLists([...lists, newList]);
+      handleCloseModal();
+    }
+  };
+
+  const handleEditList = (list) => {
+    setEditingList(list);
+    setNewListName(list.name);
+    setShowEditModal(true);
+    setShowDropdown(null);
+  };
+
+  const handleUpdateList = () => {
+    if (newListName.trim()) {
+      setLists(lists.map(list => 
+        list.id === editingList.id 
+          ? { ...list, name: newListName }
+          : list
+      ));
+      handleCloseEditModal();
+    }
+  };
+
+  const handleDeleteList = (listId) => {
+    setLists(lists.filter(list => list.id !== listId));
+    setShowDropdown(null);
+  };
+
+  const handleShareList = (list) => {
+    navigator.clipboard.writeText(`Check out my list: ${list.name}`);
+    alert(`"${list.name}" has been copied to clipboard for sharing!`);
+    setShowDropdown(null);
+  };
+
+  const toggleDropdown = (listId) => {
+    setShowDropdown(showDropdown === listId ? null : listId);
+  };
+
+  // Get additional lists (excluding the first default one)
+  const additionalLists = lists.slice(1);
+
+  return (
+    <>
+      <div className="px-4 w-full font-poppins">
+        <h2 className="text-2xl font-[400] mb-4">Favorite Listings</h2>
+        
+        <div className="grid grid-cols-2 h-[300px] gap-4">
+          {/* Original favorite list */}
+          <div className="bg-[#1544AB] border border-[#1544AB] text-white rounded-md p-6 flex flex-col items-center justify-center h-full shadow-sm relative">
+            {/* Three dots menu for default list */}
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={() => toggleDropdown(lists[0].id)}
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors duration-200"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+              </button>
               
-              <div className="p-6">
-                <input
-                  type="text"
-                  value={newListName}
-                  onChange={(e) => setNewListName(e.target.value)}
-                  placeholder="Enter list name"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              {showDropdown === lists[0].id && (
+                <div className="absolute right-0 top-8 bg-white text-black rounded-md shadow-lg py-2 w-32 z-10">
+                  <button
+                    onClick={() => handleEditList(lists[0])}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors duration-200"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleShareList(lists[0])}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors duration-200"
+                  >
+                    Share
+                  </button>
+                  {/* No delete option for default list */}
+                </div>
+              )}
+            </div>
+
+            <h3 className="font-medium text-center text-xl">{lists[0].name}</h3>
+            <p className="text-xl mt-2">({lists[0].count} listings)</p>
+          </div>
+          
+          {/* Create new list card */}
+          <div 
+            onClick={handleCreateNewList}
+            className="border border-[#1544AB] rounded-md p-6 flex flex-col items-center justify-center h-full cursor-pointer hover:border-blue-400 hover:bg-gray-50 transition-colors duration-200 shadow-sm"
+          >
+            <div className="text-[#1544AB] mb-2">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <p className="text-[#1544AB] text-xl">Create New List</p>
+          </div>
+        </div>
+
+        {/* Additional created lists */}
+        {additionalLists.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {additionalLists.map((list) => (
+              <div 
+                key={list.id}
+                className="bg-[#1544AB] border border-[#1544AB] text-white rounded-md p-6 flex flex-col items-center justify-center h-[300px] shadow-sm relative"
+              >
+                {/* Three dots menu */}
+                <div className="absolute top-4 right-4">
+                  <button
+                    onClick={() => toggleDropdown(list.id)}
+                    className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors duration-200"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="12" cy="5" r="1"></circle>
+                      <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                  </button>
+                  
+                  {showDropdown === list.id && (
+                    <div className="absolute right-0 top-8 bg-white text-black rounded-md shadow-lg py-2 w-32 z-10">
+                      <button
+                        onClick={() => handleEditList(list)}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors duration-200"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleShareList(list)}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors duration-200"
+                      >
+                        Share
+                      </button>
+                      <button
+                        onClick={() => handleDeleteList(list.id)}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600 transition-colors duration-200"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <h3 className="font-medium text-center text-xl">{list.name}</h3>
+                <p className="text-xl mt-2">({list.count} listings)</p>
               </div>
-              
-              <div className="p-6 flex justify-end">
-                <button
-                  onClick={handleSaveList}
-                  disabled={!newListName.trim()}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
-                >
-                  Save
-                </button>
+            ))}
+          </div>
+        )}
+
+        {/* Create New List Modal */}
+        {showModal && (
+          <>
+            <div className="fixed inset-0 bg-black bg-opacity-30" onClick={handleCloseModal}></div>
+            <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+              <div className="bg-white w-full max-w-lg rounded-lg border border-blue-900 overflow-hidden">
+                <div className="p-6 flex justify-between items-center border-b">
+                  <h3 className="text-xl font-medium">Create New List</h3>
+                  <button 
+                    onClick={handleCloseModal}
+                    className="p-1 rounded-full hover:bg-gray-100"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="p-6">
+                  <input
+                    type="text"
+                    value={newListName}
+                    onChange={(e) => setNewListName(e.target.value)}
+                    placeholder="Enter list name"
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div className="p-6 flex justify-end">
+                  <button
+                    onClick={handleSaveList}
+                    disabled={!newListName.trim()}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
-    </div>
-      </>
-    );
-  };
+          </>
+        )}
+
+        {/* Edit List Modal */}
+        {showEditModal && (
+          <>
+            <div className="fixed inset-0 bg-black bg-opacity-30" onClick={handleCloseEditModal}></div>
+            <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+              <div className="bg-white w-full max-w-lg rounded-lg border border-blue-900 overflow-hidden">
+                <div className="p-6 flex justify-between items-center border-b">
+                  <h3 className="text-xl font-medium">Edit List</h3>
+                  <button 
+                    onClick={handleCloseEditModal}
+                    className="p-1 rounded-full hover:bg-gray-100"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="p-6">
+                  <input
+                    type="text"
+                    value={newListName}
+                    onChange={(e) => setNewListName(e.target.value)}
+                    placeholder="Enter list name"
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div className="p-6 flex justify-end">
+                  <button
+                    onClick={handleUpdateList}
+                    disabled={!newListName.trim()}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Click outside to close dropdown */}
+        {showDropdown && (
+          <div 
+            className="fixed inset-0 z-0" 
+            onClick={() => setShowDropdown(null)}
+          />
+        )}
+      </div>
+    </>
+  );
+};
 
   const renderFavoriteSellers = () => {
     return (

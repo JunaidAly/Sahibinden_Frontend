@@ -128,7 +128,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase"; // Adjust path as needed
 
 const PropertyListing = () => {
@@ -140,6 +140,67 @@ const PropertyListing = () => {
 
   // Fetch property data from Firebase
   useEffect(() => {
+    const searchAllDocuments = async () => {
+      try {
+        console.log('Searching all documents for ID:', id);
+        const querySnapshot = await getDocs(collection(db, "allAddsPost"));
+        let foundProperty = null;
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          console.log(`Checking document ${doc.id}:`, Object.keys(data));
+          
+          // Check if document ID starts with the search ID (for cases where index is appended)
+          if (doc.id.startsWith(id) && (data.propertyType || data.images || data.price)) {
+            console.log('Found document with matching ID prefix:', doc.id);
+            foundProperty = { id: doc.id, ...data };
+            return;
+          }
+          
+          // Check if this is an exact direct match
+          if (doc.id === id && (data.propertyType || data.images || data.price)) {
+            console.log('Found exact direct match in document:', doc.id);
+            foundProperty = { id: doc.id, ...data };
+            return;
+          }
+          
+          // Search in nested arrays and objects
+          Object.keys(data).forEach(categoryKey => {
+            if (Array.isArray(data[categoryKey])) {
+              console.log(`Checking array ${categoryKey} in doc ${doc.id}`);
+              data[categoryKey].forEach((item, index) => {
+                console.log(`Item ${index} in ${categoryKey}:`, { addID: item.addID, id: item.id });
+                if (item.addID === id || item.id === id || (item.addID && item.addID.startsWith(id))) {
+                  console.log('Found matching property in nested array!');
+                  foundProperty = { id: doc.id, originalDocId: doc.id, ...item };
+                }
+              });
+            } else if (data[categoryKey] && typeof data[categoryKey] === 'object') {
+              // Check single object properties
+              const item = data[categoryKey];
+              console.log(`Checking object ${categoryKey}:`, { addID: item.addID, id: item.id });
+              if (item.addID === id || item.id === id || (item.addID && item.addID.startsWith(id))) {
+                console.log('Found matching property in nested object!');
+                foundProperty = { id: doc.id, originalDocId: doc.id, ...item };
+              }
+            }
+          });
+        });
+        
+        if (foundProperty) {
+          console.log('Property found:', foundProperty);
+          setProperty(foundProperty);
+          setError(null);
+        } else {
+          console.log('Property not found anywhere');
+          setError("Property not found");
+        }
+      } catch (searchError) {
+        console.error("Error searching for property:", searchError);
+        setError("Failed to load property details");
+      }
+    };
+
     const fetchProperty = async () => {
       if (!id) {
         setError("No property ID provided");
@@ -149,16 +210,32 @@ const PropertyListing = () => {
 
       try {
         setLoading(true);
-        const docRef = doc(db, "propertyAds", id);
+        console.log('Searching for property with ID:', id);
+        
+        // First, try to get the document directly
+        const docRef = doc(db, "allAddsPost", id);
         const docSnap = await getDoc(docRef);
 
+        console.log('Direct document lookup result:', docSnap.exists());
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setProperty({ id: docSnap.id, ...data });
-          setError(null);
-        } else {
-          setError("Property not found");
+          console.log('Document data:', data);
+          console.log('Has propertyType:', !!data.propertyType);
+          console.log('Has images:', !!data.images);
+          console.log('Has price:', !!data.price);
+          
+          // Check if this is a direct property document
+          if (data.propertyType || data.images || data.price) {
+            console.log('Found direct property document');
+            setProperty({ id: docSnap.id, ...data });
+            setError(null);
+            return;
+          }
         }
+        
+        // If direct lookup fails, search all documents for matching addID or partial ID match
+        console.log('Direct lookup failed, searching all documents...');
+        await searchAllDocuments();
       } catch (err) {
         console.error("Error fetching property:", err);
         setError("Failed to load property details");
@@ -197,6 +274,7 @@ const PropertyListing = () => {
       <div className="max-w-6xl mx-auto p-4">
         <div className="text-center py-12">
           <p className="text-red-600 text-lg mb-4">{error}</p>
+          <p className="text-gray-600 mb-4">Property ID: {id}</p>
           <button 
             onClick={() => window.history.back()} 
             className="bg-primaryBlue text-white px-6 py-2 rounded-lg hover:bg-blue-700"
@@ -226,7 +304,7 @@ const PropertyListing = () => {
 
   // Generate property details from Firebase data
   const details = [
-    { label: "Ad No.", value: property.id || "N/A" },
+    { label: "Ad No.", value: property.addID || property.id || "N/A" },
     { label: "Announcement Date", value: formatDate(property.createdAt) },
     { label: "Property Type", value: property.propertyType || "N/A" },
     { label: "m² (Gross)", value: property.m2Gross || "N/A" },
@@ -243,8 +321,8 @@ const PropertyListing = () => {
     { label: "Site Name", value: property.siteName || "N/A" }
   ].filter(detail => detail.value && detail.value !== "N/A"); // Only show fields with values
 
-  // Handle images
-  const images = property.images || [];
+  // Handle images - support both imageUrls and images arrays
+  const images = property.images || property.imageUrls || [];
   const mainImage = images.length > 0 
     ? (typeof images[selectedImageIndex] === 'string' 
         ? images[selectedImageIndex] 
@@ -408,7 +486,7 @@ export const PropertyDetails = () => {
       if (!id) return;
       
       try {
-        const docRef = doc(db, "propertyAds", id);
+        const docRef = doc(db, "allAddsPost", id);
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
