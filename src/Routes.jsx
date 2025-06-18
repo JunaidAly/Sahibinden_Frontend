@@ -60,14 +60,14 @@ import SellingGuidePage from "./Components/RealEstate/WhenSelling/SellingGuidePa
 import PreSales from "./Components/RealEstate/WhenSelling/PreSales";
 import PreSalesOverview from "./Components/RealEstate/WhenSelling/PreSalesOverview";
 import CartPage from "./Components/Cart/CartPage";
-import PropertyListingForm from "./Components/AddAnPost/PropertyListingForm";
-import DynamicListingForm from './Components/AddAnPost/PropertyListingForm';
+import DynamicListingForm from './Components/AddAnPost/DynamicListingForm';
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
         { path: "/signup", element: <SignUpForm/> },
         { path: "/signin", element: <SignInForm/> },
-        { path: "/ad-details/:id", element: <AdDetails/> },
+        { path: "/ad-details/:category/:id", element: <AdDetails/> },
+        { path: "/ad-details/:id" , element: <DynamicListingForm />} ,
         { path: "/post-an-add", element: <PostAnAdd/> }, 
         {path: "/post-ad" ,element:<DynamicListingForm />},  
         { path: "/category-selection-details/:categorySlug", element: <CategorySelectionDetails/> }, 
@@ -125,7 +125,6 @@ const ProjectRoutes = () => {
         { path: "/pre-sales", element: <PreSales/> },
         { path: "/pre-sales-overview", element: <PreSalesOverview/> },
         { path: "/cart", element: <CartPage/> },
-        { path: "/post-details", element: <PropertyListingForm/> }
         
     ]);
     return element;
