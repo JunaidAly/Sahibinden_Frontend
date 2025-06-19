@@ -1,120 +1,128 @@
 
 
 import React, { useState, useEffect } from "react";
+import { FaStar } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
-import { db } from "../../../firebase"; // Adjust path as needed
+import { db } from "../../../firebase";
+import { 
+  CATEGORY_CONFIGS, 
+  DEFAULT_CONFIG, 
+  getFieldValue, 
+  getItemTitle, 
+  getPriceDisplay 
+} from "./PropertyConfig";
+import FavoritesModal from "./FavoritesModal";
 
 const PropertyListing = () => {
-  // Updated to handle both category and id, with fallback for old URLs
   const { category, addID, id } = useParams(); 
-  const propertyId = addID || id; // Use addID if available (new format), fallback to id (old format)
+  const propertyId = addID || id;
   
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showFavoritesModal, setShowFavoritesModal] = useState(false);
 
-  // Fetch property data from Firebase
-  useEffect(() => {
-    const searchAllDocuments = async () => {
-      try {
-        console.log('Searching all documents for ID:', propertyId, 'in category:', category);
-        const querySnapshot = await getDocs(collection(db, "allAddsPost"));
-        let foundProperty = null;
+  // Get category configuration
+  const categoryConfig = CATEGORY_CONFIGS[category] || DEFAULT_CONFIG;
+
+  // Search all documents when direct lookup fails
+  const searchAllDocuments = async () => {
+    try {
+      console.log('Searching all documents for ID:', propertyId, 'in category:', category);
+      const querySnapshot = await getDocs(collection(db, "allAddsPost"));
+      let foundProperty = null;
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        console.log(`Checking document ${doc.id}:`, Object.keys(data));
         
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          console.log(`Checking document ${doc.id}:`, Object.keys(data));
-          
-          // Check if document ID starts with the search ID (for cases where index is appended)
-          if (doc.id.startsWith(propertyId) && (data.propertyType || data.images || data.price)) {
-            // If category is provided, also check if it matches
-            if (!category || data.category === category) {
-              console.log('Found document with matching ID prefix:', doc.id);
-              foundProperty = { id: doc.id, ...data };
-              return;
-            }
+        // Check if it's a direct document match
+        if (doc.id.startsWith(propertyId) && (data.brand || data.propertyType || data.type || data.images || data.price)) {
+          if (!category || data.category === category) {
+            console.log('Found document with matching ID prefix:', doc.id);
+            foundProperty = { id: doc.id, ...data };
+            return;
           }
-          
-          // Check if this is an exact direct match
-          if (doc.id === propertyId && (data.propertyType || data.images || data.price)) {
-            // If category is provided, also check if it matches
-            if (!category || data.category === category) {
-              console.log('Found exact direct match in document:', doc.id);
-              foundProperty = { id: doc.id, ...data };
-              return;
-            }
+        }
+        
+        if (doc.id === propertyId && (data.brand || data.propertyType || data.type || data.images || data.price)) {
+          if (!category || data.category === category) {
+            console.log('Found exact direct match in document:', doc.id);
+            foundProperty = { id: doc.id, ...data };
+            return;
           }
-          
-          // Search in nested arrays and objects
-          Object.keys(data).forEach(categoryKey => {
-            if (Array.isArray(data[categoryKey])) {
-              console.log(`Checking array ${categoryKey} in doc ${doc.id}`);
-              data[categoryKey].forEach((item, index) => {
-                console.log(`Item ${index} in ${categoryKey}:`, { addID: item.addID, id: item.id });
-                const matchesId = item.addID === propertyId || item.id === propertyId || 
-                                 (item.addID && item.addID.startsWith(propertyId));
-                const matchesCategory = !category || item.category === category || categoryKey === category;
-                
-                if (matchesId && matchesCategory) {
-                  console.log('Found matching property in nested array!');
-                  foundProperty = { 
-                    id: doc.id, 
-                    originalDocId: doc.id, 
-                    categoryKey: categoryKey,
-                    arrayIndex: index,
-                    ...item 
-                  };
-                }
-              });
-            } else if (data[categoryKey] && typeof data[categoryKey] === 'object') {
-              // Check single object properties
-              const item = data[categoryKey];
-              console.log(`Checking object ${categoryKey}:`, { addID: item.addID, id: item.id });
+        }
+        
+        // Check nested arrays and objects
+        Object.keys(data).forEach(categoryKey => {
+          if (Array.isArray(data[categoryKey])) {
+            console.log(`Checking array ${categoryKey} in doc ${doc.id}`);
+            data[categoryKey].forEach((item, index) => {
+              console.log(`Item ${index} in ${categoryKey}:`, { addID: item.addID, id: item.id });
               const matchesId = item.addID === propertyId || item.id === propertyId || 
                                (item.addID && item.addID.startsWith(propertyId));
               const matchesCategory = !category || item.category === category || categoryKey === category;
               
               if (matchesId && matchesCategory) {
-                console.log('Found matching property in nested object!');
+                console.log('Found matching item in nested array!');
                 foundProperty = { 
                   id: doc.id, 
                   originalDocId: doc.id, 
                   categoryKey: categoryKey,
+                  arrayIndex: index,
                   ...item 
                 };
               }
+            });
+          } else if (data[categoryKey] && typeof data[categoryKey] === 'object') {
+            const item = data[categoryKey];
+            console.log(`Checking object ${categoryKey}:`, { addID: item.addID, id: item.id });
+            const matchesId = item.addID === propertyId || item.id === propertyId || 
+                             (item.addID && item.addID.startsWith(propertyId));
+            const matchesCategory = !category || item.category === category || categoryKey === category;
+            
+            if (matchesId && matchesCategory) {
+              console.log('Found matching item in nested object!');
+              foundProperty = { 
+                id: doc.id, 
+                originalDocId: doc.id, 
+                categoryKey: categoryKey,
+                ...item 
+              };
             }
-          });
+          }
         });
-        
-        if (foundProperty) {
-          console.log('Property found:', foundProperty);
-          setProperty(foundProperty);
-          setError(null);
-        } else {
-          console.log('Property not found anywhere');
-          setError("Property not found");
-        }
-      } catch (searchError) {
-        console.error("Error searching for property:", searchError);
-        setError("Failed to load property details");
+      });
+      
+      if (foundProperty) {
+        console.log('Item found:', foundProperty);
+        setProperty(foundProperty);
+        setError(null);
+      } else {
+        console.log('Item not found anywhere');
+        setError("Item not found");
       }
-    };
+    } catch (searchError) {
+      console.error("Error searching for item:", searchError);
+      setError("Failed to load item details");
+    }
+  };
 
+  // Fetch property data from Firebase
+  useEffect(() => {
     const fetchProperty = async () => {
       if (!propertyId) {
-        setError("No property ID provided");
+        setError("No item ID provided");
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        console.log('Searching for property with ID:', propertyId, 'category:', category);
+        console.log('Searching for item with ID:', propertyId, 'category:', category);
         
-        // First, try to get the document directly
         const docRef = doc(db, "allAddsPost", propertyId);
         const docSnap = await getDoc(docRef);
 
@@ -122,28 +130,24 @@ const PropertyListing = () => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           console.log('Document data:', data);
-          console.log('Has propertyType:', !!data.propertyType);
-          console.log('Has images:', !!data.images);
-          console.log('Has price:', !!data.price);
           
-          // Check if this is a direct property document and category matches (if provided)
-          const isPropertyDoc = data.propertyType || data.images || data.price;
+          // Check if it's a valid item document (has key identifying fields)
+          const isValidDoc = data.propertyType || data.brand || data.type || data.images || data.price;
           const categoryMatches = !category || data.category === category;
           
-          if (isPropertyDoc && categoryMatches) {
-            console.log('Found direct property document with matching category');
+          if (isValidDoc && categoryMatches) {
+            console.log('Found direct item document with matching category');
             setProperty({ id: docSnap.id, ...data });
             setError(null);
             return;
           }
         }
         
-        // If direct lookup fails, search all documents for matching addID or partial ID match
         console.log('Direct lookup failed, searching all documents...');
         await searchAllDocuments();
       } catch (err) {
-        console.error("Error fetching property:", err);
-        setError("Failed to load property details");
+        console.error("Error fetching item:", err);
+        setError("Failed to load item details");
       } finally {
         setLoading(false);
       }
@@ -151,6 +155,40 @@ const PropertyListing = () => {
 
     fetchProperty();
   }, [propertyId, category]);
+
+  // Generate item details based on category configuration
+  const generateDetails = () => {
+    if (!property) return [];
+    
+    return categoryConfig.detailFields
+      .map(field => ({
+        label: field.label,
+        value: getFieldValue(property, field.field, field.fallback, field.type)
+      }))
+      .filter(detail => detail.value && detail.value !== "N/A");
+  };
+
+  // Handle add to favorites click
+  const handleAddToFavorites = () => {
+    setShowFavoritesModal(true);
+  };
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setShowFavoritesModal(false);
+  };
+
+  // Handle existing favorites list selection
+  const handleSelectExistingList = () => {
+    console.log("Selected existing favorites list");
+    // Add your logic here to add to existing list
+  };
+
+  // Handle create new list
+  const handleCreateNewList = () => {
+    console.log("Creating new favorites list");
+    // Add your logic here to create new list
+  };
 
   // Loading state
   if (loading) {
@@ -179,7 +217,7 @@ const PropertyListing = () => {
       <div className="max-w-6xl mx-auto p-4">
         <div className="text-center py-12">
           <p className="text-red-600 text-lg mb-4">{error}</p>
-          <p className="text-gray-600 mb-2">Property ID: {propertyId}</p>
+          <p className="text-gray-600 mb-2">Item ID: {propertyId}</p>
           {category && <p className="text-gray-600 mb-4">Category: {category}</p>}
           <button 
             onClick={() => window.history.back()} 
@@ -194,41 +232,7 @@ const PropertyListing = () => {
 
   if (!property) return null;
 
-  // Format creation date
-  const formatDate = (timestamp) => {
-    if (!timestamp) return "N/A";
-    try {
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long' 
-      });
-    } catch {
-      return "N/A";
-    }
-  };
-
-  // Generate property details from Firebase data
-  const details = [
-    { label: "Ad No.", value: property.addID || property.id || "N/A" },
-    { label: "Category", value: property.category || category || "N/A" },
-    { label: "Announcement Date", value: formatDate(property.createdAt) },
-    { label: "Property Type", value: property.propertyType || "N/A" },
-    { label: "m² (Gross)", value: property.m2Gross || "N/A" },
-    { label: "m² (Net)", value: property.m2Net || "N/A" },
-    { label: "Open Area m²", value: property.openAreaM2 || "N/A" },
-    { label: "Number of Rooms", value: property.numberOfRooms || "N/A" },
-    { label: "Number of Bathrooms", value: property.numberOfBathrooms || "N/A" },
-    { label: "Heating", value: property.heating || "N/A" },
-    { label: "Parking", value: property.parking || "N/A" },
-    { label: "Kitchen", value: property.kitchen || "N/A" },
-    { label: "Furnished", value: property.furnished || "N/A" },
-    { label: "Usage Status", value: property.usageStatus || "N/A" },
-    { label: "Within The Site", value: property.withinTheSite || "N/A" },
-    { label: "Site Name", value: property.siteName || "N/A" }
-  ].filter(detail => detail.value && detail.value !== "N/A"); // Only show fields with values
-
-  // Handle images - support both imageUrls and images arrays
+  const details = generateDetails();
   const images = property.images || property.imageUrls || [];
   const mainImage = images.length > 0 
     ? (typeof images[selectedImageIndex] === 'string' 
@@ -237,208 +241,169 @@ const PropertyListing = () => {
     : '/assets/placeholder-property.png';
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      {/* Breadcrumb Navigation */}
-      {category && (
-        <nav className="mb-6">
-          <ol className="flex items-center space-x-2 text-sm text-gray-600">
-            <li><a href="/" className="hover:text-blue-600">Home</a></li>
-            <li className="text-gray-400">/</li>
-            <li><span className="capitalize">{category.replace('-', ' ')}</span></li>
-            <li className="text-gray-400">/</li>
-            <li className="text-gray-800 font-medium">{property.propertyType || 'Property'}</li>
-          </ol>
-        </nav>
-      )}
-
-      <div className="bg-white rounded-xl border border-[#E0E0E0]">
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Main Image and Info Section */}
-          <div className="w-full md:w-2/3">
-            <img
-              src={mainImage}
-              alt={`${property.propertyType} in ${property.siteName}`}
-              className="w-full h-96 object-cover rounded-xl"
-              onError={(e) => {
-                e.target.src = '/assets/placeholder-property.png';
-              }}
-            />
-          </div>
-
-          {/* Property Details */}
-          <div className="max-w-2xl mx-auto p-6 font-sans text-[#2D2D2D]">
-            {/* Price header */}
-            <h1 className="text-[26px] font-bold mb-4">
-              {property.price ? `${parseInt(property.price).toLocaleString()} TL` : 'Price on Request'}
-            </h1>
-
-            {/* Property details with vertical dividers */}
-            <div className="space-y-1">
-              {details.map((detail, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="text-2xl md:text-[20px] font-[400] leading-[171%] text-black min-w-[140px]">
-                    {detail.label}
-                  </div>
-                  <div className="px-1 text-3xl md:text-xl text-[#000000] font-light">
-                    |
-                  </div>
-                  <div className="flex-1 w-max md:text-[20px] font-[400] leading-[171%] text-black">
-                    {detail.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+    <>
+      <div className="max-w-7xl mx-auto p-4">
+        <div className="flex flex-row items-center gap-[47rem]">
+          {/* Breadcrumb Navigation */}
+          {category && (
+            <nav className="mb-6">
+              <ol className="flex items-center space-x-2 text-sm text-gray-600">
+                <li>
+                  <a href="/" className="hover:text-blue-600">
+                    Home
+                  </a>
+                </li>
+                <li className="text-gray-400">/</li>
+                <li>
+                  <span className="capitalize">{categoryConfig.name}</span>
+                </li>
+                <li className="text-gray-400">/</li>
+                <li className="text-gray-800 font-medium">
+                  {getItemTitle(property, category, categoryConfig)}
+                </li>
+              </ol>
+            </nav>
+          )}
+          
+          {/* Add to Favorites - Clickable */}
+          <button
+            onClick={handleAddToFavorites}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
+          >
+            <FaStar size={20} className="text-[#FFC107]" />
+            <span className="text-sm font-normal text-primaryBlue">
+              Add to Favorites
+            </span>
+          </button>
         </div>
 
-        {/* Thumbnail Images */}
-        {images.length > 1 && (
-          <div className="mb-3 mt-6 px-6">
-            <h3 className="text-lg font-semibold mb-3">Property Images</h3>
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {images.slice(0, 6).map((image, index) => {
-                const imageUrl = typeof image === 'string' ? image : image?.url;
-                return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    alt={`Property image ${index + 1}`}
-                    className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all duration-200 ${
-                      selectedImageIndex === index 
-                        ? 'ring-2 ring-primaryBlue opacity-100' 
-                        : 'opacity-70 hover:opacity-100'
-                    }`}
-                    onClick={() => setSelectedImageIndex(index)}
-                    onError={(e) => {
-                      e.target.src = '/assets/placeholder-property.png';
-                    }}
-                  />
-                );
-              })}
-            </div>
-            {images.length > 6 && (
-              <p className="text-sm text-gray-500 mt-2">
-                +{images.length - 6} more images
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export const PropertyDescription = ({ property, category }) => {
-  if (!property) return null;
-
-  // Create additional details from property data
-  const additionalDetails = [
-    { category: "PROPERTY TYPE:", value: property.propertyType, highlight: false },
-    { category: "CATEGORY:", value: property.category || category, highlight: true },
-    { category: "SITE NAME:", value: property.siteName, highlight: false },
-    { category: "HEATING SYSTEM:", value: property.heating, highlight: true },
-    { category: "KITCHEN:", value: property.kitchen, highlight: false },
-    { category: "PARKING:", value: property.parking, highlight: true },
-    { category: "FURNISHED:", value: property.furnished, highlight: false },
-    { category: "USAGE STATUS:", value: property.usageStatus, highlight: true },
-    { category: "WITHIN SITE:", value: property.withinTheSite, highlight: false }
-  ].filter(detail => detail.value && detail.value.trim() !== ""); // Only show fields with values
-
-  return (
-    <div className="max-w-6xl mx-auto p-6 font-poppins">
-      {/* Description section */}
-      <div className="mb-8">
-        <h2 className="text-[28px] leading-[100%] font-bold text-[#434343] mb-3">Property Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Property Information</h3>
-            <p className="text-[#434343] leading-[38px]">
-              This is a {property.propertyType?.toLowerCase()} property located in {property.siteName}. 
-              {property.m2Gross && ` The property features ${property.m2Gross}m² of gross area`}
-              {property.m2Net && ` with ${property.m2Net}m² of net area`}.
-              {property.numberOfRooms && ` It has ${property.numberOfRooms} rooms`}
-              {property.numberOfBathrooms && ` and ${property.numberOfBathrooms} bathrooms`}.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Features</h3>
-            <ul className="text-[#434343] leading-[38px] space-y-1">
-              {property.heating && <li>• Heating: {property.heating}</li>}
-              {property.parking && <li>• Parking: {property.parking}</li>}
-              {property.kitchen && <li>• Kitchen: {property.kitchen}</li>}
-              {property.furnished && <li>• Furnished: {property.furnished}</li>}
-              {property.openAreaM2 && <li>• Open Area: {property.openAreaM2}m²</li>}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Additional Details section */}
-      {additionalDetails.length > 0 && (
-        <div className="font-poppins">
-          <h2 className="text-[28px] leading-[100%] font-bold text-[#434343] mb-4">Additional Details</h2>
-          <div className="overflow-hidden rounded-lg border border-gray-200">
-            {additionalDetails.map((detail, index) => (
-              <div 
-                key={index} 
-                className={`flex ${detail.highlight ? 'bg-[#1544AB] text-white' : 'bg-white text-[#272727]'}`}
-              >
-                <div className={`w-2/5 p-3 text-[20px] leading-[38px] font-poppins font-medium ${detail.highlight ? 'border-r border-blue-600' : 'border-r border-gray-200'}`}>
-                  {detail.category}
+        <div className="bg-white rounded-xl border border-[#E0E0E0]">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="flex flex-col max-w-3xl gap-3">
+              {/* Main Image and Info Section */}
+              <div className="w-[400px] mt-10 ml-5">
+                <img
+                  src={mainImage}
+                  alt={getItemTitle(property, category, categoryConfig)}
+                  className="w-full h-96 object-cover rounded-xl"
+                  onError={(e) => {
+                    e.target.src = "/assets/placeholder-property.png";
+                  }}
+                />
+              </div>
+              {/* Thumbnail Images */}
+              {images.length > 1 && (
+                <div className="mb-3 w-full px-6 max-w-xl">
+                  <h3 className="text-lg font-semibold mb-3">
+                    {categoryConfig.name} Images
+                  </h3>
+                  <div className="grid grid-cols-3 gap-3">
+                    {images.slice(0, 6).map((image, index) => {
+                      const imageUrl =
+                        typeof image === "string" ? image : image?.url;
+                      return (
+                        <img
+                          key={index}
+                          src={imageUrl}
+                          alt={`${categoryConfig.name} image ${index + 1}`}
+                          className={`w-full max-w-[10rem] h-24 object-cover rounded-lg cursor-pointer transition-all duration-200 ${
+                            selectedImageIndex === index
+                              ? "ring-2 ring-primaryBlue opacity-100"
+                              : "opacity-70 hover:opacity-100"
+                          }`}
+                          onClick={() => setSelectedImageIndex(index)}
+                          onError={(e) => {
+                            e.target.src = "/assets/placeholder-property.png";
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  {images.length > 6 && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      +{images.length - 6} more images
+                    </p>
+                  )}
                 </div>
-                <div className="w-3/5 p-3 text-[20px] leading-[38px] font-poppins">
-                  {detail.value}
+              )}
+            </div>
+
+            {/* Item Details */}
+            <div className="max-w-2xl mx-auto p-6 font-sans text-[#2D2D2D]">
+              {/* Price header */}
+              <h1 className="text-[26px] font-bold mb-4">
+                {getPriceDisplay(property)}
+              </h1>
+
+              {/* Category-specific item details */}
+              <div className="space-y-1">
+                {details.map((detail, index) => (
+                  <div key={index} className="flex items-start">
+                    <div className="text-2xl md:text-[20px] font-[400] leading-[171%] text-black min-w-[140px]">
+                      {detail.label}
+                    </div>
+                    <div className="px-1 text-3xl md:text-xl text-[#000000] font-light">
+                      |
+                    </div>
+                    <div className="flex-1 w-max md:text-[20px] font-[400] leading-[171%] text-black">
+                      {detail.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="max-w-lg h-[30rem] font-poppins mx-5 my-10 bg-white rounded-lg overflow-hidden shadow-custom-diagonal">
+              {/* Header */}
+              <div className="text-center py-6 px-2">
+                <h1 className="text-sm font-semibold text-primaryBlue mb-2">
+                  Coldwell Banker Beritan Real Estate
+                </h1>
+
+                <h2 className="text-sm font-bold text-gray-900 mb-6">
+                  Gurkan Dogan
+                </h2>
+              </div>
+
+              {/* Agent Photo */}
+              <div className="px-4 mb-6">
+                <div className="relative">
                 </div>
               </div>
-            ))}
+
+              {/* Add to Favorites Section */}
+              <div className="px-4 mb-6">
+                <h3 className="text-md font-semibold text-primaryBlue text-center">
+                  Add Listings to my Favorite Sellers
+                </h3>
+              </div>
+
+              {/* Contact Buttons */}
+              <div className="px-4 space-y-4">
+                {/* Phone Button */}
+                <button className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 transition-colors duration-200">
+                  POCKE 0 (530) 736 38 59
+                </button>
+
+                {/* Message Button */}
+                <button className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 rounded-full transition-colors duration-200">
+                  SEND MESSAGE
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      )}
-    </div>
-  );
-};
+      </div>
 
-// Enhanced PropertyDetails component that combines both
-export const PropertyDetails = () => {
-  const { category, addID, id } = useParams();
-  const propertyId = addID || id;
-  const [property, setProperty] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProperty = async () => {
-      if (!propertyId) return;
-      
-      try {
-        const docRef = doc(db, "allAddsPost", propertyId);
-        const docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          // Check if category matches (if provided)
-          if (!category || data.category === category) {
-            setProperty({ id: docSnap.id, ...data });
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching property:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProperty();
-  }, [propertyId, category]);
-
-  if (loading) {
-    return <div className="text-center py-12">Loading property details...</div>;
-  }
-
-  return (
-    <div>
-      <PropertyListing />
-      <PropertyDescription property={property} category={category} />
-    </div>
+      {/* Favorites Modal */}
+      <FavoritesModal 
+        isOpen={showFavoritesModal}
+        onClose={handleCloseModal}
+        onSelectExistingList={handleSelectExistingList}
+        onCreateNewList={handleCreateNewList}
+      />
+    </>
   );
 };
 
