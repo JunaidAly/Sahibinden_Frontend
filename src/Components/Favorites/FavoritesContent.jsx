@@ -361,16 +361,15 @@
 
 
 
-
 import { useState, useEffect } from 'react';
 import { 
-  collection, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
   doc, 
-  getDocs, 
-  onSnapshot 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  onSnapshot,
+  arrayUnion,
+  arrayRemove 
 } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../../../firebase'; // Adjust path to your Firebase config
@@ -388,72 +387,92 @@ function FavoritesContent({ activeComponent }) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Firebase functions
-  const getListsCollection = () => {
+  const getFavoritesDocRef = () => {
     if (!user) return null;
-    return collection(db, 'users', user.uid, 'newlist');
+    return doc(db, 'users', user.uid, 'favoriteItem', 'favorites');
+  };
+
+  // Generate unique ID for new list items
+  const generateListId = (existingLists) => {
+    const baseId = user.uid;
+    let counter = 1;
+    let newId = `${baseId}${counter}`;
+    
+    // Keep incrementing until we find a unique ID
+    while (existingLists.some(list => list.id === newId)) {
+      counter++;
+      newId = `${baseId}${counter}`;
+    }
+    
+    return newId;
   };
 
   // Load lists from Firebase when component mounts or user changes
   useEffect(() => {
     if (!user) return;
 
-    const listsCollection = getListsCollection();
-    if (!listsCollection) return;
+    const favoritesDocRef = getFavoritesDocRef();
+    if (!favoritesDocRef) return;
 
-    // Real-time listener for lists
-    const unsubscribe = onSnapshot(listsCollection, (snapshot) => {
-      const fetchedLists = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      // Ensure default list exists
-      const hasDefaultList = fetchedLists.some(list => list.isDefault);
-      if (!hasDefaultList) {
-        // Add default list if it doesn't exist
-        const defaultList = { 
-          name: 'My Favorite List', 
-          count: 0, 
-          isDefault: true,
-          createdAt: new Date()
-        };
-        setLists([defaultList, ...fetchedLists]);
+    // Real-time listener for favorites document
+    const unsubscribe = onSnapshot(favoritesDocRef, async (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        const favoriteList = data.favoriteList || [];
+        
+        // Filter lists that belong to current user (user ID should be at the start of the id)
+        const userLists = favoriteList.filter(item => item.id.startsWith(user.uid));
+        
+        // Check if default list exists
+        const hasDefaultList = userLists.some(list => list.isDefault);
+        
+        if (!hasDefaultList) {
+          // Create default list if it doesn't exist
+          await handleCreateDefaultList();
+        } else {
+          setLists(userLists);
+        }
       } else {
-        setLists(fetchedLists);
+        // Document doesn't exist, create it with default list
+        await handleCreateDefaultList();
       }
     });
 
     return () => unsubscribe();
   }, [user]);
 
-  // Create default list in Firebase if it doesn't exist
-  useEffect(() => {
-    const createDefaultListIfNeeded = async () => {
-      if (!user || lists.length === 0) return;
-      
-      const hasDefaultList = lists.some(list => list.isDefault);
-      if (!hasDefaultList) {
-        await handleCreateDefaultList();
-      }
-    };
-
-    createDefaultListIfNeeded();
-  }, [user, lists]);
-
   const handleCreateDefaultList = async () => {
     try {
-      const listsCollection = getListsCollection();
-      if (!listsCollection) return;
+      const favoritesDocRef = getFavoritesDocRef();
+      if (!favoritesDocRef) return;
 
-      await addDoc(listsCollection, {
+      console.log('Creating default list in Firebase...');
+      
+      // Check if document exists
+      const docSnapshot = await getDoc(favoritesDocRef);
+      const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+      const existingFavoriteList = existingData.favoriteList || [];
+      
+      // Generate unique ID for default list
+      const newId = generateListId(existingFavoriteList);
+      
+      const defaultListItem = {
+        id: newId,
         name: 'My Favorite List',
-        count: 0,
-        isDefault: true,
-        createdAt: new Date()
-      });
+        isDefault: true
+      };
+
+      // Add to existing array or create new array
+      const updatedFavoriteList = [...existingFavoriteList, defaultListItem];
+
+      // Update the document
+      await setDoc(favoritesDocRef, {
+        favoriteList: updatedFavoriteList
+      }, { merge: true });
+      
+      console.log('Default list created with ID:', newId);
     } catch (error) {
       console.error('Error creating default list:', error);
-      alert('Error creating default list. Please try again.');
     }
   };
 
@@ -477,15 +496,30 @@ function FavoritesContent({ activeComponent }) {
 
     setIsLoading(true);
     try {
-      const listsCollection = getListsCollection();
-      if (!listsCollection) return;
+      const favoritesDocRef = getFavoritesDocRef();
+      if (!favoritesDocRef) return;
 
-      await addDoc(listsCollection, {
+      // Get current data
+      const docSnapshot = await getDoc(favoritesDocRef);
+      const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+      const existingFavoriteList = existingData.favoriteList || [];
+
+      // Generate unique ID
+      const newId = generateListId(existingFavoriteList);
+
+      const newListItem = {
+        id: newId,
         name: newListName.trim(),
-        count: 0,
-        isDefault: false,
-        createdAt: new Date()
-      });
+        isDefault: false
+      };
+
+      // Add to existing array
+      const updatedFavoriteList = [...existingFavoriteList, newListItem];
+
+      // Update the document
+      await setDoc(favoritesDocRef, {
+        favoriteList: updatedFavoriteList
+      }, { merge: true });
 
       handleCloseModal();
     } catch (error) {
@@ -508,11 +542,29 @@ function FavoritesContent({ activeComponent }) {
 
     setIsLoading(true);
     try {
-      const listDoc = doc(db, 'users', user.uid, 'newlist', editingList.id);
-      await updateDoc(listDoc, {
-        name: newListName.trim(),
-        updatedAt: new Date()
+      const favoritesDocRef = getFavoritesDocRef();
+      if (!favoritesDocRef) return;
+
+      // Get current data
+      const docSnapshot = await getDoc(favoritesDocRef);
+      const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+      const existingFavoriteList = existingData.favoriteList || [];
+
+      // Find and update the specific item
+      const updatedFavoriteList = existingFavoriteList.map(item => {
+        if (item.id === editingList.id) {
+          return {
+            ...item,
+            name: newListName.trim()
+          };
+        }
+        return item;
       });
+
+      // Update the document
+      await setDoc(favoritesDocRef, {
+        favoriteList: updatedFavoriteList
+      }, { merge: true });
 
       handleCloseEditModal();
     } catch (error) {
@@ -533,8 +585,22 @@ function FavoritesContent({ activeComponent }) {
 
     setIsLoading(true);
     try {
-      const listDoc = doc(db, 'users', user.uid, 'newlist', listId);
-      await deleteDoc(listDoc);
+      const favoritesDocRef = getFavoritesDocRef();
+      if (!favoritesDocRef) return;
+
+      // Get current data
+      const docSnapshot = await getDoc(favoritesDocRef);
+      const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+      const existingFavoriteList = existingData.favoriteList || [];
+
+      // Remove the specific item
+      const updatedFavoriteList = existingFavoriteList.filter(item => item.id !== listId);
+
+      // Update the document
+      await setDoc(favoritesDocRef, {
+        favoriteList: updatedFavoriteList
+      }, { merge: true });
+
       setShowDropdown(null);
     } catch (error) {
       console.error('Error deleting list:', error);
@@ -649,7 +715,7 @@ function FavoritesContent({ activeComponent }) {
                 </div>
 
                 <h3 className="font-medium text-center text-xl">{defaultList.name}</h3>
-                <p className="text-xl mt-2">({defaultList.count} listings)</p>
+                <p className="text-xl mt-2">({defaultList.count || 0} listings)</p>
               </div>
             )}
             
@@ -714,7 +780,7 @@ function FavoritesContent({ activeComponent }) {
                   </div>
 
                   <h3 className="font-medium text-center text-xl">{list.name}</h3>
-                  <p className="text-xl mt-2">({list.count} listings)</p>
+                  <p className="text-xl mt-2">({list.count || 0} listings)</p>
                 </div>
               ))}
             </div>
