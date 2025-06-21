@@ -1,6 +1,5 @@
 
 
-// // Helper function to extract addowner by removing last digit from addID
 // import React, { useState, useEffect } from "react";
 // import { FaTimes } from "react-icons/fa";
 // import { useParams } from 'react-router-dom'; // Add this import
@@ -15,18 +14,47 @@
 // import { useAuthState } from 'react-firebase-hooks/auth';
 // import { auth, db } from '../../../firebase'; // Adjust path to your Firebase config
 
+// // Add CSS animation styles
+// const styles = `
+//   @keyframes slide-in {
+//     from {
+//       transform: translateX(100%);
+//       opacity: 0;
+//     }
+//     to {
+//       transform: translateX(0);
+//       opacity: 1;
+//     }
+//   }
+  
+//   .animate-slide-in {
+//     animation: slide-in 0.3s ease-out;
+//   }
+// `;
+
+// // Inject styles
+// if (typeof document !== 'undefined') {
+//   const styleSheet = document.createElement("style");
+//   styleSheet.innerText = styles;
+//   document.head.appendChild(styleSheet);
+// }
+
 // const FavoritesModal = ({ 
 //   isOpen, 
 //   onClose, 
 //   onCreateNewList,
 //   onNavigateToFavorites // Function to navigate to FavoritesContent component
 // }) => {
-//   const { id: currentAdId } = useParams(); // Get ad ID from URL params
+//   const { id: currentAdId, category: urlCategory } = useParams(); // Get ad ID and category from URL params
 //   const [user, loading, error] = useAuthState(auth);
 //   const [userLists, setUserLists] = useState([]);
 //   const [isLoading, setIsLoading] = useState(false);
 //   const [addingToList, setAddingToList] = useState(null);
 //   const [currentAd, setCurrentAd] = useState(null); // State to store fetched ad data
+//   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+//   const [successMessage, setSuccessMessage] = useState('');
+//   const [showErrorAlert, setShowErrorAlert] = useState(false);
+//   const [errorMessage, setErrorMessage] = useState('');
 
 //   // Firebase functions
 //   const getFavoritesDocRef = () => {
@@ -94,22 +122,83 @@
 //     return addId.toString().slice(0, -1);
 //   };
 
-//   // Helper function to get category from addID (you may need to adjust this based on your data structure)
+//   // Helper function to get category from addID with URL fallback
 //   const getCategoryFromAddId = async (addId) => {
 //     try {
-//       // You might need to fetch from ads collection or extract from ID pattern
-//       // This is a placeholder - adjust based on your actual data structure
-//       const adDocRef = doc(db, 'ads', addId); // Assuming you have an ads collection
-//       const adDoc = await getDoc(adDocRef);
-//       if (adDoc.exists()) {
-//         return adDoc.data().category || '';
+//       // First try to get from current ad data
+//       if (currentAd?.category) {
+//         return currentAd.category;
 //       }
-//       return currentAd?.category || '';
+
+//       // Then try to fetch from ads collection
+//       const adDocRef = doc(db, 'ads', addId);
+//       const adDoc = await getDoc(adDocRef);
+//       if (adDoc.exists() && adDoc.data().category) {
+//         return adDoc.data().category;
+//       }
+
+//       // Finally fall back to URL params
+//       return urlCategory || '';
 //     } catch (error) {
 //       console.error('Error getting category:', error);
-//       return currentAd?.category || '';
+//       // Return URL category as final fallback
+//       return urlCategory || '';
 //     }
 //   };
+
+//   // Custom Success Alert Component
+//   const SuccessAlert = () => (
+//     showSuccessAlert && (
+//       <div className="fixed top-4 right-4 z-[60] animate-slide-in">
+//         <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 min-w-[300px]">
+//           <div className="flex-shrink-0">
+//             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+//             </svg>
+//           </div>
+//           <div className="flex-1">
+//             <p className="font-medium">Success!</p>
+//             <p className="text-sm opacity-90">{successMessage}</p>
+//           </div>
+//           <button
+//             onClick={() => setShowSuccessAlert(false)}
+//             className="flex-shrink-0 text-white hover:text-gray-200 transition-colors"
+//           >
+//             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+//             </svg>
+//           </button>
+//         </div>
+//       </div>
+//     )
+//   );
+
+//   // Custom Error Alert Component
+//   const ErrorAlert = () => (
+//     showErrorAlert && (
+//       <div className="fixed top-4 right-4 z-[60] animate-slide-in">
+//         <div className="bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 min-w-[300px]">
+//           <div className="flex-shrink-0">
+//             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+//             </svg>
+//           </div>
+//           <div className="flex-1">
+//             <p className="font-medium">Error!</p>
+//             <p className="text-sm opacity-90">{errorMessage}</p>
+//           </div>
+//           <button
+//             onClick={() => setShowErrorAlert(false)}
+//             className="flex-shrink-0 text-white hover:text-gray-200 transition-colors"
+//           >
+//             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+//             </svg>
+//           </button>
+//         </div>
+//       </div>
+//     )
+//   );
 
 //   // Fetch user's favorite lists from Firebase
 //   useEffect(() => {
@@ -139,7 +228,13 @@
 //   }, [user, isOpen]);
 
 //   // Don't render if modal is not open
-//   if (!isOpen) return null;
+//   if (!isOpen) {
+//     // Hide success alert when modal closes
+//     if (showSuccessAlert) {
+//       setShowSuccessAlert(false);
+//     }
+//     return null;
+//   }
 
 //   // Handle backdrop click to close modal
 //   const handleBackdropClick = (e) => {
@@ -203,34 +298,28 @@
 //         addedBy: user.uid
 //       };
 
-//       // Check if ad already exists in the selected list
-//       const existingAds = selectedList.ads || [];
-//       const adExists = existingAds.some(ad => ad.addID === newAdData.addID);
+//       // Check if ad already exists by checking the user's favorites array
+//       // Include category in the check to allow same IDs from different categories
+//       const userDocSnapshot = await getDoc(userDocRef);
+//       const userData = userDocSnapshot.exists() ? userDocSnapshot.data() : {};
+//       const currentFavorites = userData.favorites || [];
+      
+//       const adExists = currentFavorites.some(fav => 
+//         fav.addID === adId && 
+//         fav.favoriteName === selectedList.name &&
+//         fav.category === category
+//       );
       
 //       if (adExists) {
-//         alert('This ad is already in your favorites list!');
+//         setErrorMessage('This ad is already in your favorites list!');
+//         setShowErrorAlert(true);
+//         setTimeout(() => setShowErrorAlert(false), 4000);
 //         setIsLoading(false);
 //         setAddingToList(null);
 //         return;
 //       }
 
-//       // Update the specific list with the new ad in favoriteItem collection
-//       const updatedFavoriteList = existingFavoriteList.map(item => {
-//         if (item.id === selectedList.id) {
-//           const updatedAds = [...(item.ads || []), newAdData];
-//           return {
-//             ...item,
-//             ads: updatedAds,
-//             count: updatedAds.length // Update count based on ads array length
-//           };
-//         }
-//         return item;
-//       });
-
-//       // Update the favoriteItem document
-//       await setDoc(favoritesDocRef, {
-//         favoriteList: updatedFavoriteList
-//       }, { merge: true });
+//       // Don't modify favoriteList structure - it should keep only id, isDefault, name
 
 //       // Create new entry for favorites array in user's main document
 //       const favoritesEntry = {
@@ -240,29 +329,30 @@
 //         favoriteName: selectedList.name
 //       };
 
-//       // Check if user document exists and get current favorites array
-//       const userDocSnapshot = await getDoc(userDocRef);
-//       const userData = userDocSnapshot.exists() ? userDocSnapshot.data() : {};
-//       const currentFavorites = userData.favorites || [];
+//       // Add to favorites array in user's main document (only if not already exists)
+//       await updateDoc(userDocRef, {
+//         favorites: arrayUnion(favoritesEntry)
+//       });
 
-//       // Check if this addID already exists in favorites array
-//       const favoriteExists = currentFavorites.some(fav => 
-//         fav.addID === favoritesEntry.addID && fav.favoriteName === selectedList.name
-//       );
-
-//       if (!favoriteExists) {
-//         // Add to favorites array in user's main document
-//         await updateDoc(userDocRef, {
-//           favorites: arrayUnion(favoritesEntry)
-//         });
-//       }
-
-//       alert(`Ad successfully added to "${selectedList.name}"!`);
-//       onClose();
+//       // Show custom success message
+//       setSuccessMessage(`Ad successfully added to "${selectedList.name}"!`);
+//       setShowSuccessAlert(true);
+      
+//       // Auto-hide alert after 4 seconds
+//       setTimeout(() => {
+//         setShowSuccessAlert(false);
+//       }, 4000);
+      
+//       // Close modal after a short delay to show the success message
+//       setTimeout(() => {
+//         onClose();
+//       }, 1000);
 
 //     } catch (error) {
 //       console.error('Error adding ad to favorites:', error);
-//       alert('Error adding ad to favorites. Please try again.');
+//       setErrorMessage('Error adding ad to favorites. Please try again.');
+//       setShowErrorAlert(true);
+//       setTimeout(() => setShowErrorAlert(false), 4000);
 //     } finally {
 //       setIsLoading(false);
 //       setAddingToList(null);
@@ -318,10 +408,17 @@
 //   }
 
 //   return (
-//     <div 
-//       className="fixed inset-0 bg-black bg-opacity-50 font-poppins flex items-center justify-center z-50"
-//       onClick={handleBackdropClick}
-//     >
+//     <>
+//       {/* Custom Success Alert */}
+//       <SuccessAlert />
+      
+//       {/* Custom Error Alert */}
+//       <ErrorAlert />
+      
+//       <div 
+//         className="fixed inset-0 bg-black bg-opacity-50 font-poppins flex items-center justify-center z-50"
+//         onClick={handleBackdropClick}
+//       >
 //       <div className="bg-white rounded-lg w-[500px] max-w-[90vw] p-8 relative max-h-[80vh] overflow-y-auto">
 //         {/* Close Button */}
 //         <button
@@ -356,7 +453,7 @@
 //                     <div>
 //                       <h4 className="font-medium text-black">{list.name}</h4>
 //                       <p className="text-sm text-gray-500">
-//                         {list.count || 0} items
+//                         Favorite List
 //                       </p>
 //                     </div>
 //                     {addingToList === list.id ? (
@@ -391,20 +488,19 @@
 //           </button>
 //         </div>
 
-//         {/* Current Ad Info */}
-//         {(currentAd || currentAdId) && (
-//           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-//             <p className="text-xs text-gray-500">
-//               Adding: {currentAd?.title || currentAdId}
-//             </p>
-//           </div>
-//         )}
 //       </div>
 //     </div>
+//     </>
 //   );
 // };
 
 // export default FavoritesModal;
+
+
+
+
+
+
 
 
 
@@ -464,6 +560,11 @@ const FavoritesModal = ({
   const [successMessage, setSuccessMessage] = useState('');
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // New states for creating list functionality
+  const [showCreateInput, setShowCreateInput] = useState(false);
+  const [newListName, setNewListName] = useState('');
+  const [isCreatingList, setIsCreatingList] = useState(false);
 
   // Firebase functions
   const getFavoritesDocRef = () => {
@@ -474,6 +575,20 @@ const FavoritesModal = ({
   const getUserDocRef = () => {
     if (!user) return null;
     return doc(db, 'users', user.uid);
+  };
+
+  // Generate unique ID for new list items
+  const generateListId = (existingLists) => {
+    const baseId = user.uid;
+    let counter = 1;
+    let newId = `${baseId}${counter}`;
+    
+    while (existingLists.some(list => list.id === newId)) {
+      counter++;
+      newId = `${baseId}${counter}`;
+    }
+    
+    return newId;
   };
 
   // Function to fetch ad data from favoriteItem collection
@@ -768,13 +883,73 @@ const FavoritesModal = ({
     }
   };
 
-  // Handle create new list navigation
+  // Handle create new list - show input instead of navigation
   const handleCreateNewList = () => {
-    console.log("Navigating to create new favorites list");
-    onClose();
-    if (onNavigateToFavorites) {
-      onNavigateToFavorites('listing'); // Navigate to FavoritesContent with listing tab
+    setShowCreateInput(true);
+  };
+
+  // Handle saving new list
+  const handleSaveNewList = async () => {
+    if (!newListName.trim() || !user) return;
+
+    setIsCreatingList(true);
+    try {
+      const favoritesDocRef = getFavoritesDocRef();
+      if (!favoritesDocRef) return;
+
+      const docSnapshot = await getDoc(favoritesDocRef);
+      const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+      const existingFavoriteList = existingData.favoriteList || [];
+
+      // Check if list name already exists
+      const nameExists = existingFavoriteList.some(list => 
+        list.name.toLowerCase() === newListName.trim().toLowerCase()
+      );
+
+      if (nameExists) {
+        setErrorMessage('A list with this name already exists!');
+        setShowErrorAlert(true);
+        setTimeout(() => setShowErrorAlert(false), 4000);
+        setIsCreatingList(false);
+        return;
+      }
+
+      const newId = generateListId(existingFavoriteList);
+      const newListItem = {
+        id: newId,
+        name: newListName.trim(),
+        isDefault: false
+      };
+
+      const updatedFavoriteList = [...existingFavoriteList, newListItem];
+
+      await setDoc(favoritesDocRef, {
+        favoriteList: updatedFavoriteList
+      }, { merge: true });
+
+      // Show success message
+      setSuccessMessage(`List "${newListName.trim()}" created successfully!`);
+      setShowSuccessAlert(true);
+      setTimeout(() => setShowSuccessAlert(false), 4000);
+
+      // Reset form
+      setNewListName('');
+      setShowCreateInput(false);
+
+    } catch (error) {
+      console.error('Error creating list:', error);
+      setErrorMessage('Error creating list. Please try again.');
+      setShowErrorAlert(true);
+      setTimeout(() => setShowErrorAlert(false), 4000);
+    } finally {
+      setIsCreatingList(false);
     }
+  };
+
+  // Handle cancel creating new list
+  const handleCancelCreateList = () => {
+    setNewListName('');
+    setShowCreateInput(false);
   };
 
   // Show loading state
@@ -855,7 +1030,7 @@ const FavoritesModal = ({
                 <button
                   key={list.id}
                   onClick={() => handleAddToList(list)}
-                  disabled={isLoading || addingToList === list.id}
+                  disabled={isLoading || addingToList === list.id || showCreateInput}
                   className="w-full p-4 border border-gray-300 hover:border-primaryBlue text-left rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="flex justify-between items-center">
@@ -886,15 +1061,50 @@ const FavoritesModal = ({
           )}
         </div>
 
-        {/* Create New List Button */}
+        {/* Create New List Section */}
         <div className="border-t pt-4">
-          <button
-            onClick={handleCreateNewList}
-            disabled={isLoading}
-            className="w-full max-w-[15rem] py-3 border bg-primaryBlue text-white font-medium text-lg rounded-full hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            CREATE NEW LIST
-          </button>
+          {!showCreateInput ? (
+            <button
+              onClick={handleCreateNewList}
+              disabled={isLoading}
+              className="w-full max-w-[15rem] py-3 border bg-primaryBlue text-white font-medium text-lg rounded-full hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              CREATE NEW LIST
+            </button>
+          ) : (
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-gray-600">
+                Create New List:
+              </h3>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                  placeholder="Enter list name"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue"
+                  disabled={isCreatingList}
+                  autoFocus
+                />
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleSaveNewList}
+                    disabled={!newListName.trim() || isCreatingList}
+                    className="flex-1 py-2 bg-primaryBlue text-white rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  >
+                    {isCreatingList ? 'Creating...' : 'Save'}
+                  </button>
+                  <button
+                    onClick={handleCancelCreateList}
+                    disabled={isCreatingList}
+                    className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
