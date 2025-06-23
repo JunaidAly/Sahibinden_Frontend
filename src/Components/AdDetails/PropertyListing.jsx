@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { useAuthState } from 'react-firebase-hooks/auth'; // If you're using this
+import { auth, db } from "../../../firebase";
 import { 
   CATEGORY_CONFIGS, 
   DEFAULT_CONFIG, 
@@ -17,56 +18,61 @@ const PropertyListing = () => {
   const navigate = useNavigate();
   const propertyId = addID || id;
   
+  // Get current authenticated user
+  const [user, loading, error] = useAuthState(auth); // If using react-firebase-hooks
+  // OR if you have your own auth context:
+  // const { user } = useAuth();
+  
   const [property, setProperty] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [propertyLoading, setPropertyLoading] = useState(true);
   const [userLoading, setUserLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [propertyError, setPropertyError] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
 
   // Get category configuration
   const categoryConfig = CATEGORY_CONFIGS[category] || DEFAULT_CONFIG;
 
-// Updated function to remove last digit from addID
-const findUserIdFromProperty = (propertyData) => {
-  const possibleUserIdFields = [
-        'userUID','addID'
-  ];
-  
-  for (const field of possibleUserIdFields) {
-    if (propertyData[field]) {
-      let userId = propertyData[field];
-      
-      // For addID, remove the last digit to create base ID
-      if (field === 'addID' && userId.length > 1) {
-        userId = userId.slice(0, -1);
+  // Updated function to remove last digit from addID
+  const findUserIdFromProperty = (propertyData) => {
+    const possibleUserIdFields = [
+          'userUID','addID'
+    ];
+    
+    for (const field of possibleUserIdFields) {
+      if (propertyData[field]) {
+        let userId = propertyData[field];
+        
+        // For addID, remove the last digit to create base ID
+        if (field === 'addID' && userId.length > 1) {
+          userId = userId.slice(0, -1);
+        }
+        
+        return userId;
       }
-      
-      return userId;
     }
-  }
-  
-  // Check nested objects for user ID
-  for (const [key, value] of Object.entries(propertyData)) {
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      for (const field of possibleUserIdFields) {
-        if (value[field]) {
-          let userId = value[field];
-          
-          // For addID, remove the last digit to create base ID
-          if (field === 'addID' && userId.length > 1) {
-            userId = userId.slice(0, -1);
+    
+    // Check nested objects for user ID
+    for (const [key, value] of Object.entries(propertyData)) {
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        for (const field of possibleUserIdFields) {
+          if (value[field]) {
+            let userId = value[field];
+            
+            // For addID, remove the last digit to create base ID
+            if (field === 'addID' && userId.length > 1) {
+              userId = userId.slice(0, -1);
+            }
+            
+            return userId;
           }
-          
-          return userId;
         }
       }
     }
-  }
-  
-  return null;
-};
+    
+    return null;
+  };
 
   // Function to fetch user data from Firebase
   const fetchUserData = async (uid) => {
@@ -91,52 +97,86 @@ const findUserIdFromProperty = (propertyData) => {
           displayName,
           homePhone: phone,
           photoURL,
-          email
+          email,
+          uid // Store the original user ID
         });
       } else {
         setUserData({
           displayName: 'Unknown User',
           homePhone: 'Contact not available',
           photoURL: null,
-          email: 'Email not available'
+          email: 'Email not available',
+          uid: uid
         });
       }
     } catch (error) {
+      console.error('Error fetching user data:', error);
       setUserData({
         displayName: 'Unknown User',
         homePhone: 'Contact not available',
         photoURL: null,
-        email: 'Email not available'
+        email: 'Email not available',
+        uid: uid
       });
     } finally {
       setUserLoading(false);
     }
   };
 
-  // Update handleSendMessage to use dynamic user data
+  // Updated handleSendMessage function
   const handleSendMessage = () => {
-    if (!property) return;
+    if (!property) {
+      alert('Property data not available');
+      return;
+    }
 
-    // Prepare property data for the chat
-    const propertyData = {
-      title: getItemTitle(property, category, categoryConfig),
-      price: getPriceDisplay(property),
-      type: `For sale > ${categoryConfig.name}`,
-      location: getFieldValue(property, 'location') || getFieldValue(property, 'city') || 'Location not specified',
-      image: property.images?.[0] || property.imageUrls?.[0] || '/assets/placeholder-property.png'
-    };
+    if (!user) {
+      alert('Please login to send a message');
+      // Optionally redirect to login
+      // navigate('/login');
+      return;
+    }
+
+    // Get the current property's addID
+    const currentAddId = property.addID || property.id || propertyId;
+    
+    if (!currentAddId) {
+      alert('Property ID not available');
+      return;
+    }
+
+   // Prepare property data for the chat
+const propertyData = {
+  title: getItemTitle(property, category, categoryConfig),
+  price: getPriceDisplay(property),
+  type: categoryConfig.name, // Just the original category name
+  location: getFieldValue(property, 'location') || getFieldValue(property, 'city') || 'Location not specified',
+  image: property.images?.[0] || property.imageUrls?.[0] || '/assets/placeholder-property.png',
+  addId: currentAddId, // Current property's addID
+  category: property.category || category
+};
 
     // Use dynamic user data or fallback
     const contactInfo = {
       name: userData?.displayName || "Unknown User",
-      phone: userData?.homePhone || "Contact not available"
+      phone: userData?.homePhone || "Contact not available",
+      receiverId: userData?.uid || findUserIdFromProperty(property) || 'unknown_receiver',
+      email: userData?.email
     };
 
-    // Navigate to chat with property and contact data
+    console.log('Chat Data:', {
+      propertyData,
+      contactInfo,
+      currentUserId: user.uid,
+      propertyAddId: currentAddId
+    });
+
+    // Navigate to chat with all necessary data
     navigate('/chat', {
       state: {
         propertyData,
         contactInfo,
+        currentUserId: user.uid, // Current authenticated user ID
         initialMessages: []
       }
     });
@@ -204,7 +244,7 @@ const findUserIdFromProperty = (propertyData) => {
       
       if (foundProperty) {
         setProperty(foundProperty);
-        setError(null);
+        setPropertyError(null);
         
         // Fetch user data after property is found
         const uid = findUserIdFromProperty(foundProperty);
@@ -215,14 +255,15 @@ const findUserIdFromProperty = (propertyData) => {
             displayName: 'Unknown User',
             homePhone: 'Contact not available',
             photoURL: null,
-            email: 'Email not available'
+            email: 'Email not available',
+            uid: null
           });
         }
       } else {
-        setError("Item not found");
+        setPropertyError("Item not found");
       }
     } catch (searchError) {
-      setError("Failed to load item details");
+      setPropertyError("Failed to load item details");
     }
   };
 
@@ -230,13 +271,13 @@ const findUserIdFromProperty = (propertyData) => {
   useEffect(() => {
     const fetchProperty = async () => {
       if (!propertyId) {
-        setError("No item ID provided");
-        setLoading(false);
+        setPropertyError("No item ID provided");
+        setPropertyLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
+        setPropertyLoading(true);
         
         const docRef = doc(db, "allAddsPost", propertyId);
         const docSnap = await getDoc(docRef);
@@ -250,7 +291,7 @@ const findUserIdFromProperty = (propertyData) => {
           
           if (isValidDoc && categoryMatches) {
             setProperty({ id: docSnap.id, ...data });
-            setError(null);
+            setPropertyError(null);
             
             // Fetch user data after property is found
             const uid = findUserIdFromProperty(data);
@@ -261,7 +302,8 @@ const findUserIdFromProperty = (propertyData) => {
                 displayName: 'Unknown User',
                 homePhone: 'Contact not available',
                 photoURL: null,
-                email: 'Email not available'
+                email: 'Email not available',
+                uid: null
               });
             }
             return;
@@ -270,9 +312,9 @@ const findUserIdFromProperty = (propertyData) => {
         
         await searchAllDocuments();
       } catch (err) {
-        setError("Failed to load item details");
+        setPropertyError("Failed to load item details");
       } finally {
-        setLoading(false);
+        setPropertyLoading(false);
       }
     };
 
@@ -314,7 +356,7 @@ const findUserIdFromProperty = (propertyData) => {
   };
 
   // Loading state
-  if (loading) {
+  if (propertyLoading) {
     return (
       <div className="max-w-6xl mx-auto p-4">
         <div className="animate-pulse">
@@ -335,11 +377,11 @@ const findUserIdFromProperty = (propertyData) => {
   }
 
   // Error state
-  if (error) {
+  if (propertyError) {
     return (
       <div className="max-w-6xl mx-auto p-4">
         <div className="text-center py-12">
-          <p className="text-red-600 text-lg mb-4">{error}</p>
+          <p className="text-red-600 text-lg mb-4">{propertyError}</p>
           <p className="text-gray-600 mb-2">Item ID: {propertyId}</p>
           {category && <p className="text-gray-600 mb-4">Category: {category}</p>}
           <button 
@@ -366,6 +408,15 @@ const findUserIdFromProperty = (propertyData) => {
   return (
     <>
       <div className="max-w-7xl mx-auto p-4">
+        {/* Debug info in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-blue-100 p-2 mb-4 text-xs rounded">
+            <strong>Debug:</strong> PropertyID: {propertyId} | 
+            Property AddID: {property.addID || property.id} | 
+            Current User: {user?.uid || 'Not logged in'}
+          </div>
+        )}
+
         <div className="flex flex-row items-center gap-[47rem]">
           {/* Breadcrumb Navigation */}
           {category && (
@@ -542,9 +593,10 @@ const findUserIdFromProperty = (propertyData) => {
                 <button 
                   onClick={handleSendMessage}
                   className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 rounded-full transition-colors duration-200 hover:bg-blue-700"
-                  disabled={userLoading}
+                  disabled={userLoading || !user}
+                  title={!user ? 'Please login to send a message' : ''}
                 >
-                  SEND MESSAGE
+                  {!user ? 'LOGIN TO MESSAGE' : 'SEND MESSAGE'}
                 </button>
               </div>
             </div>

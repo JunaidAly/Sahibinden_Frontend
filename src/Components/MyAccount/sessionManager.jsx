@@ -1,3 +1,5 @@
+
+
 // src/Components/MyAccount/sessionManager.js - Place this file to match your import path
 import { doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase"; // Correct path: Components/MyAccount -> src -> firebase
@@ -62,8 +64,9 @@ export const initializeUserSessions = async (user, additionalData = {}) => {
 
 /**
  * Add a new session when user logs in from a device
+ * FIXED: Now preserves user profile data when document doesn't exist
  */
-export const addUserSession = async (userId, sessionData) => {
+export const addUserSession = async (userId, sessionData, userProfileData = null) => {
   try {
     const userDocRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userDocRef);
@@ -81,27 +84,111 @@ export const addUserSession = async (userId, sessionData) => {
       // Add new current session
       sessions.push(sessionData);
       
-      // Update document
+      // Update document - PRESERVE ALL EXISTING FIELDS
       await updateDoc(userDocRef, {
         sessions: sessions,
         lastLogin: sessionData.lastLogin,
-        lastActiveAt: new Date().toISOString()
+        lastActiveAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       });
       
       console.log("Session added successfully:", sessionData.id);
     } else {
-      // Create user document with first session
-      await setDoc(userDocRef, {
+      console.warn("⚠️ User document doesn't exist, creating minimal document. Profile data might be missing!");
+      
+      // Create user document with session data AND preserve profile data if provided
+      const minimalUserData = {
         uid: userId,
         sessions: [sessionData],
         lastLogin: sessionData.lastLogin,
         lastActiveAt: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      });
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // If userProfileData is provided, merge it
+      if (userProfileData) {
+        Object.assign(minimalUserData, userProfileData);
+      }
+
+      await setDoc(userDocRef, minimalUserData);
       console.log("User document created with session:", sessionData.id);
     }
   } catch (error) {
     console.error("Error adding session:", error);
+    throw error;
+  }
+};
+
+/**
+ * ENHANCED: Add session with user profile data preservation
+ * Use this when you have access to the Firebase user object
+ */
+export const addUserSessionWithProfile = async (userId, sessionData, firebaseUser = null) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userDocRef);
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      let sessions = userData.sessions || [];
+      
+      // Remove any existing current session (user switching devices)
+      sessions = sessions.map(session => ({
+        ...session,
+        isCurrent: false
+      }));
+      
+      // Add new current session
+      sessions.push(sessionData);
+      
+      // Update document - PRESERVE ALL EXISTING FIELDS
+      await updateDoc(userDocRef, {
+        sessions: sessions,
+        lastLogin: sessionData.lastLogin,
+        lastActiveAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log("Session added successfully:", sessionData.id);
+    } else {
+      console.log("🔧 User document doesn't exist, creating with profile data from Firebase user");
+      
+      // Extract profile data from Firebase user if available
+      let profileData = {};
+      if (firebaseUser) {
+        const fullName = firebaseUser.displayName || '';
+        const nameParts = fullName.trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+        profileData = {
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          firstName: firstName,
+          lastName: lastName,
+          photoURL: firebaseUser.photoURL,
+          emailVerified: firebaseUser.emailVerified,
+          signUpMethod: 'google' // Assume Google if we're creating from session
+        };
+      }
+
+      // Create user document with session data AND profile data
+      const completeUserData = {
+        uid: userId,
+        ...profileData, // Include profile data
+        sessions: [sessionData],
+        lastLogin: sessionData.lastLogin,
+        lastActiveAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      await setDoc(userDocRef, completeUserData);
+      console.log("✅ User document created with session and profile data:", sessionData.id);
+    }
+  } catch (error) {
+    console.error("Error adding session with profile:", error);
     throw error;
   }
 };

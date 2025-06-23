@@ -1,5 +1,20 @@
-import { useState } from 'react';
+
+
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { 
+  doc, 
+  collection, 
+  addDoc, 
+  setDoc, 
+  getDoc, 
+  onSnapshot, 
+  orderBy, 
+  query, 
+  serverTimestamp,
+  updateDoc 
+} from 'firebase/firestore';
+import { db } from '../../../firebase';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import NavMenuBar from '../NavMenuBar';
@@ -8,12 +23,12 @@ const ChatComponent = ({
   propertyData: propPropertyData,
   contactInfo: propContactInfo,
   initialMessages: propInitialMessages,
-  onBack: propOnBack
+  onBack: propOnBack,
+  currentUserId
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Get data from props or location state (for navigation)
   const stateData = location.state || {};
   
   const propertyData = propPropertyData || stateData.propertyData;
@@ -22,24 +37,201 @@ const ChatComponent = ({
   
   const onBack = propOnBack || (() => navigate('/massage-and-notifications'));
   
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [chatroomId, setChatroomId] = useState(null);
+  const [error, setError] = useState(null);
+  const [chatroomCreated, setChatroomCreated] = useState(false);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const message = {
-        id: messages.length + 1,
-        text: newMessage,
-        timestamp: new Date().toLocaleString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          year: 'numeric', 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }),
-        isSender: true
+  // Get user ID from multiple sources
+  const userId = currentUserId || 
+                 stateData.currentUserId || 
+                 localStorage.getItem('userId') || 
+                 sessionStorage.getItem('currentUserId') ||
+                 'temp_user_' + Date.now();
+
+  const generateChatroomId = (addId, userId) => {
+    return `${addId}_${userId}`;
+  };
+
+  // Enhanced chatroom creation with better error handling
+  const createOrGetChatroom = async () => {
+    try {
+      if (!propertyData?.addId && !propertyData?.id) {
+        throw new Error('Missing property ID');
+      }
+      
+      const addId = propertyData.addId || propertyData.id;
+      const roomId = generateChatroomId(addId, userId);
+      
+      setChatroomId(roomId);
+
+      const chatroomRef = doc(db, 'chatrooms', roomId);
+      const chatroomSnap = await getDoc(chatroomRef);
+
+      if (!chatroomSnap.exists()) {
+        const chatroomData = {
+          addID: addId,
+          category: propertyData.type || propertyData.category || 'Real Estate',
+          lastMessage: '',
+          participants: {
+            [userId]: true,
+            [contactInfo?.receiverId || 'unknown_receiver']: true
+          },
+          sentOn: serverTimestamp()
+        };
+        
+        await setDoc(chatroomRef, chatroomData);
+        
+        // Verify chatroom was created
+        const verifySnap = await getDoc(chatroomRef);
+        if (verifySnap.exists()) {
+          setChatroomCreated(true);
+        } else {
+          throw new Error('Failed to create chatroom document');
+        }
+      } else {
+        setChatroomCreated(true);
+      }
+      
+      return roomId;
+    } catch (error) {
+      setError('Failed to create chatroom: ' + error.message);
+      setLoading(false);
+      return null;
+    }
+  };
+
+  // Enhanced message sending with better error handling
+  const sendMessageToFirebase = async (messageText) => {
+    if (!chatroomId || !messageText.trim()) {
+      return;
+    }
+
+    if (!chatroomCreated) {
+      setError('Chatroom not ready. Please try again.');
+      return;
+    }
+
+    try {
+      // First, verify chatroom exists
+      const chatroomRef = doc(db, 'chatrooms', chatroomId);
+      const chatroomSnap = await getDoc(chatroomRef);
+      
+      if (!chatroomSnap.exists()) {
+        await createOrGetChatroom();
+        // Try again after recreating
+        return sendMessageToFirebase(messageText);
+      }
+
+      // Add message to messages subcollection
+      const messagesRef = collection(db, 'chatrooms', chatroomId, 'messages');
+      const messageData = {
+        addID: propertyData.addId || propertyData.id,
+        isRead: false,
+        receiver: contactInfo?.receiverId || 'unknown_receiver',
+        sender: userId,
+        sentOn: serverTimestamp(),
+        text: messageText.trim()
       };
-      setMessages([...messages, message]);
+
+      await addDoc(messagesRef, messageData);
+
+      // Update chatroom with last message
+      await updateDoc(chatroomRef, {
+        lastMessage: messageText.trim(),
+        sentOn: serverTimestamp()
+      });
+
+    } catch (error) {
+      setError('Failed to send message: ' + error.message);
+      
+      // If update failed, try to recreate chatroom
+      if (error.message.includes('No document to update')) {
+        setChatroomCreated(false);
+        await createOrGetChatroom();
+      }
+    }
+  };
+
+  // Listen to messages with better error handling
+  useEffect(() => {
+    if (!chatroomId || !chatroomCreated) return;
+
+    const messagesRef = collection(db, 'chatrooms', chatroomId, 'messages');
+    const q = query(messagesRef, orderBy('sentOn', 'asc'));
+
+    const unsubscribe = onSnapshot(q, 
+      (snapshot) => {
+        const messagesData = [];
+        
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          messagesData.push({
+            id: doc.id,
+            text: data.text,
+            timestamp: data.sentOn?.toDate ? data.sentOn.toDate().toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : 'Sending...',
+            isSender: data.sender === userId,
+            isRead: data.isRead,
+            sender: data.sender,
+            receiver: data.receiver
+          });
+        });
+        
+        setMessages(messagesData);
+        setLoading(false);
+        setError(null);
+      },
+      (error) => {
+        setError('Failed to load messages: ' + error.message);
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [chatroomId, userId, chatroomCreated]);
+
+  // Initialize chatroom with timeout and retry logic
+  useEffect(() => {
+    if (propertyData && contactInfo && userId) {
+      const initializeChat = async () => {
+        try {
+          await createOrGetChatroom();
+        } catch (error) {
+          setError('Failed to initialize chat: ' + error.message);
+          setLoading(false);
+        }
+      };
+
+      const timeoutId = setTimeout(() => {
+        if (loading && !chatroomCreated) {
+          setError('Connection timeout. Please check your internet connection.');
+          setLoading(false);
+        }
+      }, 15000);
+
+      initializeChat().then(() => {
+        clearTimeout(timeoutId);
+      });
+
+      return () => clearTimeout(timeoutId);
+    } else {
+      setLoading(false);
+    }
+  }, [propertyData, contactInfo, userId]);
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim()) {
+      await sendMessageToFirebase(newMessage);
       setNewMessage('');
     }
   };
@@ -50,7 +242,55 @@ const ChatComponent = ({
     }
   };
 
-  // If no data is provided, show a message or redirect
+  const handleReport = () => {
+    // Add your report functionality here
+    alert('Report functionality will be implemented');
+  };
+
+  const handleBlock = () => {
+    // Add your block functionality here
+    alert('Block functionality will be implemented');
+  };
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <NavMenuBar />
+        <div className="w-full max-w-5xl mx-auto shadow-custom-diagonal rounded-lg mb-10 mt-5 bg-white p-8 text-center">
+          <h2 className="text-xl font-semibold text-red-600 mb-4">Chat Error</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <div className="text-left bg-gray-100 p-4 rounded mb-4 text-sm">
+            <p><strong>Debug Info:</strong></p>
+            <p>Property Data: {propertyData ? '✓' : '✗'}</p>
+            <p>Contact Info: {contactInfo ? '✓' : '✗'}</p>
+            <p>User ID: {userId}</p>
+            <p>Property AddID: {propertyData?.addId || 'Missing'}</p>
+            <p>Chatroom ID: {chatroomId || 'Not set'}</p>
+            <p>Chatroom Created: {chatroomCreated ? '✓' : '✗'}</p>
+          </div>
+          <div className="space-y-2">
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors mr-2"
+            >
+              Retry
+            </button>
+            <button 
+              onClick={() => navigate('/')}
+              className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors"
+            >
+              Go Home
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // No data state
   if (!propertyData || !contactInfo) {
     return (
       <>
@@ -59,6 +299,12 @@ const ChatComponent = ({
         <div className="w-full max-w-5xl mx-auto shadow-custom-diagonal rounded-lg mb-10 mt-5 bg-white p-8 text-center">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">No Chat Data Available</h2>
           <p className="text-gray-600 mb-4">Unable to load chat information. Please try again.</p>
+          <div className="text-left bg-gray-100 p-4 rounded mb-4 text-sm">
+            <p><strong>Debug Info:</strong></p>
+            <p>Property Data: {propertyData ? '✓' : '✗'}</p>
+            <p>Contact Info: {contactInfo ? '✓' : '✗'}</p>
+            <p>User ID: {userId}</p>
+          </div>
           <button 
             onClick={() => navigate('/')}
             className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
@@ -134,21 +380,32 @@ const ChatComponent = ({
           </div>
           
           <div className="flex space-x-2">
-            <button className="flex items-center space-x-1 text-blue-600 border border-blue-600 px-3 py-1 rounded text-sm">
+            {/* Report Button with Icon */}
+            <button 
+              onClick={handleReport}
+              className="flex items-center space-x-2 text-blue-600 border border-blue-600 px-3 py-2 rounded text-sm hover:bg-blue-50 transition-colors"
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
               <span>Report</span>
             </button>
-            <button className="flex items-center space-x-1 text-blue-600 border border-blue-600 px-3 py-1 rounded text-sm">
+
+            {/* Block Button with Icon */}
+            <button 
+              onClick={handleBlock}
+              className="flex items-center space-x-2 text-red-600 border border-red-600 px-3 py-2 rounded text-sm hover:bg-red-50 transition-colors"
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18 18M5.636 5.636L6 6" />
               </svg>
               <span>Block</span>
             </button>
-            <button className="text-red-600 p-1">
+
+            {/* Delete/More Options Button */}
+            <button className="text-gray-600 hover:text-red-600 p-2 rounded hover:bg-gray-100 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
               </svg>
             </button>
           </div>
@@ -156,7 +413,14 @@ const ChatComponent = ({
 
         {/* Chat Messages */}
         <div className="flex-1 p-4 space-y-4 min-h-[300px] max-h-[400px] overflow-y-auto">
-          {messages.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center h-full flex-col">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-2"></div>
+              <p className="text-gray-500 text-sm">
+                {chatroomCreated ? 'Loading messages...' : 'Setting up chat...'}
+              </p>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="flex justify-center items-center h-full">
               <p className="text-gray-500 text-sm">No messages yet. Start the conversation!</p>
             </div>
@@ -172,7 +436,12 @@ const ChatComponent = ({
                   <p className="text-xs text-gray-500 mt-1">{message.timestamp}</p>
                   {message.isSender && (
                     <div className="flex justify-end mt-1">
-                      <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg 
+                        className={`w-4 h-4 ${message.isRead ? 'text-blue-500' : 'text-gray-400'}`} 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
@@ -193,12 +462,17 @@ const ChatComponent = ({
               onKeyPress={handleKeyPress}
               placeholder="Write your message here"
               className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={loading || !chatroomCreated}
             />
             <button
               onClick={handleSendMessage}
-              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
+              disabled={loading || !newMessage.trim() || !chatroomCreated}
+              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
-              Send
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              <span>Send</span>
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-2">
