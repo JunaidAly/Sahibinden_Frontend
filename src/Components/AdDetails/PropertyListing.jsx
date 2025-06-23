@@ -1,8 +1,6 @@
-
-
 import React, { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { 
@@ -16,10 +14,13 @@ import FavoritesModal from "./FavoritesModal";
 
 const PropertyListing = () => {
   const { category, addID, id } = useParams(); 
+  const navigate = useNavigate();
   const propertyId = addID || id;
   
   const [property, setProperty] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userLoading, setUserLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
@@ -27,21 +28,132 @@ const PropertyListing = () => {
   // Get category configuration
   const categoryConfig = CATEGORY_CONFIGS[category] || DEFAULT_CONFIG;
 
+// Updated function to remove last digit from addID
+const findUserIdFromProperty = (propertyData) => {
+  const possibleUserIdFields = [
+        'userUID','addID'
+  ];
+  
+  for (const field of possibleUserIdFields) {
+    if (propertyData[field]) {
+      let userId = propertyData[field];
+      
+      // For addID, remove the last digit to create base ID
+      if (field === 'addID' && userId.length > 1) {
+        userId = userId.slice(0, -1);
+      }
+      
+      return userId;
+    }
+  }
+  
+  // Check nested objects for user ID
+  for (const [key, value] of Object.entries(propertyData)) {
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      for (const field of possibleUserIdFields) {
+        if (value[field]) {
+          let userId = value[field];
+          
+          // For addID, remove the last digit to create base ID
+          if (field === 'addID' && userId.length > 1) {
+            userId = userId.slice(0, -1);
+          }
+          
+          return userId;
+        }
+      }
+    }
+  }
+  
+  return null;
+};
+
+  // Function to fetch user data from Firebase
+  const fetchUserData = async (uid) => {
+    if (!uid) return;
+    
+    try {
+      setUserLoading(true);
+      
+      const userDocRef = doc(db, "users", uid);
+      const userDocSnap = await getDoc(userDocRef);
+      
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        
+        // Try multiple field names for each piece of data
+        const displayName = userData.displayName || userData.name || userData.fullName || userData.username || 'Unknown User';
+        const phone = userData.homePhone || userData.phone || userData.phoneNumber || userData.contactNumber || 'Contact not available';
+        const email = userData.email || userData.emailAddress || 'Email not available';
+        const photoURL = userData.photoURL || userData.profilePicture || userData.avatar || userData.image || null;
+        
+        setUserData({
+          displayName,
+          homePhone: phone,
+          photoURL,
+          email
+        });
+      } else {
+        setUserData({
+          displayName: 'Unknown User',
+          homePhone: 'Contact not available',
+          photoURL: null,
+          email: 'Email not available'
+        });
+      }
+    } catch (error) {
+      setUserData({
+        displayName: 'Unknown User',
+        homePhone: 'Contact not available',
+        photoURL: null,
+        email: 'Email not available'
+      });
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  // Update handleSendMessage to use dynamic user data
+  const handleSendMessage = () => {
+    if (!property) return;
+
+    // Prepare property data for the chat
+    const propertyData = {
+      title: getItemTitle(property, category, categoryConfig),
+      price: getPriceDisplay(property),
+      type: `For sale > ${categoryConfig.name}`,
+      location: getFieldValue(property, 'location') || getFieldValue(property, 'city') || 'Location not specified',
+      image: property.images?.[0] || property.imageUrls?.[0] || '/assets/placeholder-property.png'
+    };
+
+    // Use dynamic user data or fallback
+    const contactInfo = {
+      name: userData?.displayName || "Unknown User",
+      phone: userData?.homePhone || "Contact not available"
+    };
+
+    // Navigate to chat with property and contact data
+    navigate('/chat', {
+      state: {
+        propertyData,
+        contactInfo,
+        initialMessages: []
+      }
+    });
+  };
+
   // Search all documents when direct lookup fails
   const searchAllDocuments = async () => {
     try {
-      console.log('Searching all documents for ID:', propertyId, 'in category:', category);
       const querySnapshot = await getDocs(collection(db, "allAddsPost"));
       let foundProperty = null;
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        console.log(`Checking document ${doc.id}:`, Object.keys(data));
         
         // Check if it's a direct document match
         if (doc.id.startsWith(propertyId) && (data.brand || data.propertyType || data.type || data.images || data.price)) {
           if (!category || data.category === category) {
-            console.log('Found document with matching ID prefix:', doc.id);
             foundProperty = { id: doc.id, ...data };
             return;
           }
@@ -49,7 +161,6 @@ const PropertyListing = () => {
         
         if (doc.id === propertyId && (data.brand || data.propertyType || data.type || data.images || data.price)) {
           if (!category || data.category === category) {
-            console.log('Found exact direct match in document:', doc.id);
             foundProperty = { id: doc.id, ...data };
             return;
           }
@@ -58,15 +169,12 @@ const PropertyListing = () => {
         // Check nested arrays and objects
         Object.keys(data).forEach(categoryKey => {
           if (Array.isArray(data[categoryKey])) {
-            console.log(`Checking array ${categoryKey} in doc ${doc.id}`);
             data[categoryKey].forEach((item, index) => {
-              console.log(`Item ${index} in ${categoryKey}:`, { addID: item.addID, id: item.id });
               const matchesId = item.addID === propertyId || item.id === propertyId || 
                                (item.addID && item.addID.startsWith(propertyId));
               const matchesCategory = !category || item.category === category || categoryKey === category;
               
               if (matchesId && matchesCategory) {
-                console.log('Found matching item in nested array!');
                 foundProperty = { 
                   id: doc.id, 
                   originalDocId: doc.id, 
@@ -78,13 +186,11 @@ const PropertyListing = () => {
             });
           } else if (data[categoryKey] && typeof data[categoryKey] === 'object') {
             const item = data[categoryKey];
-            console.log(`Checking object ${categoryKey}:`, { addID: item.addID, id: item.id });
             const matchesId = item.addID === propertyId || item.id === propertyId || 
                              (item.addID && item.addID.startsWith(propertyId));
             const matchesCategory = !category || item.category === category || categoryKey === category;
             
             if (matchesId && matchesCategory) {
-              console.log('Found matching item in nested object!');
               foundProperty = { 
                 id: doc.id, 
                 originalDocId: doc.id, 
@@ -97,15 +203,25 @@ const PropertyListing = () => {
       });
       
       if (foundProperty) {
-        console.log('Item found:', foundProperty);
         setProperty(foundProperty);
         setError(null);
+        
+        // Fetch user data after property is found
+        const uid = findUserIdFromProperty(foundProperty);
+        if (uid) {
+          await fetchUserData(uid);
+        } else {
+          setUserData({
+            displayName: 'Unknown User',
+            homePhone: 'Contact not available',
+            photoURL: null,
+            email: 'Email not available'
+          });
+        }
       } else {
-        console.log('Item not found anywhere');
         setError("Item not found");
       }
     } catch (searchError) {
-      console.error("Error searching for item:", searchError);
       setError("Failed to load item details");
     }
   };
@@ -121,32 +237,39 @@ const PropertyListing = () => {
 
       try {
         setLoading(true);
-        console.log('Searching for item with ID:', propertyId, 'category:', category);
         
         const docRef = doc(db, "allAddsPost", propertyId);
         const docSnap = await getDoc(docRef);
 
-        console.log('Direct document lookup result:', docSnap.exists());
         if (docSnap.exists()) {
           const data = docSnap.data();
-          console.log('Document data:', data);
           
           // Check if it's a valid item document (has key identifying fields)
           const isValidDoc = data.propertyType || data.brand || data.type || data.images || data.price;
           const categoryMatches = !category || data.category === category;
           
           if (isValidDoc && categoryMatches) {
-            console.log('Found direct item document with matching category');
             setProperty({ id: docSnap.id, ...data });
             setError(null);
+            
+            // Fetch user data after property is found
+            const uid = findUserIdFromProperty(data);
+            if (uid) {
+              await fetchUserData(uid);
+            } else {
+              setUserData({
+                displayName: 'Unknown User',
+                homePhone: 'Contact not available',
+                photoURL: null,
+                email: 'Email not available'
+              });
+            }
             return;
           }
         }
         
-        console.log('Direct lookup failed, searching all documents...');
         await searchAllDocuments();
       } catch (err) {
-        console.error("Error fetching item:", err);
         setError("Failed to load item details");
       } finally {
         setLoading(false);
@@ -353,22 +476,41 @@ const PropertyListing = () => {
               </div>
             </div>
             
-            {/* Modal Content */}
+            {/* Contact Card - Updated with dynamic user data */}
             <div className="max-w-lg h-[30rem] font-poppins mx-5 my-10 bg-white rounded-lg overflow-hidden shadow-custom-diagonal">
               {/* Header */}
               <div className="text-center py-6 px-2">
                 <h1 className="text-sm font-semibold text-primaryBlue mb-2">
-                  Coldwell Banker Beritan Real Estate
+                  {categoryConfig.name || 'Real Estate'}
                 </h1>
 
                 <h2 className="text-sm font-bold text-gray-900 mb-6">
-                  Gurkan Dogan
+                  {userLoading ? 'Loading user...' : userData?.displayName || 'Unknown User'}
                 </h2>
               </div>
 
-              {/* Agent Photo */}
+              {/* User Photo */}
               <div className="px-4 mb-6">
-                <div className="relative">
+                <div className="relative flex justify-center">
+                  {userLoading ? (
+                    <div className="w-20 h-20 bg-gray-300 rounded-full animate-pulse"></div>
+                  ) : userData?.photoURL ? (
+                    <img
+                      src={userData.photoURL}
+                      alt={userData.displayName || 'User'}
+                      className="w-20 h-20 rounded-full object-cover border-2 border-primaryBlue"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  {/* Fallback avatar */}
+                  <div 
+                    className={`w-20 h-20 bg-primaryBlue rounded-full flex items-center justify-center text-white font-bold text-lg ${userData?.photoURL ? 'hidden' : 'flex'}`}
+                  >
+                    {userData?.displayName ? userData.displayName.charAt(0).toUpperCase() : 'U'}
+                  </div>
                 </div>
               </div>
 
@@ -382,12 +524,26 @@ const PropertyListing = () => {
               {/* Contact Buttons */}
               <div className="px-4 space-y-4">
                 {/* Phone Button */}
-                <button className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 transition-colors duration-200">
-                  POCKE 0 (530) 736 38 59
+                <button 
+                  className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 transition-colors duration-200 hover:bg-blue-700"
+                  disabled={userLoading}
+                  onClick={() => {
+                    if (userData?.homePhone && userData.homePhone !== 'Contact not available') {
+                      window.open(`tel:${userData.homePhone}`, '_self');
+                    } else {
+                      alert('Phone number not available');
+                    }
+                  }}
+                >
+                  {userLoading ? 'Loading...' : `CONTACT ${userData?.homePhone || 'Not available'}`}
                 </button>
 
                 {/* Message Button */}
-                <button className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 rounded-full transition-colors duration-200">
+                <button 
+                  onClick={handleSendMessage}
+                  className="w-full bg-primaryBlue text-white font-medium text-sm py-3 px-3 rounded-full transition-colors duration-200 hover:bg-blue-700"
+                  disabled={userLoading}
+                >
                   SEND MESSAGE
                 </button>
               </div>

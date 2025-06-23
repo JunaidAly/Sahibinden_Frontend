@@ -7,39 +7,39 @@ import { auth } from '../../../firebase'; // Adjust path to your firebase config
 
 function MobilePhone() {
   const [user, loading, error] = useAuthState(auth);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [homePhone, sethomePhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const db = getFirestore();
 
   // Format phone number as user types
-  const formatPhoneNumber = (value) => {
+  const formathomePhone = (value) => {
     // Remove all non-digits
-    const phoneNumber = value.replace(/\D/g, '');
+    const homePhone = value.replace(/\D/g, '');
     
     // Format as +90(XXX)XX XXX
-    if (phoneNumber.length <= 3) {
-      return `+90(${phoneNumber}`;
-    } else if (phoneNumber.length <= 5) {
-      return `+90(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3)}`;
+    if (homePhone.length <= 3) {
+      return `+90(${homePhone}`;
+    } else if (homePhone.length <= 5) {
+      return `+90(${homePhone.slice(0, 3)})${homePhone.slice(3)}`;
     } else {
-      return `+90(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}`;
+      return `+90(${homePhone.slice(0, 3)})${homePhone.slice(3, 5)} ${homePhone.slice(5, 8)}`;
     }
   };
 
   const handlePhoneChange = (e) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    setPhoneNumber(formatted);
+    const formatted = formathomePhone(e.target.value);
+    sethomePhone(formatted);
   };
 
-  const handleAddPhoneNumber = async () => {
+  const handleAddhomePhone = async () => {
     if (!user) {
       setMessage('Please log in to add your phone number.');
       return;
     }
 
     // Basic validation
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    const cleanPhone = homePhone.replace(/\D/g, '');
     if (cleanPhone.length < 10) {
       setMessage('Please enter a valid phone number.');
       return;
@@ -54,13 +54,13 @@ function MobilePhone() {
       
       // Update the document with phone number and updatedAt timestamp
       await updateDoc(userDocRef, {
-        phoneNumber: phoneNumber,
+        homePhone: homePhone,
         updatedAt: new Date().toISOString()
       });
 
       setMessage('Phone number added successfully!');
       // Optionally clear the input
-      // setPhoneNumber('');
+      // sethomePhone('');
     } catch (error) {
       console.error('Error updating phone number:', error);
       setMessage('Error adding phone number. Please try again.');
@@ -98,7 +98,7 @@ function MobilePhone() {
           </label>
           <input
             type="text"
-            value={phoneNumber}
+            value={homePhone}
             onChange={handlePhoneChange}
             placeholder="+90(__)__ ___"
             maxLength={14}
@@ -118,10 +118,10 @@ function MobilePhone() {
 
         <button
           type="button"
-          onClick={handleAddPhoneNumber}
-          disabled={isSubmitting || !phoneNumber.trim()}
+          onClick={handleAddhomePhone}
+          disabled={isSubmitting || !homePhone.trim()}
           className={`px-5 py-2 mt-4 capitalize font-medium rounded-full transition-colors ${
-            isSubmitting || !phoneNumber.trim()
+            isSubmitting || !homePhone.trim()
               ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
               : 'bg-[#1544AB] text-white hover:bg-blue-700'
           }`}

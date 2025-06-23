@@ -61,6 +61,7 @@ import PreSales from "./Components/RealEstate/WhenSelling/PreSales";
 import PreSalesOverview from "./Components/RealEstate/WhenSelling/PreSalesOverview";
 import CartPage from "./Components/Cart/CartPage";
 import DynamicListingForm from './Components/AddAnPost/DynamicListingForm';
+import ChatComponent from "./Components/MassageAndNotifications/ChatComponent";
 const ProjectRoutes = () => {
     let element = useRoutes([
         { path: "/", element: <Home/> },
@@ -125,6 +126,7 @@ const ProjectRoutes = () => {
         { path: "/pre-sales", element: <PreSales/> },
         { path: "/pre-sales-overview", element: <PreSalesOverview/> },
         { path: "/cart", element: <CartPage/> },
+        { path: "chat", element: <ChatComponent/>},
         
     ]);
     return element;
