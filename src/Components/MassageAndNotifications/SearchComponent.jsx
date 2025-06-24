@@ -230,21 +230,21 @@ const SearchComponent = ({ currentUserId } = {}) => {
             messagesSnapshot = await getDocs(messagesRef);
           }
           
-          console.log(`Found ${messagesSnapshot.docs.length} messages in chatroom ${chatroom.id}`);
+          console.log(`Found ${messagesSnapshot.docs.length} total messages in chatroom ${chatroom.id}`);
           
           // Debug: Show first message data if available
           if (messagesSnapshot.docs.length > 0) {
             const firstMsg = messagesSnapshot.docs[0].data();
             console.log('Sample message data:', firstMsg);
+            console.log(`Filtering for messages where receiver === ${userId}`);
           }
           
           for (const messageDoc of messagesSnapshot.docs) {
             try {
               const messageData = messageDoc.data();
               
-              // More lenient check - just need text
-              if (!messageData?.text) {
-                console.log('Skipping message without text:', messageData);
+              // Only include messages sent TO the current user (incoming messages)
+              if (!messageData?.text || messageData.receiver !== userId) {
                 continue;
               }
               
@@ -289,7 +289,7 @@ const SearchComponent = ({ currentUserId } = {}) => {
                 isRead: Boolean(messageData.isRead),
                 sentOn: sentDate,
                 category: chatroom.category || 'Unknown',
-                isFromCurrentUser: messageData.sender === userId
+                isFromCurrentUser: false // All messages shown are TO current user, so none are FROM current user
               });
             } catch (messageError) {
               console.warn('Error processing message:', messageError);
@@ -300,7 +300,7 @@ const SearchComponent = ({ currentUserId } = {}) => {
         }
       }
       
-      console.log(`Total messages found: ${allMessages.length}`);
+      console.log(`Total incoming messages found: ${allMessages.length}`);
       
       // Sort messages by date (newest first) with error handling
       try {
@@ -504,7 +504,7 @@ const SearchComponent = ({ currentUserId } = {}) => {
       )}
       
       <div className="text-[#8D8D8D] mb-2 text-lg font-medium">
-        You Can Search By Ad Number Or Sender Name.
+        Search Your Incoming Messages By Ad Number Or Sender Name.
       </div>
       
       <div className="mb-4">
@@ -540,7 +540,7 @@ const SearchComponent = ({ currentUserId } = {}) => {
         <div className="space-y-4">
           {filteredMessages.length === 0 ? (
             <div className="text-black text-lg font-semibold">
-              {allMessages.length === 0 ? 'You have no messages.' : 'No messages match your search.'}
+              {allMessages.length === 0 ? 'You have no incoming messages.' : 'No incoming messages match your search.'}
             </div>
           ) : (
             filteredMessages.map((message) => (
@@ -558,7 +558,7 @@ const SearchComponent = ({ currentUserId } = {}) => {
                       <span className="text-xs bg-gray-100 px-2 py-1 rounded">
                         {message.category}
                       </span>
-                      {!message.isRead && !message.isFromCurrentUser && (
+                      {!message.isRead && (
                         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
                           New
                         </span>
@@ -566,11 +566,12 @@ const SearchComponent = ({ currentUserId } = {}) => {
                     </div>
                     
                     <div className="text-sm text-gray-600 mb-1">
-                      {message.isFromCurrentUser ? (
-                        <span>You → {message.receiverName}</span>
-                      ) : (
-                        <span>{message.senderName} → You</span>
-                      )}
+                      <span className="font-medium text-green-600">
+                        {message.senderName} → You
+                      </span>
+                      <span className="text-xs text-gray-500 ml-2">
+                        (Incoming message)
+                      </span>
                     </div>
                     
                     <p className="text-gray-800 text-sm line-clamp-2">
@@ -588,19 +589,9 @@ const SearchComponent = ({ currentUserId } = {}) => {
                 
                 <div className="flex justify-between items-center text-xs text-gray-400">
                   <span>Chatroom: {message.chatroomId}</span>
-                  {message.isFromCurrentUser && (
-                    <span className="flex items-center">
-                      <svg 
-                        className={`w-3 h-3 mr-1 ${message.isRead ? 'text-blue-500' : 'text-gray-400'}`} 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {message.isRead ? 'Read' : 'Sent'}
-                    </span>
-                  )}
+                  <span className="text-green-600">
+                    Received message
+                  </span>
                 </div>
               </div>
             ))

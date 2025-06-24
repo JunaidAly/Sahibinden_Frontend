@@ -408,15 +408,6 @@ const propertyData = {
   return (
     <>
       <div className="max-w-7xl mx-auto p-4">
-        {/* Debug info in development */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="bg-blue-100 p-2 mb-4 text-xs rounded">
-            <strong>Debug:</strong> PropertyID: {propertyId} | 
-            Property AddID: {property.addID || property.id} | 
-            Current User: {user?.uid || 'Not logged in'}
-          </div>
-        )}
-
         <div className="flex flex-row items-center gap-[47rem]">
           {/* Breadcrumb Navigation */}
           {category && (
