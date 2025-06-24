@@ -52,7 +52,7 @@ const ChatComponent = ({
                  'temp_user_' + Date.now();
 
   const generateChatroomId = (addId, userId) => {
-    return `${addId}_${userId}`;
+    return `${addId}+${userId}`;
   };
 
   // Enhanced chatroom creation with better error handling
