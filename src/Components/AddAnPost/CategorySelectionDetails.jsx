@@ -813,24 +813,6 @@ const CategorySelectionDetails = () => {
     console.log('Current selections:', newSelections);
   };
 
-  // Handle continue button click
-  // const handleContinue = () => {
-  //   const selectedLabels = getSelectedLabels(categorySlug, selections);
-    
-  //   const selectionData = {
-  //     category: categorySlug,
-  //     categoryTitle: categoryData?.title,
-  //     selections: selections,
-  //     labels: selectedLabels,
-  //     maxLevel: maxLevel,
-  //     selectedVehicle: selectedVehicle
-  //   };
-    
-  //   console.log('Category selection complete:', selectionData);
-    
-  //   // Navigate to post-details route with selection data
-  //   navigate('/post-details', { state: selectionData });
-  // };
 
 
   const handleContinue = () => {
@@ -849,20 +831,14 @@ const CategorySelectionDetails = () => {
   
   // Map category slugs to form categories
   const categoryMapping = {
-    'vehicles': 'vehicle',
+ 
     'vehicle': 'vehicle',
-    'property': 'property',
     'real-estate': 'property',
-    'spare-parts': 'product',
-    'products': 'product',
-    'electronics': 'product',
-    'furniture': 'product',
-    'clothing': 'product',
-    'books': 'product',
-    'sports': 'product'
+    'spare-parts': 'spareparts',
+    'animals': 'animal',
   };
   
-  const mappedCategory = categoryMapping[categorySlug] || 'product';
+  const mappedCategory = categoryMapping[categorySlug];
   
   // Navigate to PropertyListingForm with selection data
   navigate('/post-ad', { 
@@ -928,19 +904,6 @@ const CategorySelectionDetails = () => {
     ? generateVehicleDataFromSelections(categorySlug, selections, categoryData) 
     : [];
 
-  // Debug log for vehicle data generation
-  if (process.env.NODE_ENV === 'development' && (categorySlug === 'vehicles' || categorySlug === 'vehicle')) {
-    console.log('Vehicle data generation debug:');
-    console.log('Selected labels:', selectedLabels);
-    console.log('Mapped vehicle data:');
-    console.log('- Year of Production (level2):', selectedLabels.level2);
-    console.log('- Fuel (level5):', selectedLabels.level5);
-    console.log('- Case Type (level6):', selectedLabels.level6);
-    console.log('- Gear (level7):', selectedLabels.level7);
-    console.log('- Sub Model part 1 (level8):', selectedLabels.level8);
-    console.log('- Sub Model part 2 (level9):', selectedLabels.level9);
-    console.log('Generated vehicles:', vehicleData);
-  }
 
   // Create columns for all available levels
   const renderLevelColumns = () => {

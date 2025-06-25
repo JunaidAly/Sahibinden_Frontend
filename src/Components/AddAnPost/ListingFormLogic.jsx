@@ -43,12 +43,12 @@ const categoryFields = {
     { name: 'fromWhom', label: 'From Whom', type: 'select', placeholder: 'Owner,Dealer,Gallery' },
     { name: 'swap', label: 'Swap/Exchange', type: 'select', placeholder: 'Yes,No' }
   ],
-  product: [
+  spareparts: [
     { name: 'spareCategory', label: 'Spare Category', type: 'select', placeholder: 'Engine Parts,Body Parts,Electrical,Interior,Exterior,Other', required: true },
-    { name: 'type', label: 'Type', placeholder: 'Part type' },
+    // { name: 'type', label: 'Type', placeholder: 'Part type' },
     { name: 'product', label: 'Product', placeholder: 'Product name', required: true },
-    { name: 'vehicleBrand', label: 'Vehicle Brand', type: 'select', placeholder: 'Toyota,Honda,BMW,Mercedes,Audi,Volkswagen,Ford,Chevrolet' },
-    { name: 'vehicleSeries', label: 'Vehicle Series', placeholder: 'Vehicle series/model' },
+    // { name: 'vehicleBrand', label: 'Vehicle Brand', type: 'select', placeholder: 'Toyota,Honda,BMW,Mercedes,Audi,Volkswagen,Ford,Chevrolet' },
+    // { name: 'vehicleSeries', label: 'Vehicle Series', placeholder: 'Vehicle series/model' },
     { name: 'productBrand', label: 'Product Brand', placeholder: 'Brand of the spare part' },
     { name: 'fromWhom', label: 'From Whom', type: 'select', placeholder: 'Owner,Dealer,Shop' },
     { name: 'usedSpareParts', label: 'Used Spare Parts', type: 'select', placeholder: 'Yes,No' },
@@ -151,16 +151,13 @@ const ListingFormLogic = () => {
     if (categorySelectionData) {
       const categoryMapping = {
         'vehicle': 'vehicle',
-        'vehicles': 'vehicle',
         'property': 'property',
         'real-estate': 'property',
-        'spare-parts': 'product',
-        'products': 'product',
-        'animal': 'animal',
+        'spare-parts': 'spareparts',
         'animals': 'animal'
       };
       
-      const category = categoryMapping[categorySelectionData.mappedCategory] || categorySelectionData.mappedCategory || 'product';
+      const category = categoryMapping[categorySelectionData.mappedCategory] || categorySelectionData.mappedCategory;
       setSelectedCategory(category);
       
       const newFormData = {
@@ -210,11 +207,11 @@ const ListingFormLogic = () => {
           if (labels.level1) newFormData.propertyType = labels.level1;
         }
         
-        if (category === 'product') {
-          if (labels.level1) newFormData.vehicleBrand = labels.level1;
-          if (labels.level2) newFormData.vehicleSeries = labels.level2;
-          if (labels.level3) newFormData.spareCategory = labels.level3;
-          if (labels.level4) newFormData.product = labels.level4;
+        if (category === 'spareparts') {
+          // if (labels.level1) newFormData.vehicleBrand = labels.level1;
+          // if (labels.level2) newFormData.vehicleSeries = labels.level2;
+          // if (labels.level3) newFormData.spareCategory = labels.level3;
+          // if (labels.level4) newFormData.product = labels.level4;
         }
 
         if (category === 'animal') {
@@ -438,7 +435,7 @@ const ListingFormLogic = () => {
         categoryName = 'Real Estate';
       } else if (selectedCategory === 'vehicle') {
         categoryName = 'Vehicles';
-      } else if (selectedCategory === 'product') {
+      } else if (selectedCategory === 'spareparts') {
         categoryName = 'Spare Parts, Accessories, hardware & Tuning';
       } else if (selectedCategory === 'animal') {
         categoryName = 'Animal Kingdom';
@@ -510,7 +507,7 @@ const ListingFormLogic = () => {
           adStatus: 'active',
           userUID: user.uid
         };
-      } else if (selectedCategory === 'product') {
+      } else if (selectedCategory === 'spareparts') {
         adData = {
           addID: addID,
           category: categorySelectionData?.labels?.category || 'Spare Parts',
@@ -667,7 +664,7 @@ const ListingFormLogic = () => {
             label="Category" 
             name="category" 
             type="select" 
-            placeholder="property,vehicle,product,animal" 
+            placeholder="property,vehicle,spareparts,animal" 
             value={selectedCategory} 
             onChange={handleCategoryChange}
             required={true}
