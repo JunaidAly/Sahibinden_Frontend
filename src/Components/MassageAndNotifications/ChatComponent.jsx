@@ -1,5 +1,6 @@
 
-// import { useState, useEffect } from 'react';
+
+// import { useState, useEffect, useRef } from 'react';
 // import { useLocation, useNavigate } from 'react-router-dom';
 // import { 
 //   doc, 
@@ -42,6 +43,7 @@
 //   const [chatroomId, setChatroomId] = useState(null);
 //   const [error, setError] = useState(null);
 //   const [chatroomCreated, setChatroomCreated] = useState(false);
+//   const messagesEndRef = useRef(null);
 
 //   // Get user ID from multiple sources
 //   const userId = currentUserId || 
@@ -69,8 +71,19 @@
 //       const addId = propertyData.addId || propertyData.id;
 //       const adOwnerId = contactInfo.receiverId || contactInfo.adOwnerId || propertyData.ownerId;
       
-//       // Generate chatroom ID: adOwnerId + addId + current user (participant)
-//       const roomId = generateChatroomId(adOwnerId, addId, userId);
+//       // Check if we have an existing chatroom ID from navigation (e.g., from SearchComponent)
+//       const existingChatroomId = stateData.chatroomId;
+      
+//       let roomId;
+//       if (existingChatroomId) {
+//         // Use existing chatroom ID if provided
+//         roomId = existingChatroomId;
+//         console.log('Using existing chatroom ID:', roomId);
+//       } else {
+//         // Generate new chatroom ID: adOwnerId + addId + current user (participant)
+//         roomId = generateChatroomId(adOwnerId, addId, userId);
+//         console.log('Generated new chatroom ID:', roomId);
+//       }
       
 //       setChatroomId(roomId);
 
@@ -100,11 +113,13 @@
 //         const verifySnap = await getDoc(chatroomRef);
 //         if (verifySnap.exists()) {
 //           setChatroomCreated(true);
+//           console.log('Chatroom created successfully:', roomId);
 //         } else {
 //           throw new Error('Failed to create chatroom document');
 //         }
 //       } else {
 //         setChatroomCreated(true);
+//         console.log('Using existing chatroom:', roomId);
 //       }
       
 //       return roomId;
@@ -137,15 +152,43 @@
 //         return sendMessageToFirebase(messageText);
 //       }
 
+//       // Get chatroom data to determine participants
+//       const chatroomData = chatroomSnap.data();
+//       const adOwnerId = contactInfo.receiverId || contactInfo.adOwnerId || propertyData.ownerId;
+      
+//       // Determine the correct receiver (the other participant)
+//       let receiverId;
+//       if (chatroomData.participantsList && Array.isArray(chatroomData.participantsList)) {
+//         // Find the other participant who is not the current sender
+//         receiverId = chatroomData.participantsList.find(participantId => participantId !== userId);
+//       } else {
+//         // Fallback: if current user is ad owner, receiver is the other participant
+//         // if current user is not ad owner, receiver is the ad owner
+//         receiverId = userId === adOwnerId ? 
+//           chatroomData.participantsList?.find(id => id !== adOwnerId) || contactInfo.receiverId :
+//           adOwnerId;
+//       }
+      
+//       // Ensure we have a valid receiver
+//       if (!receiverId) {
+//         receiverId = adOwnerId; // Fallback to ad owner
+//       }
+
+//       console.log('Sending message:', {
+//         sender: userId,
+//         receiver: receiverId,
+//         adOwnerId: adOwnerId,
+//         participants: chatroomData.participantsList
+//       });
+
 //       // Add message to messages subcollection with exact structure
 //       const messagesRef = collection(db, 'chatrooms', chatroomId, 'messages');
-//       const adOwnerId = contactInfo.receiverId || contactInfo.adOwnerId || propertyData.ownerId;
       
 //       // Create message document with auto-generated ID
 //       const messageDocRef = await addDoc(messagesRef, {
 //         addId: propertyData.addId || propertyData.id,
 //         isRead: false,
-//         receiver: adOwnerId,
+//         receiver: receiverId, // Use the determined receiver
 //         sender: userId,
 //         sentOn: serverTimestamp(),
 //         text: messageText.trim()
@@ -177,6 +220,8 @@
 //   useEffect(() => {
 //     if (!chatroomId || !chatroomCreated) return;
 
+//     console.log('Setting up message listener for chatroom:', chatroomId);
+
 //     const messagesRef = collection(db, 'chatrooms', chatroomId, 'messages');
 //     const q = query(messagesRef, orderBy('sentOn', 'asc'));
 
@@ -184,8 +229,20 @@
 //       (snapshot) => {
 //         const messagesData = [];
         
+//         console.log(`Received ${snapshot.docs.length} messages from Firestore`);
+        
 //         snapshot.forEach((doc) => {
 //           const data = doc.data();
+          
+//           // Log each message for debugging
+//           console.log('Message data:', {
+//             id: doc.id,
+//             sender: data.sender,
+//             receiver: data.receiver,
+//             text: data.text,
+//             sentOn: data.sentOn
+//           });
+          
 //           messagesData.push({
 //             id: data.id || doc.id, // Use the id field from document or fallback to doc.id
 //             text: data.text,
@@ -204,17 +261,29 @@
 //           });
 //         });
         
+//         console.log(`Processed ${messagesData.length} messages for user ${userId}`);
+//         console.log('Messages display data:', messagesData);
+        
 //         setMessages(messagesData);
 //         setLoading(false);
 //         setError(null);
+        
+//         // Scroll to bottom when messages update
+//         setTimeout(() => {
+//           if (messagesEndRef.current) {
+//             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+//           }
+//         }, 100);
 //       },
 //       (error) => {
+//         console.error('Message listener error:', error);
 //         setError('Failed to load messages: ' + error.message);
 //         setLoading(false);
 //       }
 //     );
 
 //     return () => {
+//       console.log('Cleaning up message listener for chatroom:', chatroomId);
 //       unsubscribe();
 //     };
 //   }, [chatroomId, userId, chatroomCreated]);
@@ -289,6 +358,8 @@
 //             <p>Ad Owner ID: {contactInfo?.receiverId || contactInfo?.adOwnerId || 'Missing'}</p>
 //             <p>Chatroom ID: {chatroomId || 'Not set'}</p>
 //             <p>Chatroom Created: {chatroomCreated ? '✓' : '✗'}</p>
+//             <p>From Search: {stateData.fromSearch ? '✓' : '✗'}</p>
+//             <p>Existing Chatroom ID: {stateData.chatroomId || 'None'}</p>
 //           </div>
 //           <div className="space-y-2">
 //             <button 
@@ -445,30 +516,33 @@
 //               <p className="text-gray-500 text-sm">No messages yet. Start the conversation!</p>
 //             </div>
 //           ) : (
-//             messages.map((message) => (
-//               <div key={message.id} className={`flex ${message.isSender ? 'justify-end' : 'justify-start'}`}>
-//                 <div className={`max-w-xs px-4 py-2 rounded-lg ${
-//                   message.isSender 
-//                     ? 'bg-green-100 text-gray-800' 
-//                     : 'bg-gray-100 text-gray-800'
-//                 }`}>
-//                   <p className="text-sm">{message.text}</p>
-//                   <p className="text-xs text-gray-500 mt-1">{message.timestamp}</p>
-//                   {message.isSender && (
-//                     <div className="flex justify-end mt-1">
-//                       <svg 
-//                         className={`w-4 h-4 ${message.isRead ? 'text-blue-500' : 'text-gray-400'}`} 
-//                         fill="none" 
-//                         stroke="currentColor" 
-//                         viewBox="0 0 24 24"
-//                       >
-//                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-//                       </svg>
-//                     </div>
-//                   )}
+//             <>
+//               {messages.map((message) => (
+//                 <div key={message.id} className={`flex ${message.isSender ? 'justify-end' : 'justify-start'}`}>
+//                   <div className={`max-w-xs px-4 py-2 rounded-lg ${
+//                     message.isSender 
+//                       ? 'bg-green-100 text-gray-800' 
+//                       : 'bg-gray-100 text-gray-800'
+//                   }`}>
+//                     <p className="text-sm">{message.text}</p>
+//                     <p className="text-xs text-gray-500 mt-1">{message.timestamp}</p>
+//                     {message.isSender && (
+//                       <div className="flex justify-end mt-1">
+//                         <svg 
+//                           className={`w-4 h-4 ${message.isRead ? 'text-blue-500' : 'text-gray-400'}`} 
+//                           fill="none" 
+//                           stroke="currentColor" 
+//                           viewBox="0 0 24 24"
+//                         >
+//                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+//                         </svg>
+//                       </div>
+//                     )}
+//                   </div>
 //                 </div>
-//               </div>
-//             ))
+//               ))}
+//               <div ref={messagesEndRef} />
+//             </>
 //           )}
 //         </div>
 
@@ -506,9 +580,6 @@
 // };
 
 // export default ChatComponent;
-
-
-
 
 
 
@@ -569,9 +640,9 @@ const ChatComponent = ({
                  sessionStorage.getItem('currentUserId') ||
                  'temp_user_' + Date.now();
 
-  // Updated chatroom ID generation: adOwnerId + addId + participantId
-  const generateChatroomId = (adOwnerId, addId, participantId) => {
-    return `${adOwnerId}+${addId}+${participantId}`;
+  // Updated chatroom ID generation: participantId + adOwnerId + addId + category
+  const generateChatroomId = (participantId, adOwnerId, addId, category) => {
+    return `${participantId}+${adOwnerId}+${addId}+${category}`;
   };
 
   // Enhanced chatroom creation with updated structure
@@ -587,6 +658,7 @@ const ChatComponent = ({
       
       const addId = propertyData.addId || propertyData.id;
       const adOwnerId = contactInfo.receiverId || contactInfo.adOwnerId || propertyData.ownerId;
+      const category = propertyData.type || propertyData.category || 'Real Estate';
       
       // Check if we have an existing chatroom ID from navigation (e.g., from SearchComponent)
       const existingChatroomId = stateData.chatroomId;
@@ -597,8 +669,9 @@ const ChatComponent = ({
         roomId = existingChatroomId;
         console.log('Using existing chatroom ID:', roomId);
       } else {
-        // Generate new chatroom ID: adOwnerId + addId + current user (participant)
-        roomId = generateChatroomId(adOwnerId, addId, userId);
+        // Generate new chatroom ID: participantId + adOwnerId + addId + category
+        // The participant is the user who sends message to the add owner
+        roomId = generateChatroomId(userId, adOwnerId, addId, category);
         console.log('Generated new chatroom ID:', roomId);
       }
       
@@ -608,16 +681,18 @@ const ChatComponent = ({
       const chatroomSnap = await getDoc(chatroomRef);
 
       if (!chatroomSnap.exists()) {
-        // Create participantsList array with just the user IDs as strings
+        // Create participantsList array with the new sequence: participant + adOwnerId + addId + category
         const participantsList = [
-          userId,
-          adOwnerId
+          userId,     // Index 0: User who sends message to the add
+          adOwnerId,  // Index 1: Add owner
+          addId,      // Index 2: Add ID
+          category    // Index 3: Category
         ];
 
         const chatroomData = {
           adOwnerId: adOwnerId,
           addId: addId,
-          category: propertyData.type || propertyData.category || 'Real Estate',
+          category: category,
           id: roomId, // Store the full ID in the document
           lastMessage: '',
           participantsList: participantsList,
@@ -630,7 +705,9 @@ const ChatComponent = ({
         const verifySnap = await getDoc(chatroomRef);
         if (verifySnap.exists()) {
           setChatroomCreated(true);
-          console.log('Chatroom created successfully:', roomId);
+          console.log('Chatroom created successfully with new sequence:', roomId);
+          console.log('Participants list format: [userId, adOwnerId, addId, category]');
+          console.log('Participants order:', participantsList);
         } else {
           throw new Error('Failed to create chatroom document');
         }
@@ -676,13 +753,15 @@ const ChatComponent = ({
       // Determine the correct receiver (the other participant)
       let receiverId;
       if (chatroomData.participantsList && Array.isArray(chatroomData.participantsList)) {
-        // Find the other participant who is not the current sender
-        receiverId = chatroomData.participantsList.find(participantId => participantId !== userId);
+        // ParticipantsList format: [userId, adOwnerId, addId, category]
+        // Only look at the first two elements for user IDs
+        const userParticipants = chatroomData.participantsList.slice(0, 2);
+        receiverId = userParticipants.find(participantId => participantId !== userId);
       } else {
         // Fallback: if current user is ad owner, receiver is the other participant
         // if current user is not ad owner, receiver is the ad owner
         receiverId = userId === adOwnerId ? 
-          chatroomData.participantsList?.find(id => id !== adOwnerId) || contactInfo.receiverId :
+          chatroomData.participantsList?.[0] || contactInfo.receiverId :
           adOwnerId;
       }
       
@@ -691,11 +770,16 @@ const ChatComponent = ({
         receiverId = adOwnerId; // Fallback to ad owner
       }
 
-      console.log('Sending message:', {
+      console.log('Sending message with new format:', {
+        chatroomId: chatroomId,
+        chatroomFormat: 'participantId+adOwnerId+addId+category',
+        participantsListFormat: '[userId, adOwnerId, addId, category]',
         sender: userId,
         receiver: receiverId,
         adOwnerId: adOwnerId,
-        participants: chatroomData.participantsList
+        participants: chatroomData.participantsList,
+        addId: propertyData.addId || propertyData.id,
+        category: chatroomData.category
       });
 
       // Add message to messages subcollection with exact structure
@@ -738,6 +822,8 @@ const ChatComponent = ({
     if (!chatroomId || !chatroomCreated) return;
 
     console.log('Setting up message listener for chatroom:', chatroomId);
+    console.log('Chatroom format: participantId+adOwnerId+addId+category');
+    console.log('ParticipantsList format: [userId, adOwnerId, addId, category]');
 
     const messagesRef = collection(db, 'chatrooms', chatroomId, 'messages');
     const q = query(messagesRef, orderBy('sentOn', 'asc'));
@@ -873,7 +959,10 @@ const ChatComponent = ({
             <p>User ID: {userId}</p>
             <p>Property AddID: {propertyData?.addId || 'Missing'}</p>
             <p>Ad Owner ID: {contactInfo?.receiverId || contactInfo?.adOwnerId || 'Missing'}</p>
+            <p>Category: {propertyData?.type || propertyData?.category || 'Missing'}</p>
             <p>Chatroom ID: {chatroomId || 'Not set'}</p>
+            <p>Chatroom Format: participantId+adOwnerId+addId+category</p>
+            <p>ParticipantsList Format: [userId, adOwnerId, addId, category]</p>
             <p>Chatroom Created: {chatroomCreated ? '✓' : '✗'}</p>
             <p>From Search: {stateData.fromSearch ? '✓' : '✗'}</p>
             <p>Existing Chatroom ID: {stateData.chatroomId || 'None'}</p>
